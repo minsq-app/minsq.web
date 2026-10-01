@@ -29,10 +29,14 @@ router.get('/google', googleAuthLimiter, (req, res, next) => {
   // O nonce amarra o OTC ao navegador e também gera o `state` do OAuth (ver config/oauthState.ts).
   const nonce = crypto.randomBytes(32).toString('hex');
   (req as any).gNonce = nonce;
-  res.cookie('g_nonce', nonce, {
+  const cookieOpts: any = {
     httpOnly: true, secure: !isDev,
     sameSite: 'lax', path: '/api/auth', maxAge: 5 * 60 * 1000,
-  });
+  };
+  if (!isDev) {
+    cookieOpts.domain = '.mohi.com.br';
+  }
+  res.cookie('g_nonce', nonce, cookieOpts);
   next();
 }, passport.authenticate('google', { scope: ['email'] }));
 router.get('/google/callback', googleAuthLimiter, (req, res, next) => {

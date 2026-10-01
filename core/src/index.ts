@@ -42,8 +42,13 @@ const localNet = /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3}|1
 app.use(cors({
   origin: function (origin, callback) {
     const okLocal = isDev && origin && localNet.test(origin);
+    const isMohi = origin && (
+      origin === 'https://mohi.com.br' ||
+      origin === 'https://www.mohi.com.br' ||
+      origin.endsWith('.mohi.com.br')
+    );
     
-    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin) || okLocal) {
+    if (!origin || allowedOrigins.includes('*') || allowedOrigins.includes(origin) || okLocal || isMohi) {
       callback(null, true);
     } else {
       console.warn(`[CORS] Origem bloqueada: ${origin}`);

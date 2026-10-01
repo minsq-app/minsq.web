@@ -51,13 +51,17 @@ export async function createSession(userId: string, payload: any, req: Request, 
     console.log(`[Device Limit] Revogadas ${sessionsToRevoke.length} sessões antigas do usuário ${userId}`);
   }
 
-  res.cookie('refresh_token', refresh_token, {
+  const refreshCookieOpts: any = {
     httpOnly: true,
     secure: !isDev,
     sameSite: 'lax',
     path: '/',
     maxAge: maxAgeMs
-  });
+  };
+  if (!isDev) {
+    refreshCookieOpts.domain = '.mohi.com.br';
+  }
+  res.cookie('refresh_token', refresh_token, refreshCookieOpts);
 
   if (ip && userAgent) {
     // Analytics/IP tracking could go here, but suspicious login email was removed
@@ -440,13 +444,17 @@ export class AuthController {
       }
 
       const maxAgeMs = 15 * 24 * 60 * 60 * 1000;
-      res.cookie('refresh_token', newRefreshToken, {
+      const rotCookieOpts: any = {
         httpOnly: true,
         secure: !isDev,
         sameSite: 'lax',
-    path: '/',
+        path: '/',
         maxAge: maxAgeMs
-      });
+      };
+      if (!isDev) {
+        rotCookieOpts.domain = '.mohi.com.br';
+      }
+      res.cookie('refresh_token', newRefreshToken, rotCookieOpts);
 
       res.json({
         token: newToken
@@ -533,7 +541,9 @@ export class AuthController {
     }
 
     googleOtcStore.delete(otc);
-    res.clearCookie('g_nonce', { path: '/api/auth' });
+    const clearOpts: any = { path: '/api/auth' };
+    if (!isDev) clearOpts.domain = '.mohi.com.br';
+    res.clearCookie('g_nonce', clearOpts);
     console.log(`[OTC Exchange] Sucesso! Token retornado.`);
 
     if (entry.user.isPending) {
