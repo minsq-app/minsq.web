@@ -1,0 +1,5562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <script>try { if (localStorage.getItem('minsq_is_maintenance') === 'true') { document.documentElement.style.display = 'none'; window.top.location.replace('/pages/api/maintenance.html'); } } catch (e) { }</script>
+  <meta charset="UTF-8">
+  <style id="mh-early">
+    body {
+      padding-left: 60px;
+      opacity: 0;
+      background: #070707;
+      transition: opacity .18s ease
+    }
+  </style>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil — minsq</title>
+  <script>var ACTIVE_KEY = 'profile';</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Exo+2:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@300;400;500&family=Cinzel:wght@400;700;900&family=Orbitron:wght@400;700;900&family=Bebas+Neue&family=Permanent+Marker&family=Space+Grotesk:wght@300;400;600;700&family=Playfair+Display:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Fira+Code:wght@400;700&family=Syne:wght@700;800&family=Caveat:wght@400;700&family=Syncopate:wght@400;700&family=Montserrat:wght@300;400;600;700&family=Press+Start+2P&family=Pixelify+Sans:wght@400;700&family=Exo+2:wght@400;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    :root {
+      --mh-sb: 60px;
+      --bg: #070707;
+      --s1: #0d0d0d;
+      --s2: #121212;
+      --s3: #181818;
+      --s4: #1e1e1e;
+      --s5: #242424;
+      --b1: rgba(255, 255, 255, .04);
+      --b2: rgba(255, 255, 255, .08);
+      --b3: rgba(255, 255, 255, .14);
+      --b4: rgba(255, 255, 255, .22);
+      --t1: #f0f0f0;
+      --t2: #c0c0c0;
+      --t3: #888;
+      --t4: #444;
+      --t5: #2a2a2a;
+      --up: #b8e0b8;
+      --dn: #888;
+      --warn: #c8a060;
+      --accent: #e8e8e8;
+      --r4: 4px;
+      --r8: 8px;
+      --r12: 12px;
+      --r16: 16px;
+      --r20: 20px;
+      --r24: 24px;
+      --fm: 'Exo 2', sans-serif;
+      --mono: 'DM Mono', monospace;
+      --profile-font: 'Exo 2', sans-serif;
+    }
+
+    html,
+    body {
+      scroll-behavior: smooth
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none
+    }
+
+    ::-webkit-scrollbar {
+      display: none
+    }
+
+    body {
+      font-family: var(--fm);
+      background: var(--bg);
+      color: var(--t2);
+      height: 100vh;
+      overflow: hidden
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998
+    }
+
+    ::selection {
+      background: rgba(255, 255, 255, .15);
+      color: var(--t1)
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes profileIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes badgePop {
+      0% {
+        transform: scale(.8);
+        opacity: 0
+      }
+
+      60% {
+        transform: scale(1.1)
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    @keyframes avatarGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, .08)
+      }
+
+      50% {
+        box-shadow: 0 0 20px 4px rgba(255, 255, 255, .12)
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0
+      }
+
+      100% {
+        background-position: 200% 0
+      }
+    }
+
+    @keyframes borderRotate {
+      0% {
+        transform: rotate(0deg)
+      }
+
+      100% {
+        transform: rotate(360deg)
+      }
+    }
+
+    @keyframes borderPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .7;
+        transform: scale(1.04)
+      }
+    }
+
+    @keyframes borderShimmer {
+      0% {
+        background-position: 0% 50%
+      }
+
+      50% {
+        background-position: 100% 50%
+      }
+
+      100% {
+        background-position: 0% 50%
+      }
+    }
+
+    @keyframes borderFlicker {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      45% {
+        opacity: .8
+      }
+
+      50% {
+        opacity: .3
+      }
+
+      55% {
+        opacity: .95
+      }
+    }
+
+    @keyframes neonBlink {
+
+      0%,
+      90%,
+      100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 6px currentColor) drop-shadow(0 0 12px currentColor)
+      }
+
+      91%,
+      99% {
+        opacity: .4;
+        filter: none
+      }
+    }
+
+    @keyframes neonFlicker {
+
+      0%,
+      95%,
+      100% {
+        opacity: 1
+      }
+
+      96% {
+        opacity: .6
+      }
+
+      98% {
+        opacity: .9
+      }
+
+      97%,
+      99% {
+        opacity: .2
+      }
+    }
+
+    @keyframes hackRain {
+      0% {
+        background-position: 0 0
+      }
+
+      100% {
+        background-position: 0 100%
+      }
+    }
+
+    @keyframes cosmicDrift {
+      0% {
+        background-position: 0% 0%
+      }
+
+      100% {
+        background-position: 200% 200%
+      }
+    }
+
+    @keyframes lavaLamp {
+
+      0%,
+      100% {
+        background-position: 50% 0%
+      }
+
+      50% {
+        background-position: 50% 100%
+      }
+    }
+
+    @keyframes blackoutPulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .7
+      }
+    }
+
+    @keyframes vhsGlitch {
+
+      0%,
+      95%,
+      100% {
+        transform: translateX(0) skewX(0)
+      }
+
+      96% {
+        transform: translateX(-4px) skewX(-1deg)
+      }
+
+      97% {
+        transform: translateX(4px) skewX(1deg)
+      }
+
+      98% {
+        transform: translateX(-2px) skewX(.5deg)
+      }
+
+      99% {
+        transform: translateX(2px) skewX(-.5deg)
+      }
+    }
+
+    @keyframes gifScan {
+      0% {
+        transform: translateY(-100%)
+      }
+
+      100% {
+        transform: translateY(200%)
+      }
+    }
+
+    @keyframes koutScan {
+      0% {
+        transform: translateY(-100%);
+        opacity: .6
+      }
+
+      100% {
+        transform: translateY(110vh);
+        opacity: 0
+      }
+    }
+
+    /* ── PAGE / TOPBAR / BTN ── */
+    .page {
+      display: none;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      will-change: opacity, transform
+    }
+
+    .page.on {
+      display: block;
+      animation: pageIn .3s cubic-bezier(.16, 1, .3, 1) both
+    }
+
+    .content {
+      padding: 22px 24px
+    }
+
+    .btn {
+      padding: 7px 13px;
+      border-radius: var(--r8);
+      font-size: 11px;
+      font-family: var(--fm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid;
+      letter-spacing: -.1px
+    }
+
+    .btn-p {
+      background: var(--t1);
+      color: var(--bg);
+      border-color: var(--t1)
+    }
+
+    .btn-p:hover {
+      background: var(--t2)
+    }
+
+    .btn-g {
+      background: transparent;
+      color: var(--t3);
+      border-color: var(--b2)
+    }
+
+    .btn-g:hover {
+      background: var(--s3);
+      color: var(--t2);
+      border-color: var(--b3)
+    }
+
+    /* ── PROFILE HERO ── */
+    .profile-hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--r20);
+      background: transparent;
+      border: none;
+      margin-bottom: 16px;
+      animation: profileIn .5s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    .profile-hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(255, 255, 255, .04), transparent);
+      pointer-events: none
+    }
+
+    .profile-hero-inner {
+      padding: 28px 28px 24px;
+      position: relative;
+      z-index: 1
+    }
+
+    .profile-cover {
+      height: 3px;
+      background: linear-gradient(90deg, var(--s5), var(--b2), var(--s5));
+      margin-bottom: 0
+    }
+
+    .profile-av-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 14px
+    }
+
+    .profile-av {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: var(--s4);
+      border: 2px solid var(--b3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--t1);
+      cursor: pointer;
+      transition: border-color .3s, transform .3s;
+      animation: avatarGlow 4s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat
+    }
+
+    .profile-av:hover {
+      border-color: var(--b4);
+      transform: scale(1.04)
+    }
+
+    .profile-av-edit {
+      position: absolute;
+      bottom: -4px;
+      right: -4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: var(--s5);
+      border: 1px solid var(--b3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      cursor: pointer;
+      transition: all .2s
+    }
+
+    .profile-av-edit:hover {
+      background: var(--b3)
+    }
+
+    .profile-name {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.8px;
+      color: var(--t1);
+      margin-bottom: 3px
+    }
+
+    .profile-handle {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: .8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px
+    }
+
+    .profile-bio {
+      font-size: 12px;
+      color: var(--t3);
+      line-height: 1.65;
+      margin-bottom: 14px;
+      max-width: 480px
+    }
+
+    .profile-bio-placeholder {
+      color: var(--t5);
+      font-style: italic
+    }
+
+    .profile-stats-row {
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+      background: var(--s3);
+      border: 1px solid var(--b1);
+      border-radius: var(--r12);
+      overflow: hidden;
+      margin-bottom: 20px
+    }
+
+    .pstat {
+      flex: 1;
+      min-width: 80px;
+      padding: 12px 14px;
+      text-align: center;
+      border-right: 1px solid var(--b1);
+      transition: background .2s
+    }
+
+    .pstat:last-child {
+      border-right: none
+    }
+
+    .pstat:hover {
+      background: var(--s4)
+    }
+
+    .pstat-val {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      color: var(--t1);
+      line-height: 1;
+      margin-bottom: 3px
+    }
+
+    .pstat-lbl {
+      font-size: 8px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: .6px
+    }
+
+    .profile-section {
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: var(--r16);
+      padding: 20px;
+      margin-bottom: 14px;
+      animation: profileIn .5s cubic-bezier(.16, 1, .3, 1) both
+    }
+
+    .profile-section-title {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .profile-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--b1)
+    }
+
+    .profile-badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px
+    }
+
+    .profile-badge {
+      background: var(--s3);
+      border: 1px solid var(--b1);
+      border-radius: var(--r12);
+      padding: 14px 12px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .25s, transform .25s;
+      cursor: default
+    }
+
+    .profile-badge.earned {
+      border-color: var(--b2);
+      animation: badgePop .5s cubic-bezier(.16, 1, .3, 1) both
+    }
+
+    .profile-badge.earned:hover {
+      transform: translateY(-3px);
+      border-color: var(--b3)
+    }
+
+    .profile-badge.locked {
+      opacity: .3;
+      filter: grayscale(1)
+    }
+
+    .profile-badge-icon {
+      font-size: 26px;
+      margin-bottom: 8px;
+      display: block
+    }
+
+    .profile-badge-tier {
+      font-size: 7px;
+      font-family: var(--mono);
+      letter-spacing: 1.2px;
+      padding: 2px 7px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 5px
+    }
+
+    .profile-badge-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--t1);
+      margin-bottom: 3px;
+      letter-spacing: -.2px
+    }
+
+    .profile-badge-desc {
+      font-size: 9px;
+      color: var(--t4);
+      line-height: 1.4
+    }
+
+    .profile-streak-heatmap {
+      display: flex;
+      gap: 3px;
+      flex-wrap: wrap
+    }
+
+    .streak-dot-lg {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      background: var(--s4);
+      transition: background .2s;
+      cursor: default;
+      position: relative
+    }
+
+    .streak-dot-lg.active {
+      background: rgba(255, 255, 255, .55)
+    }
+
+    .streak-dot-lg.active-hi {
+      background: rgba(255, 255, 255, .85)
+    }
+
+    .streak-dot-lg:hover::after {
+      content: attr(data-date);
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--s5);
+      border: 1px solid var(--b3);
+      color: var(--t2);
+      font-size: 8px;
+      font-family: var(--mono);
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10
+    }
+
+    .profile-score-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px
+    }
+
+    .profile-score-item {
+      background: var(--s3);
+      border: 1px solid var(--b1);
+      border-radius: var(--r12);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: border-color .2s
+    }
+
+    .profile-score-item:hover {
+      border-color: var(--b2)
+    }
+
+    .psi-icon {
+      font-size: 18px;
+      flex-shrink: 0
+    }
+
+    .psi-info {
+      flex: 1
+    }
+
+    .psi-label {
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: .5px;
+      margin-bottom: 3px
+    }
+
+    .psi-bar {
+      height: 3px;
+      background: var(--s5);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 2px
+    }
+
+    .psi-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, .7);
+      transition: width .6s cubic-bezier(.34, 1.56, .64, 1)
+    }
+
+    .psi-val {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t1);
+      font-family: var(--mono)
+    }
+
+    .profile-meta-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px
+    }
+
+    .profile-meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: var(--s3);
+      border: 1px solid var(--b1);
+      border-radius: 20px;
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4)
+    }
+
+    .profile-meta-chip strong {
+      color: var(--t2)
+    }
+
+    .profile-level-bar-wrap {
+      height: 5px;
+      background: var(--s4);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 6px
+    }
+
+    .profile-level-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, .85));
+      transition: width .8s cubic-bezier(.34, 1.56, .64, 1)
+    }
+
+    .profile-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .profile-actions .btn {
+      font-size: 11px;
+      padding: 7px 14px
+    }
+
+    .profile-social-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px
+    }
+
+    .profile-social-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      border-radius: 20px;
+      font-size: 10px;
+      color: var(--t3);
+      cursor: pointer;
+      transition: all .2s;
+      text-decoration: none
+    }
+
+    .profile-social-chip:hover {
+      border-color: var(--b3);
+      color: var(--t1);
+      background: var(--s4)
+    }
+
+    .profile-social-chip .social-icon {
+      font-size: 12px
+    }
+
+    /* ── PNEW HERO ── */
+    .pnew-hero {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px
+    }
+
+    .pnew-av-wrap {
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 12px
+    }
+
+    .pnew-av {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: var(--s4);
+      border: 2px solid var(--b3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      font-weight: 700;
+      color: var(--t1);
+      cursor: pointer;
+      transition: border-color .3s, transform .3s;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      overflow: hidden
+    }
+
+    .pnew-av:hover {
+      border-color: var(--b4);
+      transform: scale(1.03)
+    }
+
+    .pnew-av-edit {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--s5);
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: pointer;
+      transition: all .2s;
+      z-index: 2
+    }
+
+    .pnew-av-edit:hover {
+      background: var(--b3)
+    }
+
+    .pnew-info {
+      flex: 1;
+      min-width: 0;
+      padding-top: 8px
+    }
+
+    .pnew-name {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -.8px;
+      color: var(--t1);
+      margin-bottom: 2px
+    }
+
+    .pnew-handle-row {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: .6px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .pnew-bio {
+      font-size: 11px;
+      color: var(--t3);
+      line-height: 1.5
+    }
+
+    /* ── STATS (seguidores / seguindo) ── */
+    .pnew-stats-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 10px
+    }
+
+    .pnew-stat {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      cursor: pointer;
+      transition: opacity .15s
+    }
+
+    .pnew-stat:hover {
+      opacity: .75
+    }
+
+    .pnew-stat-num {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t1);
+      letter-spacing: -.2px
+    }
+
+    .pnew-stat-label {
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: .3px
+    }
+
+    /* ── AÇÕES (seguir / inbox) ── */
+    .pnew-actions {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 12px;
+      margin-left: auto
+    }
+
+    .pnew-btn-follow {
+      padding: 9px 22px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--fm);
+      letter-spacing: -.1px;
+      cursor: pointer;
+      background: var(--t1);
+      color: var(--bg);
+      border: 1px solid var(--t1);
+      transition: all .15s;
+      white-space: nowrap
+    }
+
+    .pnew-btn-follow:hover {
+      background: var(--t2);
+      border-color: var(--t2)
+    }
+
+    .pnew-btn-follow.is-following {
+      background: transparent;
+      color: var(--t1);
+    }
+
+    .pnew-btn-follow.is-following:hover {
+      background: var(--s3);
+      border-color: var(--b2);
+      color: var(--er, #e5484d);
+    }
+
+    .pnew-btn-follow:disabled {
+      opacity: .55;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .pnew-btn-social {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--b2);
+      color: var(--t2);
+      cursor: pointer;
+      transition: all .15s;
+      text-decoration: none;
+    }
+
+    .pnew-btn-social:hover {
+      background: var(--s3);
+      border-color: var(--b3);
+      color: var(--t1)
+    }
+
+    .pnew-btn-social svg {
+      width: 16px;
+      height: 16px
+    }
+
+    .pnew-gif-wrap {
+      flex-shrink: 0;
+      width: 100px;
+      height: 100px;
+      min-width: 67px;
+      position: relative
+    }
+
+    .pnew-gif-box {
+      width: 100%;
+      height: 100%;
+      border-radius: 22px;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--t4);
+      text-align: center;
+      font-family: var(--mono);
+      line-height: 1.6;
+      padding: 10px
+    }
+
+    .pnew-main-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: stretch
+    }
+
+    .pnew-left-panel {
+      background: var(--s2);
+      border: 1px solid var(--b2);
+      border-radius: 20px;
+      padding: 20px;
+      min-height: 340px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .pnew-right-panel {
+      background: var(--s2);
+      border: 1px solid var(--b2);
+      border-radius: 20px;
+      padding: 16px;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-right: -18px;
+      margin-left: -10px;
+      position: relative;
+      overflow: hidden
+    }
+
+    .pnew-tabs-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--b2);
+      margin-bottom: 10px;
+      flex-shrink: 0
+    }
+
+    .pnew-tab-btn {
+      font-size: 9px;
+      font-family: inherit;
+      letter-spacing: .5px;
+      color: var(--t4);
+      background: none;
+      border: none;
+      padding: 7px 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap
+    }
+
+    .pnew-tab-btn:hover {
+      color: var(--t2)
+    }
+
+    .pnew-tab-btn.active {
+      color: var(--t1);
+      border-bottom-color: var(--t1)
+    }
+
+    .pnew-tab-pane {
+      display: none;
+      flex: 1;
+      overflow-y: auto
+    }
+
+    .pnew-tab-pane.active {
+      display: block
+    }
+
+    .pnew-badge-sm {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 7px 5px;
+      border-radius: 10px;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      cursor: default;
+      transition: transform .2s, background .2s;
+      min-width: 0
+    }
+
+    .pnew-badge-sm:hover {
+      transform: scale(1.06);
+      background: var(--s4)
+    }
+
+    .pnew-badge-sm.locked {
+      opacity: .28;
+      filter: grayscale(1)
+    }
+
+    .pnew-badge-sm-icon {
+      font-size: 20px;
+      line-height: 1
+    }
+
+    .pnew-badge-sm-name {
+      font-size: 7px;
+      font-family: var(--mono);
+      color: var(--t3);
+      text-align: center;
+      letter-spacing: .3px;
+      max-width: 58px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%
+    }
+
+    .pnew-tab-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 32px 12px;
+      text-align: center;
+      color: var(--t5);
+      font-size: 9px;
+      font-family: var(--mono);
+      letter-spacing: .3px;
+      line-height: 1.8
+    }
+
+    .pnew-tab-empty-ico {
+      font-size: 26px;
+      opacity: .4
+    }
+
+    /* ── AV BORDER FRAME ── */
+    .av-border-frame {
+      position: absolute;
+      inset: -6px;
+      border-radius: 24px;
+      pointer-events: none;
+      z-index: 2;
+      overflow: visible
+    }
+
+    .av-border-none .av-border-frame {
+      display: none
+    }
+
+    .av-border-fire .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 0deg, #ff1a00, #ff6600, #ffcc00, #ff6600, #ff4400, #cc1100, #ff1a00);
+      animation: borderRotate 1.8s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-fire .av-border-frame {
+      filter: drop-shadow(0 0 8px rgba(255, 100, 0, .7)) drop-shadow(0 0 20px rgba(255, 50, 0, .4))
+    }
+
+    .av-border-ice .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 0deg, #004466, #00aaff, #aaeeff, #ffffff, #88ddff, #00aaff, #004466);
+      animation: borderRotate 3s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-ice .av-border-frame {
+      filter: drop-shadow(0 0 10px rgba(0, 200, 255, .6)) drop-shadow(0 0 20px rgba(0, 150, 255, .3))
+    }
+
+    .av-border-nebula .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 0deg, #4400aa, #8800ff, #dd44ff, #ff88ff, #cc44ff, #6600cc, #4400aa);
+      animation: borderRotate 4s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-nebula .av-border-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 180deg, transparent, rgba(255, 100, 255, .4), transparent);
+      animation: borderRotate 2s linear infinite reverse;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 1.5px
+    }
+
+    .av-border-nebula .av-border-frame {
+      filter: drop-shadow(0 0 12px rgba(180, 0, 255, .7))
+    }
+
+    .av-border-gold .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: linear-gradient(90deg, #3d2600, #c8960c, #ffd700, #fffacd, #ffd700, #c8960c, #3d2600);
+      background-size: 300% 300%;
+      animation: borderShimmer 2s ease infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-gold .av-border-frame {
+      filter: drop-shadow(0 0 8px rgba(255, 200, 0, .6)) drop-shadow(0 0 20px rgba(200, 150, 0, .3))
+    }
+
+    .av-border-matrix .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 0deg, #001100, #003300, #00ff41, #44ff88, #00ff41, #003300, #001100);
+      animation: borderRotate 1.4s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-matrix .av-border-frame {
+      filter: drop-shadow(0 0 6px #00ff41) drop-shadow(0 0 16px rgba(0, 255, 65, .4));
+      animation: neonBlink 4s ease-in-out infinite
+    }
+
+    .av-border-plasma .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 0deg, #0055ff, #00ffcc, #88ff00, #ffff00, #ff8800, #ff0055, #cc00ff, #0055ff);
+      animation: borderRotate 1.2s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-plasma .av-border-frame {
+      filter: drop-shadow(0 0 10px rgba(100, 100, 255, .6))
+    }
+
+    .av-border-dragon .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 0deg, #1a0000, #550000, #cc0000, #ff2200, #ff6600, #cc0000, #550000, #1a0000);
+      animation: borderRotate 2s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-dragon .av-border-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 90deg, transparent, rgba(255, 100, 0, .5), transparent);
+      animation: borderRotate 1s linear infinite reverse;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 1.5px
+    }
+
+    .av-border-dragon .av-border-frame {
+      filter: drop-shadow(0 0 10px rgba(255, 60, 0, .8)) drop-shadow(0 0 24px rgba(200, 0, 0, .5))
+    }
+
+    .av-border-aurora .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: linear-gradient(90deg, #00ff88, #00ddff, #8866ff, #ff44bb, #ff8800, #00ff88);
+      background-size: 400% 400%;
+      animation: borderShimmer 3s ease infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 3px
+    }
+
+    .av-border-aurora .av-border-frame {
+      filter: drop-shadow(0 0 12px rgba(100, 220, 255, .5))
+    }
+
+    .av-border-legend .av-border-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 0deg, #888, #bbb, #ffffff, #eeeeee, #cccccc, #aaaaaa, #ffffff, #888);
+      animation: borderRotate 3s linear infinite;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 4px
+    }
+
+    .av-border-legend .av-border-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: conic-gradient(from 180deg, transparent, rgba(255, 255, 255, .5), transparent);
+      animation: borderRotate 1.5s linear infinite reverse;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 2px
+    }
+
+    .av-border-legend .av-border-frame {
+      filter: drop-shadow(0 0 14px rgba(255, 255, 255, .7)) drop-shadow(0 0 30px rgba(200, 200, 255, .4))
+    }
+
+    /* ── THEMES ── */
+    .ptheme-default {}
+
+    .ptheme-hacker .profile-hero {
+      background: #010801 !important;
+      border-color: rgba(0, 255, 65, .25) !important
+    }
+
+    .ptheme-hacker .profile-hero-bg {
+      background: repeating-linear-gradient(0deg, transparent 0px, transparent 20px, rgba(0, 255, 65, .015) 20px, rgba(0, 255, 65, .015) 21px), radial-gradient(ellipse 100% 80% at 50% -10%, rgba(0, 255, 65, .12), transparent 70%) !important;
+      animation: hackRain 8s linear infinite !important
+    }
+
+    .ptheme-hacker .profile-cover {
+      background: linear-gradient(90deg, #001100, #00aa33, #00ff65, #00aa33, #001100) !important;
+      height: 2px !important;
+      box-shadow: 0 0 10px rgba(0, 255, 65, .6) !important
+    }
+
+    .ptheme-hacker .profile-name {
+      color: #00ff65 !important;
+      text-shadow: 0 0 10px rgba(0, 255, 65, .6), 0 0 20px rgba(0, 255, 65, .3) !important;
+      font-family: var(--mono) !important
+    }
+
+    .ptheme-hacker .profile-handle {
+      color: rgba(0, 255, 65, .6) !important
+    }
+
+    .ptheme-hacker .profile-bio {
+      color: rgba(0, 255, 65, .5) !important
+    }
+
+    .ptheme-hacker .profile-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      background: linear-gradient(transparent 50%, rgba(0, 255, 65, .02) 50%);
+      background-size: 100% 4px
+    }
+
+    .ptheme-particle .profile-hero {
+      background: radial-gradient(circle at 20% 30%, rgba(100, 0, 255, .15), transparent 40%), radial-gradient(circle at 80% 70%, rgba(0, 100, 255, .12), transparent 40%), radial-gradient(circle at 50% 50%, rgba(200, 0, 255, .06), transparent 60%), #080012 !important;
+      border-color: rgba(150, 50, 255, .3) !important
+    }
+
+    .ptheme-particle .profile-hero-bg {
+      background: radial-gradient(1px 1px at 20% 25%, rgba(255, 255, 255, .8), transparent), radial-gradient(1px 1px at 40% 75%, rgba(200, 150, 255, .8), transparent), radial-gradient(1px 1px at 60% 20%, rgba(150, 200, 255, .7), transparent), radial-gradient(1px 1px at 75% 55%, rgba(255, 200, 255, .7), transparent), radial-gradient(ellipse 100% 100% at 50% 50%, rgba(100, 0, 200, .08), transparent 70%) !important;
+      animation: cosmicDrift 20s linear infinite !important;
+      background-size: 200% 200% !important
+    }
+
+    .ptheme-particle .profile-cover {
+      background: linear-gradient(90deg, #6600ff, #cc44ff, #ffffff, #44aaff, #6600ff) !important;
+      height: 2px !important;
+      box-shadow: 0 0 14px rgba(180, 50, 255, .7) !important
+    }
+
+    .ptheme-particle .profile-name {
+      background: linear-gradient(135deg, #cc88ff, #88aaff, #ffffff) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important
+    }
+
+    .ptheme-blackout .profile-hero {
+      background: #000000 !important;
+      border-color: rgba(180, 0, 0, .3) !important
+    }
+
+    .ptheme-blackout .profile-hero-bg {
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(120, 0, 0, .2), transparent 60%) !important;
+      animation: blackoutPulse 4s ease-in-out infinite !important
+    }
+
+    .ptheme-blackout .profile-cover {
+      background: linear-gradient(90deg, #000, #440000, #880000, #440000, #000) !important;
+      height: 2px !important
+    }
+
+    .ptheme-blackout .profile-name {
+      color: #cc2200 !important;
+      text-shadow: 0 0 12px rgba(200, 0, 0, .5) !important
+    }
+
+    .ptheme-blackout .profile-handle {
+      color: rgba(150, 0, 0, .7) !important
+    }
+
+    .ptheme-vhs .profile-hero {
+      background: #080010 !important;
+      border-color: rgba(255, 0, 180, .25) !important;
+      animation: vhsGlitch 8s ease-in-out infinite !important
+    }
+
+    .ptheme-vhs .profile-hero-bg {
+      background: repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(255, 0, 180, .03) 2px, rgba(255, 0, 180, .03) 4px), radial-gradient(ellipse 80% 60% at 50% 20%, rgba(0, 220, 255, .1), transparent 70%), radial-gradient(ellipse 60% 40% at 20% 80%, rgba(255, 0, 180, .08), transparent 60%) !important
+    }
+
+    .ptheme-vhs .profile-cover {
+      background: linear-gradient(90deg, #ff0066, #00eeff, #ff0066) !important;
+      height: 2px !important;
+      box-shadow: 0 0 12px rgba(255, 0, 180, .5), 0 2px 0 rgba(0, 238, 255, .3) !important
+    }
+
+    .ptheme-vhs .profile-name {
+      color: #00eeff !important;
+      text-shadow: 3px 0 rgba(255, 0, 180, .6), -3px 0 rgba(0, 255, 100, .4), 0 0 12px rgba(0, 238, 255, .4) !important
+    }
+
+    .ptheme-ocean .profile-hero-bg {
+      background: radial-gradient(ellipse 100% 80% at 50% -10%, rgba(0, 140, 255, .18), transparent 60%), radial-gradient(ellipse 60% 40% at 20% 100%, rgba(0, 80, 180, .1), transparent 50%) !important
+    }
+
+    .ptheme-ocean .profile-cover {
+      background: linear-gradient(90deg, #002244, #0066bb, #00ccff, #0066bb, #002244) !important
+    }
+
+    .ptheme-crystal .profile-hero {
+      background: linear-gradient(135deg, #080018 0%, #0d0025 50%, #080018 100%) !important;
+      border-color: rgba(100, 200, 255, .3) !important
+    }
+
+    .ptheme-crystal .profile-hero-bg {
+      background: linear-gradient(60deg, transparent 30%, rgba(100, 220, 255, .06) 50%, transparent 70%), linear-gradient(120deg, transparent 20%, rgba(200, 100, 255, .04) 40%, transparent 60%), linear-gradient(0deg, rgba(50, 150, 255, .06) 0%, transparent 50%) !important
+    }
+
+    .ptheme-crystal .profile-cover {
+      background: linear-gradient(90deg, #0044aa, #66ccff, #ffffff, #aa66ff, #0044aa) !important;
+      height: 2px !important;
+      box-shadow: 0 0 12px rgba(100, 200, 255, .5) !important
+    }
+
+    .ptheme-crystal .profile-name {
+      background: linear-gradient(135deg, #88ddff, #ffffff, #cc88ff) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important
+    }
+
+    .ptheme-lava .profile-hero {
+      background: #0a0000 !important;
+      border-color: rgba(255, 80, 0, .3) !important
+    }
+
+    .ptheme-lava .profile-hero-bg {
+      background: radial-gradient(ellipse 120% 60% at 50% 110%, rgba(255, 60, 0, .2), transparent 60%), radial-gradient(ellipse 80% 40% at 20% 80%, rgba(255, 120, 0, .1), transparent 50%) !important;
+      animation: lavaLamp 6s ease-in-out infinite !important;
+      background-size: 100% 200% !important
+    }
+
+    .ptheme-lava .profile-cover {
+      background: linear-gradient(90deg, #330000, #aa2200, #ff5500, #ffaa00, #ff5500, #aa2200, #330000) !important;
+      height: 3px !important;
+      box-shadow: 0 0 16px rgba(255, 80, 0, .5) !important
+    }
+
+    .ptheme-lava .profile-name {
+      color: #ff7700 !important;
+      text-shadow: 0 0 10px rgba(255, 100, 0, .5) !important
+    }
+
+    .ptheme-cyber .profile-hero {
+      background: #020008 !important;
+      border-color: rgba(255, 240, 0, .2) !important
+    }
+
+    .ptheme-cyber .profile-hero-bg {
+      background: radial-gradient(ellipse 100% 60% at 0% 50%, rgba(255, 240, 0, .08), transparent 60%), radial-gradient(ellipse 80% 60% at 100% 50%, rgba(255, 0, 150, .08), transparent 60%), radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0, 200, 255, .06), transparent 50%) !important
+    }
+
+    .ptheme-cyber .profile-cover {
+      background: linear-gradient(90deg, #ff0066, #fff000, #00eeff, #fff000, #ff0066) !important;
+      height: 2px !important;
+      box-shadow: 0 0 10px rgba(255, 240, 0, .5) !important
+    }
+
+    .ptheme-cyber .profile-name {
+      background: linear-gradient(90deg, #fff000, #ff0066) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important
+    }
+
+    .ptheme-sakura .profile-hero {
+      background: #0a0008 !important;
+      border-color: rgba(255, 100, 180, .25) !important
+    }
+
+    .ptheme-sakura .profile-hero-bg {
+      background: radial-gradient(circle at 15% 40%, rgba(255, 80, 160, .1), transparent 40%), radial-gradient(circle at 85% 20%, rgba(255, 160, 220, .08), transparent 40%), radial-gradient(circle at 50% 90%, rgba(180, 50, 120, .08), transparent 50%) !important;
+      animation: cosmicDrift 15s linear infinite !important;
+      background-size: 200% 200% !important
+    }
+
+    .ptheme-sakura .profile-cover {
+      background: linear-gradient(90deg, #440022, #cc2266, #ff88cc, #ffaadd, #cc2266, #440022) !important;
+      height: 2px !important;
+      box-shadow: 0 0 12px rgba(255, 100, 180, .5) !important
+    }
+
+    .ptheme-sakura .profile-name {
+      background: linear-gradient(135deg, #ffaadd, #ff66aa, #ffffff) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important
+    }
+
+    .ptheme-galaxy .profile-hero {
+      background: radial-gradient(ellipse at 20% 20%, rgba(80, 0, 160, .2) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(0, 60, 160, .15) 0%, transparent 50%), var(--s2) !important
+    }
+
+    .ptheme-galaxy .profile-cover {
+      background: linear-gradient(90deg, #0a0028, #6600ff, #cc44ff, #0088ff, #0a0028) !important
+    }
+
+    .ptheme-aurora .profile-hero-bg {
+      background: linear-gradient(135deg, rgba(0, 255, 120, .07) 0%, rgba(0, 180, 255, .08) 33%, rgba(120, 0, 255, .07) 66%, rgba(255, 0, 120, .06) 100%) !important
+    }
+
+    .ptheme-aurora .profile-cover {
+      background: linear-gradient(90deg, #00ff88, #00ccff, #8844ff, #ff44aa, #00ff88) !important;
+      background-size: 200% 100% !important;
+      animation: borderShimmer 4s ease infinite !important;
+      height: 3px
+    }
+
+    .ptheme-void .profile-hero {
+      background: radial-gradient(ellipse at 50% 0%, rgba(20, 0, 40, .6), var(--s2) 60%) !important;
+      border-color: rgba(80, 0, 120, .3) !important
+    }
+
+    .ptheme-void .profile-cover {
+      background: linear-gradient(90deg, #000000, #440088, #8800cc, #440088, #000000) !important
+    }
+
+    .ptheme-fire .profile-hero-bg {
+      background: radial-gradient(ellipse 100% 80% at 50% -10%, rgba(255, 80, 0, .15), transparent 60%), radial-gradient(ellipse 60% 40% at 80% 100%, rgba(200, 40, 0, .1), transparent 50%) !important
+    }
+
+    .ptheme-fire .profile-cover {
+      background: linear-gradient(90deg, #ff4400, #ff8800, #ffcc00, #ff8800, #ff4400) !important
+    }
+
+    .ptheme-platinum .profile-hero-bg {
+      background: radial-gradient(ellipse 100% 80% at 50% -10%, rgba(220, 220, 230, .07), transparent 60%) !important
+    }
+
+    .ptheme-platinum .profile-cover {
+      background: linear-gradient(90deg, #444, #aaa, #fff, #eee, #aaa, #444) !important;
+      background-size: 200% 100% !important;
+      animation: borderShimmer 3s ease infinite !important;
+      height: 3px
+    }
+
+    /* ── KOUT BASE ── */
+    [class*="kout"] .profile-hero {
+      border-width: 0 !important;
+      border-radius: var(--r20) !important
+    }
+
+    [class*="kout"] .profile-hero .profile-hero-inner * {
+      border-color: transparent !important
+    }
+
+    [class*="kout"] .profile-stats-row {
+      border: none !important;
+      background: transparent !important
+    }
+
+    [class*="kout"] .pstat {
+      border: none !important
+    }
+
+    [class*="kout"] .profile-badge {
+      border: none !important;
+      background: transparent !important
+    }
+
+    [class*="kout"] .profile-badge.locked {
+      opacity: .15 !important
+    }
+
+    [class*="kout"] .profile-badge-name {
+      letter-spacing: .5px
+    }
+
+    [class*="kout"] .profile-meta-chip {
+      background: transparent !important;
+      border: none !important
+    }
+
+    [class*="kout"] .profile-section {
+      background: transparent !important;
+      border: none !important
+    }
+
+    [class*="kout"] .profile-score-item {
+      background: transparent !important;
+      border: none !important
+    }
+
+    [class*="kout"] .profile-level-bar-wrap {
+      background: #111 !important
+    }
+
+    [class*="kout"] .profile-av {
+      border-color: transparent !important
+    }
+
+    [class*="kout"] .profile-social-chip {
+      border: none !important;
+      background: transparent !important
+    }
+
+    [class*="kout"] .profile-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, .08) 2px, rgba(0, 0, 0, .08) 4px);
+      border-radius: var(--r20)
+    }
+
+    .pkout-black .profile-hero {
+      background: #000 !important
+    }
+
+    .pkout-black .profile-hero-bg {
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 255, 255, .04), transparent) !important
+    }
+
+    .pkout-black .profile-cover {
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .2), transparent) !important
+    }
+
+    .pkout-black .profile-name {
+      color: #fff !important;
+      text-shadow: 0 0 20px rgba(255, 255, 255, .7), 0 0 40px rgba(255, 255, 255, .3) !important;
+      animation: neonFlicker 8s ease-in-out infinite !important
+    }
+
+    .pkout-black .profile-handle {
+      color: rgba(200, 200, 200, .5) !important;
+      letter-spacing: 2px !important
+    }
+
+    .pkout-black .profile-bio {
+      color: rgba(180, 180, 180, .6) !important
+    }
+
+    .pkout-black .pstat-val {
+      color: #fff !important;
+      text-shadow: 0 0 12px rgba(255, 255, 255, .6) !important
+    }
+
+    .pkout-black .pstat-lbl {
+      color: rgba(255, 255, 255, .25) !important;
+      letter-spacing: 1.5px !important
+    }
+
+    .pkout-black .pnew-left-panel,
+    .pkout-black .pnew-right-panel {
+      background: #000 !important;
+      border-color: rgba(255, 255, 255, .07) !important
+    }
+
+    .pkout-black .pnew-badge-circle,
+    .pkout-black .pnew-insignia-circle,
+    .pkout-black .pnew-badge-sm {
+      background: rgba(255, 255, 255, .04) !important;
+      border-color: rgba(255, 255, 255, .1) !important
+    }
+
+    .pkout-black .pnew-insignia-label,
+    .pkout-black .pnew-badge-sm-name {
+      color: rgba(255, 255, 255, .3) !important
+    }
+
+    .pkout-black .profile-section-title {
+      color: rgba(255, 255, 255, .35) !important
+    }
+
+    .pkout-black .pnew-tab-btn {
+      color: rgba(255, 255, 255, .25) !important;
+      border-bottom-color: transparent !important
+    }
+
+    .pkout-black .pnew-tab-btn.active {
+      color: #fff !important;
+      border-bottom-color: rgba(255, 255, 255, .7) !important
+    }
+
+    .pkout-black .pnew-tabs-bar {
+      border-bottom-color: rgba(255, 255, 255, .08) !important
+    }
+
+    .pkout-black .streak-dot-lg.active {
+      background: rgba(255, 255, 255, .5) !important
+    }
+
+    .pkout-black .streak-dot-lg.active-hi {
+      background: rgba(255, 255, 255, .9) !important
+    }
+
+    .pkout-purple .profile-hero {
+      background: #04000d !important
+    }
+
+    .pkout-purple .profile-hero-bg {
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(140, 0, 255, .12), transparent) !important
+    }
+
+    .pkout-purple .profile-cover {
+      background: linear-gradient(90deg, transparent, rgba(160, 0, 255, .7), rgba(200, 100, 255, 1), rgba(160, 0, 255, .7), transparent) !important;
+      box-shadow: 0 0 20px rgba(160, 0, 255, .6) !important
+    }
+
+    .pkout-purple .profile-name {
+      color: #cc88ff !important;
+      text-shadow: 0 0 20px rgba(180, 0, 255, .9), 0 0 50px rgba(140, 0, 255, .5) !important;
+      animation: neonFlicker 7s ease-in-out infinite !important
+    }
+
+    .pkout-purple .profile-handle {
+      color: rgba(180, 80, 255, .4) !important;
+      letter-spacing: 2px !important
+    }
+
+    .pkout-purple .profile-bio {
+      color: rgba(180, 100, 255, .5) !important
+    }
+
+    .pkout-purple .pstat-val {
+      color: #cc88ff !important;
+      text-shadow: 0 0 12px rgba(160, 0, 255, .7) !important
+    }
+
+    .pkout-purple .pstat-lbl {
+      color: rgba(160, 80, 255, .3) !important;
+      letter-spacing: 1.5px !important
+    }
+
+    .pkout-purple .pnew-left-panel,
+    .pkout-purple .pnew-right-panel {
+      background: #04000d !important;
+      border-color: rgba(150, 0, 255, .15) !important
+    }
+
+    .pkout-purple .pnew-badge-circle,
+    .pkout-purple .pnew-insignia-circle,
+    .pkout-purple .pnew-badge-sm {
+      background: rgba(140, 0, 255, .07) !important;
+      border-color: rgba(140, 0, 255, .2) !important
+    }
+
+    .pkout-purple .pnew-insignia-label,
+    .pkout-purple .pnew-badge-sm-name {
+      color: rgba(180, 100, 255, .5) !important
+    }
+
+    .pkout-purple .profile-section-title {
+      color: rgba(180, 100, 255, .5) !important
+    }
+
+    .pkout-purple .pnew-tab-btn {
+      color: rgba(180, 100, 255, .35) !important
+    }
+
+    .pkout-purple .pnew-tab-btn.active {
+      color: #cc88ff !important;
+      border-bottom-color: #aa44ff !important
+    }
+
+    .pkout-purple .pnew-tabs-bar {
+      border-bottom-color: rgba(140, 0, 255, .15) !important
+    }
+
+    .pkout-purple .streak-dot-lg.active {
+      background: rgba(160, 0, 255, .5) !important
+    }
+
+    .pkout-purple .streak-dot-lg.active-hi {
+      background: rgba(200, 80, 255, .9) !important
+    }
+
+    .pkout-pink .profile-hero {
+      background: #0d0007 !important
+    }
+
+    .pkout-pink .profile-hero-bg {
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 0, 120, .1), transparent) !important
+    }
+
+    .pkout-pink .profile-cover {
+      background: linear-gradient(90deg, transparent, rgba(255, 0, 120, .7), rgba(255, 100, 180, 1), rgba(255, 0, 120, .7), transparent) !important;
+      box-shadow: 0 0 20px rgba(255, 0, 120, .6) !important
+    }
+
+    .pkout-pink .profile-name {
+      color: #ff88cc !important;
+      text-shadow: 0 0 20px rgba(255, 0, 140, .9), 0 0 50px rgba(255, 0, 100, .5) !important;
+      animation: neonFlicker 6s ease-in-out infinite !important
+    }
+
+    .pkout-pink .profile-handle {
+      color: rgba(255, 80, 160, .4) !important;
+      letter-spacing: 2px !important
+    }
+
+    .pkout-pink .profile-bio {
+      color: rgba(255, 100, 160, .5) !important
+    }
+
+    .pkout-pink .pstat-val {
+      color: #ff88cc !important;
+      text-shadow: 0 0 12px rgba(255, 0, 140, .7) !important
+    }
+
+    .pkout-pink .pstat-lbl {
+      color: rgba(255, 80, 160, .3) !important;
+      letter-spacing: 1.5px !important
+    }
+
+    .pkout-pink .pnew-left-panel,
+    .pkout-pink .pnew-right-panel {
+      background: #0d0007 !important;
+      border-color: rgba(255, 0, 120, .15) !important
+    }
+
+    .pkout-pink .pnew-badge-circle,
+    .pkout-pink .pnew-insignia-circle,
+    .pkout-pink .pnew-badge-sm {
+      background: rgba(255, 0, 100, .06) !important;
+      border-color: rgba(255, 0, 100, .2) !important
+    }
+
+    .pkout-pink .pnew-insignia-label,
+    .pkout-pink .pnew-badge-sm-name {
+      color: rgba(255, 100, 180, .5) !important
+    }
+
+    .pkout-pink .profile-section-title {
+      color: rgba(255, 100, 180, .5) !important
+    }
+
+    .pkout-pink .pnew-tab-btn {
+      color: rgba(255, 100, 180, .35) !important
+    }
+
+    .pkout-pink .pnew-tab-btn.active {
+      color: #ff88cc !important;
+      border-bottom-color: #ff44aa !important
+    }
+
+    .pkout-pink .pnew-tabs-bar {
+      border-bottom-color: rgba(255, 0, 100, .15) !important
+    }
+
+    .pkout-pink .streak-dot-lg.active {
+      background: rgba(255, 0, 140, .5) !important
+    }
+
+    .pkout-pink .streak-dot-lg.active-hi {
+      background: rgba(255, 80, 180, .9) !important
+    }
+
+    .pkout-red .profile-hero {
+      background: #0d0000 !important
+    }
+
+    .pkout-red .profile-hero-bg {
+      background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 0, 0, .1), transparent) !important
+    }
+
+    .pkout-red .profile-cover {
+      background: linear-gradient(90deg, transparent, rgba(200, 0, 0, .7), rgba(255, 60, 60, 1), rgba(200, 0, 0, .7), transparent) !important;
+      box-shadow: 0 0 20px rgba(255, 0, 0, .6) !important
+    }
+
+    .pkout-red .profile-name {
+      color: #ff6666 !important;
+      text-shadow: 0 0 20px rgba(255, 0, 0, .9), 0 0 50px rgba(200, 0, 0, .5) !important;
+      animation: neonFlicker 9s ease-in-out infinite !important
+    }
+
+    .pkout-red .profile-handle {
+      color: rgba(255, 80, 80, .4) !important;
+      letter-spacing: 2px !important
+    }
+
+    .pkout-red .profile-bio {
+      color: rgba(255, 100, 100, .5) !important
+    }
+
+    .pkout-red .pstat-val {
+      color: #ff6666 !important;
+      text-shadow: 0 0 12px rgba(255, 0, 0, .7) !important
+    }
+
+    .pkout-red .pstat-lbl {
+      color: rgba(255, 80, 80, .3) !important;
+      letter-spacing: 1.5px !important
+    }
+
+    .pkout-red .pnew-left-panel,
+    .pkout-red .pnew-right-panel {
+      background: #0a0000 !important;
+      border-color: rgba(220, 30, 30, .15) !important
+    }
+
+    .pkout-red .pnew-badge-circle,
+    .pkout-red .pnew-insignia-circle,
+    .pkout-red .pnew-badge-sm {
+      background: rgba(220, 30, 30, .06) !important;
+      border-color: rgba(220, 30, 30, .2) !important
+    }
+
+    .pkout-red .pnew-insignia-label,
+    .pkout-red .pnew-badge-sm-name {
+      color: rgba(255, 100, 100, .5) !important
+    }
+
+    .pkout-red .profile-section-title {
+      color: rgba(255, 100, 100, .5) !important
+    }
+
+    .pkout-red .pnew-tab-btn {
+      color: rgba(255, 100, 100, .35) !important
+    }
+
+    .pkout-red .pnew-tab-btn.active {
+      color: #ff8080 !important;
+      border-bottom-color: #e04040 !important
+    }
+
+    .pkout-red .pnew-tabs-bar {
+      border-bottom-color: rgba(220, 30, 30, .15) !important
+    }
+
+    .pkout-red .streak-dot-lg.active {
+      background: rgba(255, 0, 0, .5) !important
+    }
+
+    .pkout-red .streak-dot-lg.active-hi {
+      background: rgba(255, 60, 60, .9) !important
+    }
+
+    /* ── FONT CLASSES ── */
+    :root {
+      --profile-font: 'Exo 2', sans-serif
+    }
+
+    #page-profile .pnew-name,
+    #page-profile .pnew-handle-row,
+    #page-profile .pnew-bio,
+    #page-profile .pnew-gif-box,
+    #page-profile .pnew-insignia-label,
+    #page-profile .pnew-badge-circle,
+    #page-profile #profileLevelVertical {
+      font-family: var(--profile-font) !important
+    }
+
+    .pfont-dmsans {
+      --profile-font: 'Exo 2', sans-serif
+    }
+
+    .pfont-orbitron {
+      --profile-font: 'Orbitron', sans-serif
+    }
+
+    .pfont-cinzel {
+      --profile-font: 'Cinzel', serif
+    }
+
+    .pfont-bebas {
+      --profile-font: 'Bebas Neue', cursive
+    }
+
+    .pfont-marker {
+      --profile-font: 'Permanent Marker', cursive
+    }
+
+    .pfont-playfair {
+      --profile-font: 'Playfair Display', serif
+    }
+
+    .pfont-rajdhani {
+      --profile-font: 'Rajdhani', sans-serif
+    }
+
+    .pfont-chakra {
+      --profile-font: 'Chakra Petch', sans-serif
+    }
+
+    .pfont-inter {
+      --profile-font: 'Inter', sans-serif
+    }
+
+    .pfont-spacegrotesk {
+      --profile-font: 'Space Grotesk', sans-serif
+    }
+
+
+    .pfont-firacode {
+      --profile-font: 'Fira Code', monospace
+    }
+
+    .pfont-syne {
+      --profile-font: 'Syne', sans-serif
+    }
+
+    .pfont-caveat {
+      --profile-font: 'Caveat', cursive
+    }
+
+    .pfont-syncopate {
+      --profile-font: 'Syncopate', sans-serif
+    }
+
+    .pfont-montserrat {
+      --profile-font: 'Montserrat', sans-serif
+    }
+
+    .pfont-pressstart {
+      --profile-font: 'Press Start 2P', cursive
+    }
+
+    .pfont-pixelify {
+      --profile-font: 'Pixelify Sans', sans-serif
+    }
+
+    .pfont-exo2 {
+      --profile-font: 'Exo 2', sans-serif
+    }
+
+    .pfont-fraunces {
+      --profile-font: 'Fraunces', serif
+    }
+
+    .pfont-bebas .pnew-name {
+      letter-spacing: 3px !important;
+      font-size: 30px !important
+    }
+
+    .pfont-marker .pnew-name {
+      letter-spacing: 0 !important
+    }
+
+    .pfont-orbitron .pnew-name {
+      letter-spacing: -1px !important;
+      font-size: 18px !important
+    }
+
+    .pfont-cinzel .pnew-name {
+      letter-spacing: 1px !important
+    }
+
+    .pfont-chakra .pnew-name {
+      letter-spacing: 2px !important
+    }
+
+    /* ── EDIT PANEL ── */
+    .profile-edit-wrap {
+      background: var(--s1);
+      border: 1px solid var(--b2);
+      border-radius: var(--r16);
+      padding: 20px;
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 380px;
+      z-index: 500;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .6);
+      animation: fadeUp .3s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    .profile-edit-wrap.hidden {
+      display: none
+    }
+
+    .profile-edit-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--t1);
+      margin-bottom: 14px;
+      letter-spacing: -.2px
+    }
+
+    .pe-section-hdr {
+      font-size: 8px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin: 14px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .pe-section-hdr::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--b1)
+    }
+
+    .profile-field {
+      margin-bottom: 10px
+    }
+
+    .profile-field label {
+      display: block;
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: .8px;
+      margin-bottom: 5px
+    }
+
+    .profile-field input,
+    .profile-field textarea,
+    .profile-field select {
+      width: 100%;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      border-radius: var(--r8);
+      color: var(--t1);
+      font-family: var(--fm);
+      font-size: 12px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color .2s;
+      resize: none
+    }
+
+    .profile-field input:focus,
+    .profile-field textarea:focus {
+      border-color: var(--b3)
+    }
+
+    .profile-field textarea {
+      min-height: 60px
+    }
+
+    .char-counter {
+      font-size: 8px;
+      font-family: var(--mono);
+      color: var(--t4);
+      text-align: right;
+      margin-top: 2px;
+      transition: color .2s
+    }
+
+    .char-counter.warn {
+      color: var(--warn)
+    }
+
+    .char-counter.over {
+      color: #e08080
+    }
+
+    .social-link-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 6px
+    }
+
+    .social-link-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: var(--s3);
+      border: 1px solid var(--b1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0
+    }
+
+    .font-card {
+      flex: 1;
+      min-width: calc(25% - 6px);
+      padding: 8px 6px;
+      border-radius: var(--r8);
+      border: 1.5px solid var(--b1);
+      background: var(--s3);
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .font-card:hover {
+      border-color: var(--b3);
+      background: var(--s4);
+      transform: scale(1.03)
+    }
+
+    .font-card.sel {
+      border-color: rgba(255, 255, 255, .55);
+      background: var(--s5)
+    }
+
+    .font-card.sel::after {
+      content: '✓';
+      position: absolute;
+      top: 3px;
+      right: 5px;
+      font-size: 7px;
+      color: var(--t1);
+      font-family: var(--mono)
+    }
+
+    .pe-font-sample {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--t1);
+      line-height: 1.1
+    }
+
+    .pe-font-name {
+      font-size: 7px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: .3px;
+      margin-top: 1px
+    }
+
+    .picker-card {
+      flex: 1;
+      min-width: calc(25% - 6px);
+      padding: 8px 6px;
+      border-radius: var(--r8);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-align: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .picker-card:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 255, 255, .2)
+    }
+
+    .picker-card.sel::after {
+      content: '✓';
+      position: absolute;
+      top: 3px;
+      right: 5px;
+      font-size: 7px;
+      font-family: var(--mono);
+      color: #fff
+    }
+
+    .pe-kout-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%
+    }
+
+    .pe-kout-name {
+      font-size: 7px;
+      font-family: var(--mono);
+      letter-spacing: .5px
+    }
+
+    .steam-picker-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-top: 6px
+    }
+
+    .steam-picker-item {
+      border-radius: 8px;
+      border: 1.5px solid var(--b1);
+      cursor: pointer;
+      transition: border-color .2s, transform .2s;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: var(--s3);
+      position: relative
+    }
+
+    .steam-picker-item:hover {
+      border-color: var(--b3);
+      transform: scale(1.05)
+    }
+
+    .steam-picker-item.sel {
+      border-color: rgba(255, 255, 255, .6);
+      background: var(--s4)
+    }
+
+    .steam-picker-item.sel::after {
+      content: '✓';
+      position: absolute;
+      top: 2px;
+      right: 4px;
+      font-size: 7px;
+      color: var(--t1);
+      font-family: var(--mono)
+    }
+
+    .spb-av {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: var(--s4);
+      position: relative
+    }
+
+    .spb-av::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 10px;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: xor;
+      -webkit-mask-composite: xor;
+      padding: 2px
+    }
+
+    .steam-picker-label {
+      font-size: 7px;
+      font-family: var(--mono);
+      color: var(--t4);
+      text-align: center;
+      letter-spacing: .2px;
+      line-height: 1.2
+    }
+
+    .steam-picker-item:hover .steam-picker-label {
+      color: var(--t2)
+    }
+
+    .shape-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 4px;
+      border-radius: var(--r8);
+      border: 1.5px solid var(--b2);
+      background: var(--s3);
+      color: var(--t4);
+      font-size: 8px;
+      font-family: var(--mono);
+      cursor: pointer;
+      transition: all .15s;
+      letter-spacing: .3px
+    }
+
+    .shape-btn:hover {
+      border-color: var(--b3);
+      color: var(--t2);
+      background: var(--s4)
+    }
+
+    .shape-btn.sel {
+      border-color: rgba(255, 255, 255, .5);
+      color: var(--t1);
+      background: var(--s4)
+    }
+
+    .emoji-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 12px;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      border-radius: var(--r12);
+      margin-top: 8px
+    }
+
+    .emoji-picker span {
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: background .15s, transform .15s
+    }
+
+    .emoji-picker span:hover {
+      background: var(--b2);
+      transform: scale(1.2)
+    }
+
+    .emoji-picker span.sel {
+      background: var(--b2);
+      outline: 1.5px solid var(--b3)
+    }
+
+    .af {
+      margin-bottom: 13px
+    }
+
+    .af label {
+      display: block;
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--t4);
+      margin-bottom: 6px;
+      letter-spacing: .8px
+    }
+
+    .af input {
+      width: 100%;
+      background: var(--s2);
+      border: 1px solid var(--b2);
+      border-radius: var(--r8);
+      color: var(--t1);
+      font-family: var(--fm);
+      font-size: 13px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .af input:focus {
+      border-color: var(--b3)
+    }
+
+    .af input::placeholder {
+      color: var(--t5)
+    }
+
+    .auth-err {
+      font-size: 11px;
+      color: #e08080;
+      font-family: var(--mono);
+      margin-top: 10px;
+      text-align: center;
+      min-height: 16px
+    }
+
+    /* ── PAGE BG STATES ── */
+    #page-profile.pbg-white .pnew-left-panel,
+    #page-profile.pbg-white .pnew-right-panel {
+      background: rgba(255, 255, 255, .88) !important;
+      border-color: rgba(0, 0, 0, .07) !important
+    }
+
+    #page-profile.pbg-white .profile-section-title {
+      color: rgba(0, 0, 0, .45) !important
+    }
+
+    #page-profile.pbg-white #page-profile.pbg-black .pnew-left-panel,
+    #page-profile.pbg-black .pnew-right-panel {
+      background: rgba(0, 0, 0, .88) !important;
+      border-color: rgba(255, 255, 255, .05) !important
+    }
+
+    #page-profile.pbg-black #page-profile.pbg-image .pnew-left-panel,
+    #page-profile.pbg-image .pnew-right-panel {
+      background: rgba(0, 0, 0, .72) !important
+    }
+
+    #page-profile.pbg-image {}
+
+    /* ── ESTILOS DE FUNDO DO CARTÃO (BG STYLE) ── */
+    #page-profile[data-profile-bg-style="blackout"] .pnew-left-panel,
+    #page-profile[data-profile-bg-style="blackout"] .pnew-right-panel {
+      background: #000 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+      box-shadow: none !important;
+    }
+
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-left-panel,
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-right-panel {
+      background: #f2f2f2 !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+      color: #222 !important;
+    }
+
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-left-panel *,
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-right-panel * {
+      color: inherit;
+    }
+
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-badge-circle,
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-insignia-circle,
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-badge-sm,
+    #page-profile[data-profile-bg-style="offwhite"] .pnew-tab-btn {
+      color: #333 !important;
+      border-color: rgba(0, 0, 0, 0.15) !important;
+    }
+
+    #page-profile[data-profile-bg-style="vidro"] .pnew-left-panel,
+    #page-profile[data-profile-bg-style="vidro"] .pnew-right-panel {
+      background: rgba(15, 15, 15, .45) !important;
+      backdrop-filter: blur(12px) saturate(1.6) brightness(1.08) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(1.6) brightness(1.08) !important;
+      border: 1px solid rgba(255, 255, 255, .13) !important;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .07) !important;
+    }
+
+    #page-profile[data-profile-bg-style="transparente"] .pnew-left-panel,
+    #page-profile[data-profile-bg-style="transparente"] .pnew-right-panel {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--s3);
+      border: 1px solid var(--b3);
+      border-radius: var(--r8);
+      padding: 10px 18px;
+      font-size: 12px;
+      font-family: var(--mono);
+      color: var(--t1);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: all .3s;
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0)
+    }
+
+    /* ══════════ TOPBAR (embutida nesta página) ══════════ */
+    @keyframes mhTopbarSlideDown {
+      from {
+        transform: translate3d(0, -100%, 0);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+      }
+    }
+
+    .topbar {
+      animation: mhTopbarSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+      transition: background 0.5s ease, border-bottom-color 0.5s ease;
+      background: rgba(7, 7, 7, .82) !important;
+      border: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, .04) !important;
+      box-shadow: none !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border-radius: 0 !important;
+      clip-path: none !important;
+      margin: 0 !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      height: 52px !important;
+      padding: 0 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 16px !important;
+      overflow: visible !important;
+      left: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 52 !important;
+    }
+
+    .tb-path {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-family: 'DM Mono', monospace !important;
+      font-size: 12px !important;
+      letter-spacing: .2px !important;
+    }
+
+    .tb-root {
+      color: #888 !important;
+      font-weight: 500 !important;
+    }
+
+    .tb-sep {
+      color: rgba(255, 255, 255, .22) !important;
+    }
+
+    .tb-cur {
+      color: #f0f0f0 !important;
+    }
+
+    .tb-r {
+      background: transparent !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin-left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+
+    /* ── MODAL (mesmo tratamento visual do card-overlay expandido do settings) ── */
+    .profile-modal {
+      --bg: #09090b;
+      --card: #18181b;
+      --card-hover: #27272a;
+      --border: #27272a;
+      --border-hover: #3f3f46;
+      --text: #ffffff;
+      --muted: #9ca3af;
+      --white-05: rgba(255, 255, 255, 0.05);
+      --white-10: rgba(255, 255, 255, 0.10);
+      --white-20: rgba(255, 255, 255, 0.20);
+      --white-30: rgba(255, 255, 255, 0.30);
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 500;
+      width: 460px;
+      max-width: 100%;
+      max-height: 88vh;
+      background: var(--card);
+      border: 1px solid var(--border-hover);
+      border-radius: 0.75rem;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.55);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(14px) scale(0.98);
+      animation: modalIn 0.35s var(--ease) forwards;
+    }
+
+    @keyframes modalIn {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .profile-modal.hidden {
+      display: none;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.1rem;
+      width: 2.1rem;
+      height: 2.1rem;
+      border-radius: 9999px;
+      background: var(--white-10);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background-color 0.2s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--white-20);
+    }
+
+    .modal-close svg {
+      width: 1.05rem;
+      height: 1.05rem;
+      color: var(--text);
+    }
+
+    .modal-inner {
+      padding: 1.75rem 1.75rem 1.5rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      min-height: 0;
+      flex: 1;
+    }
+
+    /* ── HEADER ── */
+    .profile-summary {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .profile-avatar {
+      width: 3.5rem;
+      height: 3.5rem;
+      border-radius: 9999px;
+      background: var(--white-05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 0.2s var(--ease);
+    }
+
+    .profile-avatar:hover {
+      transform: scale(1.05);
+    }
+
+    .profile-avatar svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--muted);
+    }
+
+    .profile-name {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .profile-meta {
+      margin-top: 0.25rem;
+      font-size: 0.8125rem;
+      color: var(--muted);
+    }
+
+    /* ── NAV (tabs) ── */
+    .overlay-nav {
+      display: flex;
+      gap: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      flex-shrink: 0;
+      scrollbar-width: none;
+    }
+
+    .overlay-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 0.8125rem;
+      padding: 0 0 0.85rem 0;
+      position: relative;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+
+    .nav-btn::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2px;
+      background: var(--text);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s var(--ease);
+    }
+
+    .nav-btn:hover {
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      color: var(--text);
+    }
+
+    .nav-btn.active::after {
+      transform: scaleX(1);
+    }
+
+    /* ── BODY ── */
+    .overlay-body-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+    }
+
+    .overlay-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .overlay-body::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+
+    .tab-panel {
+      display: none;
+      flex-direction: column;
+    }
+
+    .tab-panel.active {
+      display: flex;
+    }
+
+    .settings-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .tab-panel>.settings-section:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    .section-hint {
+      margin: -0.5rem 0 0 0;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── FIELDS ── */
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .field-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .field-label .hint-inline {
+      font-size: 0.7rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .field-input {
+      width: 100%;
+      background: var(--white-05);
+      border: 1px solid var(--border);
+      border-radius: 0.625rem;
+      padding: 0.7rem 0.9rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.875rem;
+      outline: none;
+      resize: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .field-input:hover {
+      border-color: var(--border-hover);
+    }
+
+    .field-input:focus {
+      border-color: var(--border-hover);
+      background: var(--white-10);
+    }
+
+    textarea.field-input {
+      min-height: 64px;
+    }
+
+    .handle-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .handle-at {
+      position: absolute;
+      left: 0.9rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    .handle-input-wrap .field-input {
+      padding-left: 1.6rem;
+    }
+
+    .char-counter {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-align: right;
+      margin-top: -0.15rem;
+      transition: color 0.2s ease;
+      font-family: inherit;
+    }
+
+    .char-counter.warn {
+      color: #d8a657;
+    }
+
+    .char-counter.over {
+      color: #f87171;
+    }
+
+    /* ── LINKS SOCIAIS ── */
+    .social-link-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .social-link-icon {
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 0.5rem;
+      background: var(--white-05);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ── PICKER CARDS (fundo da página / kout) ── */
+    .picker-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .picker-card {
+      flex: 1;
+      min-width: calc(33.33% - 0.4rem);
+      padding: 0.75rem 0.4rem;
+      border-radius: 0.625rem;
+      border: 1px solid var(--border);
+      background: var(--white-05);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s var(--ease);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .picker-card:hover {
+      border-color: var(--border-hover);
+      transform: scale(1.02);
+    }
+
+    .picker-card.sel {
+      border-color: var(--text);
+      background: var(--white-10);
+    }
+
+    .picker-card.sel::after {
+      content: '✓';
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 0.6rem;
+      color: var(--text);
+    }
+
+    .picker-swatch {
+      width: 28px;
+      height: 20px;
+      border-radius: 5px;
+      margin: 0 auto;
+    }
+
+    .picker-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
+    .picker-name {
+      font-size: 0.65rem;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+    }
+
+    .picker-card.sel .picker-name {
+      color: var(--text);
+    }
+
+    .picker-image-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .picker-image-thumb {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.5;
+      border-radius: 0.5rem;
+    }
+
+    .picker-note {
+      font-size: 0.7rem;
+      color: var(--muted);
+      padding: 0.55rem 0.7rem;
+      background: var(--white-05);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+    }
+
+    /* ── SLIDERS ── */
+    .slider-block {
+      display: none;
+      margin-top: 0.25rem;
+    }
+
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .slider-head span:first-child {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .slider-head span:last-child {
+      font-size: 0.7rem;
+      color: var(--text);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--text);
+      cursor: pointer;
+    }
+
+    .slider-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+
+    /* ── FONT PICKER ── */
+    .font-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .font-card {
+      flex: 1;
+      min-width: calc(25% - 0.4rem);
+      padding: 0.6rem 0.4rem;
+      border-radius: 0.625rem;
+      border: 1px solid var(--border);
+      background: var(--white-05);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s var(--ease);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .font-card:hover {
+      border-color: var(--border-hover);
+      background: var(--card-hover);
+      transform: scale(1.02);
+    }
+
+    .font-card.sel {
+      border-color: var(--text);
+      background: var(--white-10);
+    }
+
+    .font-card.sel::after {
+      content: '✓';
+      position: absolute;
+      top: 3px;
+      right: 5px;
+      font-size: 0.55rem;
+      color: var(--text);
+    }
+
+    .font-sample {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.1;
+    }
+
+    .font-name {
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+      margin-top: 1px;
+    }
+
+    /* ── SHAPE BUTTONS ── */
+    .shape-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .shape-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.6rem 0.3rem;
+      border-radius: 0.625rem;
+      border: 1px solid var(--border);
+      background: var(--white-05);
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .shape-btn:hover {
+      border-color: var(--border-hover);
+      color: var(--text);
+      background: var(--card-hover);
+    }
+
+    .shape-btn.sel {
+      border-color: var(--text);
+      color: var(--text);
+      background: var(--white-10);
+    }
+
+    /* ── UPLOAD ZONES ── */
+    .upload-zone {
+      width: 100%;
+      border-radius: 0.625rem;
+      border: 1px dashed var(--border);
+      background: var(--white-05);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--border-hover);
+    }
+
+    .upload-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      pointer-events: none;
+      color: var(--muted);
+    }
+
+    .upload-placeholder span:first-child {
+      font-size: 1.3rem;
+    }
+
+    .upload-placeholder span {
+      font-size: 0.7rem;
+    }
+
+    .upload-placeholder span.upload-sub {
+      font-size: 0.65rem;
+      color: var(--muted);
+      opacity: 0.7;
+    }
+
+    .upload-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .upload-overlay .btn {
+      font-size: 0.7rem;
+      padding: 0.4rem 0.7rem;
+    }
+
+    .upload-badge {
+      display: none;
+      margin-top: 0.4rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    /* ── MÚSICA ── */
+    .music-loaded {
+      display: none;
+      width: 100%;
+      padding: 0 0.9rem;
+      pointer-events: none;
+    }
+
+    .music-loaded-inner {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .music-name {
+      font-size: 0.75rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-sub {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      font-family: inherit;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      border-radius: 0.625rem;
+      padding: 0.65rem 1.1rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--text);
+      border-color: var(--text);
+      color: var(--bg);
+    }
+
+    .btn-primary:hover {
+      background: #e5e5e5;
+      border-color: #e5e5e5;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border-hover);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      background: var(--white-05);
+      border-color: var(--white-30);
+    }
+
+    .btn-danger-outline {
+      background: transparent;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #f87171;
+    }
+
+    .btn-danger-outline:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.7rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .modal-actions .btn {
+      flex: 1;
+      text-align: center;
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--card);
+      border: 1px solid var(--border-hover);
+      border-radius: 0.625rem;
+      padding: 0.65rem 1.1rem;
+      font-size: 0.8125rem;
+      color: var(--text);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ── Overlay Modal ── */
+    .fm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .6);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+
+    .fm-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .fm-modal {
+      width: 100%;
+      max-width: 420px;
+      max-height: 78vh;
+      background: var(--s1);
+      border: 1px solid var(--b2);
+      border-radius: var(--r16);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(14px) scale(.98);
+      opacity: 0;
+      transition: transform .2s cubic-bezier(.2, .8, .2, 1), opacity .2s ease;
+    }
+
+    .fm-overlay.open .fm-modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    /* ── Header ── */
+    .fm-head {
+      padding: 18px 20px 0 20px;
+      flex-shrink: 0;
+    }
+
+    .fm-head-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .fm-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--t1);
+      letter-spacing: .2px;
+    }
+
+    .fm-title span {
+      color: var(--t3);
+      font-weight: 400;
+    }
+
+    .fm-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--s3);
+      border: 1px solid var(--b1);
+      color: var(--t3);
+      cursor: pointer;
+      transition: background .15s ease, color .15s ease;
+    }
+
+    .fm-close:hover {
+      background: var(--s4);
+      color: var(--t1);
+    }
+
+    .fm-close svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .fm-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--s2);
+      border-radius: var(--r8);
+      padding: 3px;
+    }
+
+    .fm-tab {
+      flex: 1;
+      text-align: center;
+      font-family: var(--fm);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--t3);
+      background: transparent;
+      border: none;
+      padding: 8px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .15s ease, color .15s ease;
+    }
+
+    .fm-tab.active {
+      background: var(--s4);
+      color: var(--t1);
+    }
+
+    .fm-tab .fm-tab-count {
+      font-family: var(--fm);
+      color: var(--t4);
+      margin-left: 4px;
+    }
+
+    .fm-tab.active .fm-tab-count {
+      color: var(--t3);
+    }
+
+    .fm-search-wrap {
+      margin: 14px 0 4px 0;
+      position: relative;
+    }
+
+    .fm-search {
+      width: 100%;
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: var(--r8);
+      padding: 9px 12px 9px 32px;
+      font-family: var(--fm);
+      font-size: 13px;
+      color: var(--t1);
+      outline: none;
+      transition: border-color .15s ease;
+    }
+
+    .fm-search:focus {
+      border-color: var(--b3);
+    }
+
+    .fm-search::placeholder {
+      color: var(--t4);
+    }
+
+    .fm-search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 14px;
+      height: 14px;
+      color: var(--t4);
+      pointer-events: none;
+    }
+
+    /* ── Lista ── */
+    .fm-body {
+      overflow-y: auto;
+      padding: 6px 10px 14px 10px;
+      flex: 1;
+      max-height: calc(60px * 10 + 20px);
+    }
+
+    .fm-row {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 10px;
+      height: 60px;
+      border-radius: var(--r12);
+      transition: background .15s ease;
+      cursor: default;
+    }
+
+    .fm-row:hover {
+      background: var(--s2);
+    }
+
+    .fm-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--fm);
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--t1);
+      background: var(--s4);
+      border: 1px solid var(--b2);
+      overflow: hidden;
+    }
+
+    .fm-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .fm-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .fm-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--t1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fm-handle {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--t3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fm-follow-btn {
+      flex-shrink: 0;
+      font-family: var(--fm);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--bg);
+      background: var(--t1);
+      border: 1px solid var(--t1);
+      padding: 7px 14px;
+      border-radius: var(--r8);
+      cursor: pointer;
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+    }
+
+    .fm-follow-btn:hover {
+      background: var(--t2);
+      border-color: var(--t2);
+    }
+
+    .fm-follow-btn.btn-accept {
+      background: var(--primary) !important;
+      color: #fff !important;
+      border-color: var(--primary) !important;
+    }
+
+    .fm-follow-btn.btn-accept:hover {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+    }
+
+    .fm-follow-btn.btn-reject {
+      background: transparent !important;
+      color: var(--error) !important;
+      border-color: var(--error) !important;
+    }
+
+    .fm-follow-btn.btn-reject:hover {
+      background: var(--error) !important;
+      color: #fff !important;
+    }
+
+    .fm-follow-btn.is-following {
+      background: transparent;
+      color: var(--t1);
+      border-color: var(--b3);
+    }
+
+    .fm-follow-btn.is-following:hover {
+      background: var(--s3);
+      color: var(--er);
+      border-color: var(--b2);
+    }
+
+    /* ── Estado vazio ── */
+    .fm-empty {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .fm-empty-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--t2);
+      margin-bottom: 4px;
+    }
+
+    .fm-empty-sub {
+      font-size: 12px;
+      color: var(--t4);
+    }
+
+    @media (max-width: 480px) {
+      .fm-overlay {
+        align-items: flex-end;
+      }
+
+      .fm-modal {
+        max-width: 100%;
+        max-height: 82vh;
+        border-radius: var(--r16) var(--r16) 0 0;
+      }
+    }
+  </style>
+  <script>// Body opacity will be faded in after data load to prevent flashes of unstyled content</script>
+</head>
+
+<body>
+
+  <div id="toast"></div>
+
+  <!-- Page Profile -->
+  <div class="page on" id="page-profile">
+    <div id="profilePageBg" style="position:fixed;inset:0;z-index:0;pointer-events:none;transition:background .4s">
+    </div>
+    <img id="profilePageBgImg" src="" alt=""
+      style="position:fixed;inset:0;z-index:0;pointer-events:none;display:none;width:100%;height:100%;object-fit:fill;opacity:.18">
+
+    <div class="topbar">
+      <div class="tb-path">
+        <span class="tb-root">Minsq</span>
+        <span class="tb-sep">/</span>
+        <span class="tb-cur">Meu Perfil</span>
+        <span id="profilePrivacyIcon"
+          style="margin-left:8px; display:inline-flex; align-items:center; color:var(--t5);"></span>
+      </div>
+      <div class="tb-r">
+        <button id="editProfileBtn" class="btn btn-p" onclick="openProfileEdit()">Editar perfil</button>
+      </div>
+    </div>
+
+    <div class="content" style="max-width:860px;margin:0 auto;position:relative;z-index:2;padding-bottom:32px">
+
+      <!-- HERO: avatar + info + gif -->
+      <div class="pnew-hero">
+        <div class="pnew-av-wrap" id="profileAvWrap">
+          <div class="av-border-frame" id="profileAvBorderFrame"></div>
+          <div class="pnew-av" id="profileAv" onclick="openAvatarPicker()">U</div>
+          <input type="file" id="avatarFileInput" accept="image/*" style="display:none"
+            onchange="handleAvatarUpload(event)">
+        </div>
+
+        <div class="pnew-info">
+          <div class="pnew-name" id="profileName">—</div>
+          <div class="pnew-handle-row" id="profileHandle">@usuario</div>
+          <div class="pnew-bio" id="profileBioEl">
+          </div>
+          <div class="pnew-stats-row">
+            <div class="pnew-stat" onclick="openFollowModal('followers')" style="cursor:pointer">
+              <span class="pnew-stat-num" id="profileFollowersCount">0</span>
+              <span class="pnew-stat-label">seguidores</span>
+            </div>
+            <div class="pnew-stat" onclick="openFollowModal('following')" style="cursor:pointer">
+              <span class="pnew-stat-num" id="profileFollowingCount">0</span>
+              <span class="pnew-stat-label">seguindo</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pnew-actions">
+          <div id="profileSocialLinks" style="display:flex; gap:6px;"></div>
+          <button class="pnew-btn-follow" id="profileFollowBtn" type="button" style="display:none">Seguir</button>
+        </div>
+
+      </div>
+
+      <!-- MAIN GRID -->
+      <div class="pnew-main-grid">
+        <div class="pnew-right-panel" id="profileRightPanel">
+          <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%">
+            <div class="pnew-tabs-bar">
+              <button id="profileTabFotos" class="pnew-tab-btn active"
+                onclick="switchPnewTab(this,'Fotos')">FOTOS</button>
+              <button class="pnew-tab-btn" onclick="switchPnewTab(this,'Foco')">FOCO</button>
+              <button class="pnew-tab-btn" onclick="switchPnewTab(this,'Estudos')">ESTUDOS</button>
+              <button class="pnew-tab-btn" onclick="switchPnewTab(this,'Inventario')">INVENTÁRIO</button>
+              <button class="pnew-tab-btn" onclick="switchPnewTab(this,'Repositorio')">REPOSITÓRIO</button>
+            </div>
+            <div class="pnew-tab-pane active" id="pnewTabFotos">
+              <div class="pnew-tab-empty">
+                <div class="pnew-tab-empty-ico">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>somente após a beta
+              </div>
+            </div>
+            <div class="pnew-tab-pane" id="pnewTabFoco">
+              <div class="pnew-tab-empty">
+                <div class="pnew-tab-empty-ico">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>somente após a beta
+              </div>
+            </div>
+            <div class="pnew-tab-pane" id="pnewTabEstudos">
+              <div class="pnew-tab-empty">
+                <div class="pnew-tab-empty-ico">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>somente após a beta
+              </div>
+            </div>
+            <div class="pnew-tab-pane" id="pnewTabInventario">
+              <div class="pnew-tab-empty">
+                <div class="pnew-tab-empty-ico">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>somente após a beta
+              </div>
+            </div>
+            <div class="pnew-tab-pane" id="pnewTabRepositorio">
+              <div class="pnew-tab-empty">
+                <div class="pnew-tab-empty-ico">
+                  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.5" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                </div>somente após a beta
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── EDITOR DE PERFIL ── -->
+    <div class="profile-modal hidden" id="profileEditPanel">
+      <button class="modal-close" type="button" onclick="closeProfileEdit()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+
+      <div class="modal-inner">
+
+        <div class="profile-summary">
+          <div class="profile-avatar" id="peHeaderAvatarWrap" onclick="openAvatarPicker()" style="cursor:pointer">
+            <svg id="peHeaderAvatarIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <img id="peHeaderAvatarImg" src="" alt="Avatar"
+              style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          </div>
+          <div>
+            <h4 class="profile-name">Personalizar perfil</h4>
+            <div class="profile-meta">Configure seu perfil temático único</div>
+          </div>
+        </div>
+
+        <nav class="overlay-nav">
+          <button class="nav-btn active" type="button" data-tab="identidade">Identidade</button>
+          <button class="nav-btn" type="button" data-tab="aparencia">Aparência</button>
+        </nav>
+
+        <div class="overlay-body-wrap">
+          <div class="overlay-body">
+
+            <!-- ── ABA: IDENTIDADE ── -->
+            <div class="tab-panel active" data-tab-panel="identidade">
+
+              <div class="settings-section">
+                <p class="section-title">Identidade</p>
+                <div class="field-grid">
+                  <div class="field">
+                    <span class="field-label">Nome de exibição</span>
+                    <input class="field-input" type="text" id="peNome" placeholder="Seu nome" minlength="2"
+                      maxlength="30" oninput="updateCharCounter('peNome','peNomeCount',30, 2)">
+                    <div class="char-counter" id="peNomeCount">0 / 30</div>
+                  </div>
+                  <div class="field" style="position: relative;">
+                    <span class="field-label">Username <span class="hint-inline">@ fixo</span></span>
+                    <div class="handle-input-wrap">
+                      <span class="handle-at">@</span>
+                      <input class="field-input" type="text" id="peHandle" placeholder="seuusuario" minlength="3"
+                        maxlength="30" oninput="enforceHandleAt(this); checkHandleAvailability(this.value);"
+                        onkeydown="preventHandleDelete(event,this)">
+                    </div>
+                    <div class="char-counter" id="peHandleCount">0 / 30</div>
+                    <div id="handleBalloon"
+                      style="position: absolute; bottom: calc(100% + 4px); left: 0; background: #ff4444; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; pointer-events: none; opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 6px; z-index: 10;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      <span id="handleBalloonText">Username indisponível</span>
+                      <div
+                        style="position: absolute; bottom: -4px; left: 16px; width: 8px; height: 8px; background: #ff4444; transform: rotate(45deg);">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field" style="grid-column:1/-1">
+                    <span class="field-label">Bio</span>
+                    <textarea class="field-input" id="peBio" placeholder="Descreva você em uma frase…" maxlength="100"
+                      rows="2" oninput="updateCharCounter('peBio','peBioCount',100, 0)"></textarea>
+                    <div class="char-counter" id="peBioCount">0 / 100</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-section">
+                <p class="section-title">Links sociais</p>
+                <div class="field-grid">
+                  <div class="field" style="position: relative;">
+                    <span class="field-label">Rede social 1</span>
+                    <div class="social-link-row">
+                      <div class="social-link-icon" id="socialIcon1"><svg style="width:16px;height:16px;flex-shrink:0"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                        </svg></div>
+                      <input class="field-input" type="text" id="peSocial1" placeholder="https://instagram.com/voce"
+                        maxlength="100" oninput="updateSocialIcon(1); checkSocialLink(this, 1)">
+                    </div>
+                    <div id="socialBalloon1"
+                      style="position: absolute; bottom: calc(100% + 4px); left: 0; background: #ff4444; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; pointer-events: none; opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 6px; z-index: 10;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      <span>Este link fere os termos de uso (+18/jogos). Sujeito a ban.</span>
+                      <div
+                        style="position: absolute; bottom: -4px; left: 16px; width: 8px; height: 8px; background: #ff4444; transform: rotate(45deg);">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field" style="position: relative;">
+                    <span class="field-label">Rede social 2</span>
+                    <div class="social-link-row">
+                      <div class="social-link-icon" id="socialIcon2"><svg style="width:16px;height:16px;flex-shrink:0"
+                          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round">
+                          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                        </svg></div>
+                      <input class="field-input" type="text" id="peSocial2" placeholder="https://github.com/voce"
+                        maxlength="100" oninput="updateSocialIcon(2); checkSocialLink(this, 2)">
+                    </div>
+                    <div id="socialBalloon2"
+                      style="position: absolute; bottom: calc(100% + 4px); left: 0; background: #ff4444; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; pointer-events: none; opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; gap: 6px; z-index: 10;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                      </svg>
+                      <span>Este link fere os termos de uso (+18/jogos). Sujeito a ban.</span>
+                      <div
+                        style="position: absolute; bottom: -4px; left: 16px; width: 8px; height: 8px; background: #ff4444; transform: rotate(45deg);">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ── ABA: APARÊNCIA ── -->
+            <div class="tab-panel" data-tab-panel="aparencia">
+
+              <div class="settings-section">
+                <p class="section-title">Fundo da página</p>
+                <div class="picker-row" id="pePageBgPicker">
+                  <div class="picker-card sel" data-pbg="default" onclick="selectPageBg(this,'default')">
+                    <div class="picker-swatch"
+                      style="background:linear-gradient(135deg,#111,#1e1e1e);border:1px solid #333"></div>
+                    <div class="picker-name">Padrão</div>
+                  </div>
+                  <div class="picker-card" data-pbg="black" onclick="selectPageBg(this,'black')">
+                    <div class="picker-swatch" style="background:#000;border:1px solid rgba(255,255,255,.15)"></div>
+                    <div class="picker-name">Preto</div>
+                  </div>
+                  <div class="picker-card picker-image-card" data-pbg="image"
+                    onclick="document.getElementById('profilePageBgInput').click()" id="pePageBgImageCard">
+                    <img id="pePageBgThumb" class="picker-image-thumb" src="" alt="">
+                    <div id="pePageBgImageIcon"
+                      style="pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;z-index:1">
+                      <svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <circle cx="9" cy="9" r="2" />
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+                      </svg>
+                      <div class="picker-name">Imagem</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="hint-text" style="font-size:0.7rem; color:var(--muted); margin-top: 8px;">Apenas imagens
+                  jpg, jpeg, png, webp. Máx 3MB.</div>
+                <input type="file" id="profilePageBgInput" accept="image/jpeg,image/png,image/webp" style="display:none"
+                  onchange="handlePageBgUpload(event)">
+
+                <div class="slider-block" id="pePageBgOpacityWrap">
+                  <div class="slider-head">
+                    <span>Opacidade da Página</span>
+                    <span id="pePageBgOpacityLabel">18%</span>
+                  </div>
+                  <input type="range" id="pePageBgOpacity" min="5" max="100" value="18"
+                    oninput="onPageBgOpacityChange()">
+                </div>
+
+                <div id="pePageBgRemoveWrap" style="display:none">
+                  <button class="btn btn-danger-outline"
+                    style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:0.4rem"
+                    onclick="removePageBg()"><svg style="width:14px;height:14px;flex-shrink:0" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>Remover imagem de fundo</button>
+                </div>
+              </div>
+
+              <div class="settings-section">
+                <p class="section-title">Estilo do Cartão de Perfil</p>
+                <p class="section-hint">Personalize o fundo do seu cartão principal</p>
+
+                <div class="picker-row" id="peBgStylePicker">
+                  <div class="picker-card sel" data-bgstyle="vidro" onclick="selectProfileBgStyle(this,'vidro')">
+                    <div class="picker-swatch"
+                      style="background:rgba(15,15,15,0.45);backdrop-filter:blur(8px) saturate(1.6);border:1px solid rgba(255,255,255,0.13)">
+                    </div>
+                    <div class="picker-name">Vidro</div>
+                  </div>
+                  <div class="picker-card" data-bgstyle="blackout" onclick="selectProfileBgStyle(this,'blackout')">
+                    <div class="picker-swatch" style="background:#000;border:1px solid rgba(255,255,255,0.15)"></div>
+                    <div class="picker-name">Blackout</div>
+                  </div>
+                  <div class="picker-card" data-bgstyle="offwhite" onclick="selectProfileBgStyle(this,'offwhite')">
+                    <div class="picker-swatch" style="background:#f2f2f2;border:1px solid rgba(0,0,0,0.1)"></div>
+                    <div class="picker-name">Offwhite</div>
+                  </div>
+                  <div class="picker-card" data-bgstyle="transparente"
+                    onclick="selectProfileBgStyle(this,'transparente')">
+                    <div class="picker-swatch" style="background:transparent;border:1px dashed var(--b2)"></div>
+                    <div class="picker-name">Transparente</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-section">
+                <p class="section-title">Modo kout</p>
+                <div class="picker-row" id="peKoutPicker">
+                  <div class="picker-card sel" data-kout="none" onclick="selectKoutMode(this,'none')">
+                    <div class="picker-dot" style="background:#222;border:1.5px solid #444"></div>
+                    <div class="picker-name">Nenhum</div>
+                  </div>
+                  <div class="picker-card" data-kout="black" onclick="selectKoutMode(this,'black')">
+                    <div class="picker-dot"
+                      style="background:radial-gradient(circle,#444,#000);border:1.5px solid rgba(255,255,255,.3)">
+                    </div>
+                    <div class="picker-name">Blackout</div>
+                  </div>
+                  <div class="picker-card" data-kout="purple" onclick="selectKoutMode(this,'purple')">
+                    <div class="picker-dot"
+                      style="background:radial-gradient(circle,#aa44ff,#4400aa);box-shadow:0 0 10px #8800ff"></div>
+                    <div class="picker-name">Purplekout</div>
+                  </div>
+                  <div class="picker-card" data-kout="pink" onclick="selectKoutMode(this,'pink')">
+                    <div class="picker-dot"
+                      style="background:radial-gradient(circle,#ff66bb,#aa0055);box-shadow:0 0 10px #ff0088"></div>
+                    <div class="picker-name">Pinkout</div>
+                  </div>
+                  <div class="picker-card" data-kout="red" onclick="selectKoutMode(this,'red')">
+                    <div class="picker-dot"
+                      style="background:radial-gradient(circle,#ff4444,#880000);box-shadow:0 0 10px #ff0000"></div>
+                    <div class="picker-name">Redkout</div>
+                  </div>
+                  <div class="picker-card" data-kout="white" onclick="selectKoutMode(this,'white')">
+                    <div class="picker-dot"
+                      style="background:radial-gradient(circle,#ffffff,#cccccc);box-shadow:0 0 10px #ffffff;border:1.5px solid rgba(255,255,255,.5)">
+                    </div>
+                    <div class="picker-name">Whiteout</div>
+                  </div>
+                  <div class="picker-card" data-kout="blue" onclick="selectKoutMode(this,'blue')">
+                    <div class="picker-dot"
+                      style="background:radial-gradient(circle,#4499ff,#0044aa);box-shadow:0 0 10px #0088ff"></div>
+                    <div class="picker-name">Blueout</div>
+                  </div>
+                </div>
+                <div class="picker-note" style="display:flex;align-items:center;gap:0.4rem"><svg
+                    style="width:14px;height:14px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg><span>Remove bordas, aplica glow neon e fundo blackout extremo</span></div>
+              </div>
+
+              <div class="settings-section">
+                <p class="section-title">Fonte do perfil</p>
+                <div class="font-picker" id="peFontPicker">
+                  <div class="font-card sel" data-font="dmsans" onclick="selectProfileFont(this,'dmsans')">
+                    <div class="font-sample" style="font-family:'Exo 2',sans-serif">Aa</div>
+                    <div class="font-name">EXO 2</div>
+                  </div>
+                  <div class="font-card" data-font="orbitron" onclick="selectProfileFont(this,'orbitron')">
+                    <div class="font-sample" style="font-family:'Orbitron',sans-serif">Aa</div>
+                    <div class="font-name">ORBITRON</div>
+                  </div>
+                  <div class="font-card" data-font="cinzel" onclick="selectProfileFont(this,'cinzel')">
+                    <div class="font-sample" style="font-family:'Cinzel',serif">Aa</div>
+                    <div class="font-name">CINZEL</div>
+                  </div>
+                  <div class="font-card" data-font="bebas" onclick="selectProfileFont(this,'bebas')">
+                    <div class="font-sample" style="font-family:'Bebas Neue',cursive">Aa</div>
+                    <div class="font-name">BEBAS</div>
+                  </div>
+                  <div class="font-card" data-font="marker" onclick="selectProfileFont(this,'marker')">
+                    <div class="font-sample" style="font-family:'Permanent Marker',cursive">Aa</div>
+                    <div class="font-name">MARKER</div>
+                  </div>
+                  <div class="font-card" data-font="playfair" onclick="selectProfileFont(this,'playfair')">
+                    <div class="font-sample" style="font-family:'Playfair Display',serif">Aa</div>
+                    <div class="font-name">PLAYFAIR</div>
+                  </div>
+                  <div class="font-card" data-font="rajdhani" onclick="selectProfileFont(this,'rajdhani')">
+                    <div class="font-sample" style="font-family:'Rajdhani',sans-serif">Aa</div>
+                    <div class="font-name">RAJDHANI</div>
+                  </div>
+                  <div class="font-card" data-font="chakra" onclick="selectProfileFont(this,'chakra')">
+                    <div class="font-sample" style="font-family:'Chakra Petch',sans-serif">Aa</div>
+                    <div class="font-name">CHAKRA</div>
+                  </div>
+                  <div class="font-card" data-font="inter" onclick="selectProfileFont(this,'inter')">
+                    <div class="font-sample" style="font-family:'Inter',sans-serif">Aa</div>
+                    <div class="font-name">INTER</div>
+                  </div>
+                  <div class="font-card" data-font="spacegrotesk" onclick="selectProfileFont(this,'spacegrotesk')">
+                    <div class="font-sample" style="font-family:'Space Grotesk',sans-serif">Aa</div>
+                    <div class="font-name">SP. GROTESK</div>
+                  </div>
+                  <div class="font-card" data-font="fraunces" onclick="selectProfileFont(this,'fraunces')">
+                    <div class="font-sample" style="font-family:'Fraunces',serif">Aa</div>
+                    <div class="font-name">FRAUNCES</div>
+                  </div>
+                  <div class="font-card" data-font="firacode" onclick="selectProfileFont(this,'firacode')">
+                    <div class="font-sample" style="font-family:'Fira Code',monospace">Aa</div>
+                    <div class="font-name">FIRA CODE</div>
+                  </div>
+                  <div class="font-card" data-font="syne" onclick="selectProfileFont(this,'syne')">
+                    <div class="font-sample" style="font-family:'Syne',sans-serif">Aa</div>
+                    <div class="font-name">SYNE</div>
+                  </div>
+                  <div class="font-card" data-font="caveat" onclick="selectProfileFont(this,'caveat')">
+                    <div class="font-sample" style="font-family:'Caveat',cursive">Aa</div>
+                    <div class="font-name">CAVEAT</div>
+                  </div>
+                  <div class="font-card" data-font="syncopate" onclick="selectProfileFont(this,'syncopate')">
+                    <div class="font-sample" style="font-family:'Syncopate',sans-serif">Aa</div>
+                    <div class="font-name">SYNCOPATE</div>
+                  </div>
+                  <div class="font-card" data-font="montserrat" onclick="selectProfileFont(this,'montserrat')">
+                    <div class="font-sample" style="font-family:'Montserrat',sans-serif">Aa</div>
+                    <div class="font-name">MONTSERRAT</div>
+                  </div>
+                  <div class="font-card" data-font="pressstart" onclick="selectProfileFont(this,'pressstart')">
+                    <div class="font-sample" style="font-family:'Press Start 2P',cursive;font-size:.85rem">Aa</div>
+                    <div class="font-name">PRESS 2P</div>
+                  </div>
+                  <div class="font-card" data-font="pixelify" onclick="selectProfileFont(this,'pixelify')">
+                    <div class="font-sample" style="font-family:'Pixelify Sans',sans-serif">Aa</div>
+                    <div class="font-name">PIXELIFY</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="saveProfileEdit()"
+            style="display:inline-flex;align-items:center;justify-content:center;gap:0.4rem"><svg
+              style="width:14px;height:14px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>Salvar perfil</button>
+          <button class="btn btn-outline" onclick="closeProfileEdit()">Cancelar</button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ── EMOJI AVATAR PICKER ── -->
+    <div id="avatarPickerOverlay"
+      style="display:none;position:fixed;inset:0;z-index:5000;align-items:center;justify-content:center;background:rgba(4,4,4,.8);backdrop-filter:blur(12px)">
+      <div
+        style="background:var(--s2);border:1px solid var(--b2);border-radius:var(--r20);padding:24px;width:340px;max-height:82vh;overflow-y:auto;animation:fadeUp .3s ease">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div style="font-size:13px;font-weight:600;color:var(--t1)">Alterar foto de perfil</div>
+          <button class="btn btn-g" style="font-size:10px;padding:3px 8px" onclick="closeAvatarPicker()">✕</button>
+        </div>
+        <div style="font-size:9px;font-family:var(--mono);color:var(--t4);margin-bottom:8px;letter-spacing:.5px">FOTO DO
+          DISPOSITIVO</div>
+        <div id="avatarUploadPreview" style="display:none;margin-bottom:10px;text-align:center">
+          <img id="avatarPreviewImg"
+            style="width:72px;height:72px;border-radius:16px;object-fit:cover;border:2px solid var(--b3)">
+        </div>
+        <button class="btn btn-p" style="width:100%;font-size:11px;margin-bottom:14px"
+          onclick="document.getElementById('avatarFileInput').click()">Enviar foto</button>
+        <div style="height:1px;background:var(--b1);margin:12px 0"></div>
+        <button class="btn btn-g" style="width:100%;font-size:11px" onclick="useInitialAvatar()">Remover foto</button>
+      </div>
+    </div>
+    <script src="api-client.js"></script>
+    <script>
+      // ── STORE (localStorage namespaced) ──
+      const S = {
+        user: null,
+        streak: 0,
+        goals: [],
+        tasks: [],
+        studySessions: [],
+        healthLogs: [],
+        finances: [],
+      };
+
+      const Store = {
+        key: (k) => `minsq_${S.user?.id || 'guest'}_${k}`,
+        save(k, v) { try { localStorage.setItem(this.key(k), JSON.stringify(v)); return true; } catch (e) { return false; } },
+        load(k, def = []) { try { const v = localStorage.getItem(this.key(k)); return v !== null ? JSON.parse(v) : def; } catch (e) { return def; } },
+        remove(k) { try { localStorage.removeItem(this.key(k)); } catch (e) { } },
+        saveUser(u) { localStorage.setItem('minsq_auth_user', JSON.stringify(u)); },
+        loadUser() { try { return JSON.parse(localStorage.getItem('minsq_auth_user')); } catch (e) { return null; } },
+        getUsers() { try { return JSON.parse(localStorage.getItem('minsq_users') || '[]'); } catch (e) { return []; } },
+        saveUsers(u) { localStorage.setItem('minsq_users', JSON.stringify(u)); },
+        saveMedia(uid, field, dataUrl) {
+          const key = `minsq_${uid}_media_${field}`;
+          try { localStorage.removeItem(key); } catch (_) { }
+          try { localStorage.setItem(key, dataUrl); return true; } catch (_) { return false; }
+        },
+        loadMedia(uid, field) { try { return localStorage.getItem(`minsq_${uid}_media_${field}`) || null; } catch (e) { return null; } },
+        removeMedia(uid, field) { try { localStorage.removeItem(`minsq_${uid}_media_${field}`); } catch (e) { } },
+      };
+
+      // ── HELPERS ──
+      function setEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+      function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+      function toast(msg, tipo = 'ok') { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2400); }
+
+      // ── PROFILE EMOJIS / COLORS / BORDERS / THEMES ──
+      const PROFILE_EMOJIS = ['😀', '😎', '🤩', '🥷', '👑', '🦁', '🐺', '🦊', '🐉', '🤖', '👾', '🎭', '🧠', '⚡', '🔥', '🌊', '🌙', '☀️', '🎯', '🚀', '💎', '🏆', '🎸', '🧬', '🔮', '🌸', '🍀', '⚔️', '🛡️', '🎲'];
+      const AVATAR_BORDERS = [
+        { id: 'none', name: 'Padrão', cls: 'av-border-none', preview: 'background:var(--s4)' },
+        { id: 'fire', name: '🔥 Chama', cls: 'av-border-fire', preview: 'background:linear-gradient(135deg,#ff1a00,#ffcc00)' },
+        { id: 'ice', name: '🧊 Gelo', cls: 'av-border-ice', preview: 'background:linear-gradient(135deg,#004466,#aaeeff)' },
+        { id: 'nebula', name: '🌌 Nebulosa', cls: 'av-border-nebula', preview: 'background:linear-gradient(135deg,#4400aa,#ff88ff)' },
+        { id: 'gold', name: '🏆 Ouro', cls: 'av-border-gold', preview: 'background:linear-gradient(135deg,#3d2600,#ffd700)' },
+        { id: 'matrix', name: '💻 Matrix', cls: 'av-border-matrix', preview: 'background:linear-gradient(135deg,#001100,#00ff41)' },
+        { id: 'plasma', name: '⚡ Plasma', cls: 'av-border-plasma', preview: 'background:conic-gradient(#0055ff,#00ffcc,#ff8800,#ff0055,#cc00ff,#0055ff)' },
+        { id: 'dragon', name: '🐉 Dragão', cls: 'av-border-dragon', preview: 'background:linear-gradient(135deg,#1a0000,#ff6600)' },
+        { id: 'aurora', name: '🌈 Aurora', cls: 'av-border-aurora', preview: 'background:linear-gradient(135deg,#00ff88,#8866ff,#ff44bb)' },
+        { id: 'legend', name: '👑 Lendária', cls: 'av-border-legend', preview: 'background:linear-gradient(135deg,#888,#ffffff,#aaa)' },
+      ];
+      const PROFILE_THEMES = [
+        { id: 'default', name: 'Padrão', bar: 'linear-gradient(90deg,var(--s5),var(--b2),var(--s5))' },
+        { id: 'hacker', name: '👾 Hacker', bar: 'linear-gradient(90deg,#001100,#00aa33,#00ff65,#00aa33,#001100)' },
+        { id: 'particle', name: '✨ Partícula', bar: 'linear-gradient(90deg,#4400aa,#8822ff,#cc88ff,#8822ff,#4400aa)' },
+        { id: 'blackout', name: '⬛ Blackout', bar: 'linear-gradient(90deg,#000,#440000,#880000,#440000,#000)' },
+        { id: 'vhs', name: '📺 VHS', bar: 'linear-gradient(90deg,#ff0066,#00eeff,#ff0066)' },
+        { id: 'ocean', name: '🌊 Oceano', bar: 'linear-gradient(90deg,#002244,#0066bb,#00ccff,#0066bb,#002244)' },
+        { id: 'crystal', name: '🔮 Cristal', bar: 'linear-gradient(90deg,#0044aa,#66ccff,#ffffff,#aa66ff,#0044aa)' },
+        { id: 'lava', name: '🌋 Lava', bar: 'linear-gradient(90deg,#330000,#aa2200,#ff5500,#ffaa00,#ff5500,#330000)' },
+        { id: 'cyber', name: '⚡ Cyber', bar: 'linear-gradient(90deg,#ff0066,#fff000,#00eeff,#fff000,#ff0066)' },
+        { id: 'sakura', name: '🌸 Sakura', bar: 'linear-gradient(90deg,#440022,#cc2266,#ff88cc,#cc2266,#440022)' },
+        { id: 'galaxy', name: '🌌 Galáxia', bar: 'linear-gradient(90deg,#0a0028,#6600ff,#cc44ff,#0088ff,#0a0028)' },
+        { id: 'aurora', name: '🌈 Aurora', bar: 'linear-gradient(90deg,#00ff88,#00ccff,#8844ff,#ff44aa,#00ff88)' },
+        { id: 'void', name: '🕳️ Void', bar: 'linear-gradient(90deg,#000000,#440088,#8800cc,#440088,#000000)' },
+        { id: 'fire', name: '🔥 Chama', bar: 'linear-gradient(90deg,#ff4400,#ff8800,#ffcc00,#ff8800,#ff4400)' },
+        { id: 'platinum', name: '👑 Platina', bar: 'linear-gradient(90deg,#444,#aaa,#fff,#eee,#aaa,#444)' },
+      ];
+      const MEDIA_SHAPES = { square: { width: '115px', height: '115px', left: '-26px' }, portrait: { width: '82px', height: '123px', left: '0px' }, landscape: { width: '160px', height: '90px', left: '-72px' } };
+      const PAGE_BG_CLASSES = ['pbg-white', 'pbg-black', 'pbg-image'];
+      const KOUT_CLASSES = ['pkout-black', 'pkout-purple', 'pkout-pink', 'pkout-red'];
+      const FONT_CLASSES = ['pfont-dmsans', 'pfont-orbitron', 'pfont-cinzel', 'pfont-bebas', 'pfont-marker', 'pfont-playfair', 'pfont-rajdhani', 'pfont-chakra', 'pfont-inter', 'pfont-spacegrotesk', 'pfont-firacode', 'pfont-syne', 'pfont-caveat', 'pfont-syncopate', 'pfont-montserrat', 'pfont-pressstart', 'pfont-pixelify', 'pfont-exo2', 'pfont-fraunces'];
+      let _pendingMediaShape = 'square';
+      let _profileAudio = null;
+      let _pendingUser = null;
+      let _activeTargetUser = null;
+
+      function getActiveUserContext() {
+        const panel = document.getElementById('profileEditPanel');
+        if (panel && !panel.classList.contains('hidden')) {
+          return _pendingUser;
+        }
+        return _activeTargetUser || S.user || {};
+      }
+
+      // ── INIT: carrega usuário (ou cria guest) ──
+      let isPublicView = false;
+      let publicUserData = null;
+
+      async function init() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const identifier = params.get('u') || params.get('id');
+
+          let currentUser = null;
+          try {
+            currentUser = await window.api.getProfile();
+          } catch (e) {
+            if (!identifier) {
+              window.location.href = '/pages/auth/auth.html';
+              return;
+            }
+          }
+
+          if (currentUser) {
+            S.user = currentUser;
+            try {
+              const [tasks, studySessions, healthLogs, finances] = await Promise.all([
+                window.api.getTasks().catch(() => []),
+                window.api.getStudySessions ? window.api.getStudySessions().catch(() => []) : [],
+                window.api.getHealthLogs ? window.api.getHealthLogs().catch(() => []) : [],
+                window.api.getFinances ? window.api.getFinances().catch(() => []) : []
+              ]);
+              S.tasks = tasks;
+              S.studySessions = studySessions;
+              S.healthLogs = healthLogs;
+              S.finances = finances;
+              S.streak = currentUser.streak || 0;
+            } catch (e) {
+              console.warn("Could not load tracking lists:", e);
+            }
+          }
+
+          if (identifier) {
+            try {
+              publicUserData = await window.api.getPublicProfile(identifier);
+              isPublicView = true;
+              if (currentUser && publicUserData && publicUserData.id === currentUser.id) {
+                isPublicView = false;
+              }
+            } catch (e) {
+              alert("Usuário não encontrado.");
+              window.location.href = 'profile.html';
+              return;
+            }
+          }
+
+          const targetUser = isPublicView ? publicUserData : currentUser;
+          if (!targetUser) return;
+          _activeTargetUser = targetUser;
+
+          buildBorderPicker(targetUser.avatar_border || 'none');
+          buildThemePicker(targetUser.profile_theme || 'default');
+          renderProfile(targetUser);
+
+          renderProfileBg(targetUser.profile_bg || null);
+          applyKoutMode(targetUser.profile_kout || 'none');
+          applyProfileFont(targetUser.profile_font || 'dmsans');
+          await applyPageBg(targetUser.profile_page_bg || 'default', targetUser.profile_page_bg_img || null);
+
+          applyAvatarBorder(targetUser.avatar_border || 'none');
+          applyProfileThemeCls(targetUser.profile_theme || 'default');
+
+          if (isPublicView) {
+            const editBtn = document.getElementById('editProfileBtn');
+            if (editBtn) editBtn.style.display = 'none';
+
+            const avEdit = document.querySelector('.pnew-av-edit');
+            if (avEdit) avEdit.style.display = 'none';
+
+            const profileAv = document.getElementById('profileAv');
+            if (profileAv) {
+              profileAv.onclick = null;
+              profileAv.style.cursor = 'default';
+            }
+
+            const gifPlaceholder = document.getElementById('profileGifPlaceholder');
+            if (gifPlaceholder) {
+              gifPlaceholder.onclick = null;
+              gifPlaceholder.title = '';
+            }
+
+            const tbCur = document.querySelector('.tb-cur');
+            if (tbCur) tbCur.textContent = `Perfil de ${targetUser.nome}`;
+
+            initFollowButton(targetUser, currentUser);
+          }
+        } finally {
+          document.body.style.opacity = "1";
+          if (typeof window.hideMhLoader === 'function') {
+            window.hideMhLoader();
+          }
+        }
+      }
+
+      async function initFollowButton(targetUser, currentUser) {
+        const btn = document.getElementById('profileFollowBtn');
+        if (!btn) return;
+
+        const isSelf = !!(currentUser && targetUser && currentUser.id === targetUser.id);
+        if (!isPublicView || isSelf || !targetUser || !targetUser.id) {
+          btn.style.display = 'none';
+          return;
+        }
+
+        let currentStatus = 'none';
+        function paint(status) {
+          currentStatus = status;
+          btn.classList.toggle('is-following', status === 'accepted' || status === 'pending');
+          if (status === 'accepted') btn.textContent = 'Seguindo';
+          else if (status === 'pending') btn.textContent = 'Solicitado';
+          else btn.textContent = 'Seguir';
+        }
+
+        btn.style.display = '';
+        paint('none');
+
+        try {
+          const res = await window.api.getFollowStatus(targetUser.id);
+          paint(res.status === 'self' ? 'none' : res.status);
+        } catch (e) {
+          console.warn('Não foi possível checar status de follow:', e);
+        }
+
+        btn.onclick = async () => {
+          btn.disabled = true;
+          try {
+            if (currentStatus === 'none') {
+              const res = await window.api.followUser(targetUser.id);
+              paint(res.status);
+              if (res.status === 'accepted') {
+                const el = document.getElementById('profileFollowersCount');
+                if (el) el.textContent = String((parseInt(el.textContent, 10) || 0) + 1);
+              }
+            } else {
+              const wasAccepted = currentStatus === 'accepted';
+              await window.api.unfollowUser(targetUser.id);
+              paint('none');
+              if (wasAccepted) {
+                const el = document.getElementById('profileFollowersCount');
+                if (el) el.textContent = String(Math.max((parseInt(el.textContent, 10) || 0) - 1, 0));
+              }
+            }
+          } catch (e) {
+            alert(e.message || 'Não foi possível completar a ação. Tente novamente.');
+          } finally {
+            btn.disabled = false;
+          }
+        };
+      }
+
+      // ── STEAM PICKERS ──
+      function buildBorderPicker(currentBorder) {
+        const el = document.getElementById('peBorderPicker'); if (!el) return;
+        el.innerHTML = AVATAR_BORDERS.map(b => `<div class="steam-picker-item${currentBorder === b.id ? ' sel' : ''}" data-border="${b.id}" onclick="selectAvatarBorder(this,'${b.id}')"><div class="spb-av" style="${b.preview};border-radius:7px"></div><div class="steam-picker-label">${b.name}</div></div>`).join('');
+      }
+      function buildThemePicker(currentTheme) {
+        const el = document.getElementById('peThemePicker'); if (!el) return;
+        el.innerHTML = PROFILE_THEMES.map(t => `<div class="steam-picker-item${currentTheme === t.id ? ' sel' : ''}" data-theme="${t.id}" onclick="selectProfileTheme(this,'${t.id}')"><div style="width:28px;height:8px;border-radius:3px;background:${t.bar};margin-bottom:1px"></div><div style="width:28px;height:16px;border-radius:0 0 5px 5px;background:var(--s2);border:1px solid var(--b1);border-top:none"></div><div class="steam-picker-label">${t.name}</div></div>`).join('');
+      }
+      function selectAvatarBorder(el, borderId) {
+        document.querySelectorAll('#peBorderPicker .steam-picker-item').forEach(e => e.classList.remove('sel'));
+        el.classList.add('sel');
+        applyAvatarBorder(borderId);
+        if (_pendingUser) _pendingUser.avatar_border = borderId;
+      }
+      function selectProfileTheme(el, themeId) {
+        document.querySelectorAll('#peThemePicker .steam-picker-item').forEach(e => e.classList.remove('sel'));
+        el.classList.add('sel');
+        applyProfileThemeCls(themeId);
+        if (_pendingUser) _pendingUser.profile_theme = themeId;
+      }
+      function applyAvatarBorder(borderId) {
+        const wrap = document.getElementById('profileAvWrap'); if (!wrap) return;
+        AVATAR_BORDERS.forEach(b => wrap.classList.remove(b.cls));
+        const border = AVATAR_BORDERS.find(b => b.id === borderId); if (border) wrap.classList.add(border.cls);
+      }
+      function applyProfileThemeCls(themeId) {
+        const hero = document.getElementById('profileHero') || document.querySelector('.profile-hero'); if (!hero) return;
+        PROFILE_THEMES.forEach(t => hero.classList.remove('ptheme-' + t.id));
+        hero.classList.add('ptheme-' + themeId);
+      }
+
+      // ── RENDER PROFILE ──
+      function renderProfile(u) {
+        if (!u) u = S.user;
+        if (!u) return;
+
+        const nome = u.nome || '--';
+        const handle = u.handle || ('@' + (u.nome || 'usuario').toLowerCase().replace(/\s+/g, ''));
+        const bio = u.bio || '';
+        const avatar = u.avatar || (u.nome || 'U')[0].toUpperCase();
+
+        setEl('profileName', nome);
+        setEl('profileTabFotos', nome.toUpperCase());
+
+        window.currentViewedUserId = u.id;
+        setEl('profileFollowersCount', u.seguidores_count ?? 0);
+        setEl('profileFollowingCount', u.seguindo_count ?? 0);
+
+        const privacyIcon = document.getElementById('profilePrivacyIcon');
+        if (privacyIcon) {
+          if (u.perfil_publico === false) {
+            privacyIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>`;
+            privacyIcon.title = "Conta Privada";
+          } else {
+            privacyIcon.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
+            privacyIcon.title = "Conta Pública";
+          }
+        }
+
+        const accountNum = u.account_number ?? 1;
+        const handleEl = document.getElementById('profileHandle');
+        if (handleEl) {
+          handleEl.innerHTML = escHtml(handle) + `<span style="display:inline-flex;align-items:center;gap:5px;margin-left:8px;flex-wrap:wrap">
+      <span style="font-family:inherit;font-size:9px;color:var(--t3);background:var(--s3);border:1px solid var(--b2);border-radius:6px;padding:2px 7px;letter-spacing:.5px">#${accountNum}</span>
+    </span>`;
+        }
+
+        const bioEl = document.getElementById('profileBioEl');
+        if (bioEl) {
+          if (bio) bioEl.innerHTML = escHtml(bio);
+          else bioEl.innerHTML = '';
+        }
+
+        const avEl = document.getElementById('profileAv');
+        if (avEl) {
+          if (u.avatar_type === 'photo' && avatar.startsWith('http')) {
+            avEl.style.backgroundImage = 'url(' + avatar + ')';
+            avEl.innerHTML = '';
+          } else {
+            avEl.style.backgroundImage = '';
+            avEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:50%;height:50%;opacity:0.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+          }
+        }
+
+        buildProfileHeatmap();
+        renderProfileSocialLinks(u.social1, u.social2);
+        applyAvatarBorder(u.avatar_border || 'none');
+        applyProfileThemeCls(u.profile_theme || 'default');
+
+        const rawHandle = (u.handle || '').replace(/^@+/, '').trim().toLowerCase();
+        if (rawHandle) {
+          const newUrl = '/@' + rawHandle;
+          if (window.top && window.top !== window) {
+            window.top.postMessage({ type: 'MINSQ_UPDATE_URL', url: newUrl }, '*');
+          } else {
+            window.history.replaceState({}, '', newUrl);
+          }
+        }
+      }
+
+      function calcDiasAtivo() {
+        const dias = new Set([
+          ...(S.tasks || []).filter(t => t.concluida).map(t => t.data),
+          ...(S.studySessions || []).map(s => s.data),
+          ...(S.healthLogs || []).map(h => h.data),
+          ...(S.finances || []).map(f => f.data),
+        ].filter(Boolean));
+        return dias.size;
+      }
+
+      function buildProfileHeatmap() {
+        const el = document.getElementById('profileHeatmap'); if (!el) return;
+        const ativDias = new Map();
+        const addDia = (data, v = 1) => { ativDias.set(data, (ativDias.get(data) || 0) + v); };
+        (S.tasks || []).filter(t => t.concluida && t.data).forEach(t => addDia(t.data));
+        (S.studySessions || []).filter(s => s.data).forEach(s => addDia(s.data, 2));
+        (S.healthLogs || []).filter(h => h.data).forEach(h => addDia(h.data, 2));
+        (S.finances || []).filter(f => f.data).forEach(f => addDia(f.data));
+        const today = new Date(); el.innerHTML = '';
+        for (let i = 59; i >= 0; i--) {
+          const d = new Date(today); d.setDate(d.getDate() - i);
+          const key = d.toISOString().split('T')[0];
+          const val = ativDias.get(key) || 0;
+          const dot = document.createElement('div');
+          dot.className = 'streak-dot-lg ' + (val >= 4 ? 'active-hi' : val >= 1 ? 'active' : '');
+          dot.setAttribute('data-date', key); dot.title = key + (val ? ': ' + val + ' registros' : '');
+          el.appendChild(dot);
+        }
+        let best = 0, cur = 0;
+        for (let i = 0; i < 365; i++) { const d = new Date(today); d.setDate(d.getDate() - i); const key = d.toISOString().split('T')[0]; if (ativDias.has(key)) { cur++; best = Math.max(best, cur); } else cur = 0; }
+        setEl('profileStreakBig', S.streak || 0); setEl('profileBestStreak', best);
+      }
+
+      // ── OPEN / CLOSE EDIT PANEL ──
+      function openProfileEdit() {
+        const u = S.user; if (!u) return;
+        _pendingUser = { ...u };
+        const panel = document.getElementById('profileEditPanel'); if (!panel) return;
+        const nomeInput = document.getElementById('peNome');
+        const handleInput = document.getElementById('peHandle');
+        const bioInput = document.getElementById('peBio');
+        if (nomeInput) { nomeInput.value = (u.nome || '').slice(0, 30); updateCharCounter('peNome', 'peNomeCount', 30, 2); }
+        const rawHandle = (u.handle || ('@' + (u.nome || '').toLowerCase().replace(/\s+/g, ''))).replace(/^@/, '').slice(0, 30);
+        if (handleInput) { handleInput.value = rawHandle; updateCharCounter('peHandle', 'peHandleCount', 30, 3); }
+        if (bioInput) { bioInput.value = (u.bio || '').slice(0, 100); updateCharCounter('peBio', 'peBioCount', 100, 0); }
+        const headerIcon = document.getElementById('peHeaderAvatarIcon');
+        const headerImg = document.getElementById('peHeaderAvatarImg');
+        if (headerIcon && headerImg) {
+          if (u.avatar && u.avatar_type === 'photo' && u.avatar.length > 5) {
+            headerImg.src = u.avatar;
+            headerImg.style.display = 'block';
+            headerIcon.style.display = 'none';
+          } else {
+            headerImg.style.display = 'none';
+            headerIcon.style.display = 'block';
+          }
+        }
+        const s1 = document.getElementById('peSocial1');
+        const s2 = document.getElementById('peSocial2');
+        if (s1) { s1.value = u.social1 || ''; updateSocialIcon(1); }
+        if (s2) { s2.value = u.social2 || ''; updateSocialIcon(2); }
+
+        // Carregar slider de opacidade do bg hero
+        const bgOp = u.customization_json?.profile_bg_opacity ?? u.profile_bg_opacity ?? 30;
+        const slBgOp = document.getElementById('peBgOpacity'); const lbBgOp = document.getElementById('peBgOpacityLabel');
+        if (slBgOp) slBgOp.value = bgOp; if (lbBgOp) lbBgOp.textContent = bgOp + '%';
+        const bgOpWrap = document.getElementById('peBgOpacityWrap');
+        if (bgOpWrap) bgOpWrap.style.display = u.profile_bg ? 'block' : 'none';
+        loadBgInEditor(u.profile_bg || null);
+
+        loadKoutInEditor(u.profile_kout || 'none');
+        loadFontInEditor(u.profile_font || 'dmsans');
+        // Carregar slider de opacidade do fundo da página
+        const pgBgOp = u.customization_json?.profile_page_bg_opacity ?? u.profile_page_bg_opacity ?? 18;
+        const slPgOp = document.getElementById('pePageBgOpacity'); const lbPgOp = document.getElementById('pePageBgOpacityLabel');
+        if (slPgOp) slPgOp.value = pgBgOp; if (lbPgOp) lbPgOp.textContent = pgBgOp + '%';
+        loadPageBgInEditor(u.profile_page_bg || 'default', u.profile_page_bg_img || null);
+        panel.classList.remove('hidden');
+      }
+      function closeProfileEdit() {
+        const panel = document.getElementById('profileEditPanel');
+        if (panel) panel.classList.add('hidden');
+        _pendingUser = null;
+        if (S.user) {
+          renderProfile(S.user);
+          renderProfileBg(S.user.profile_bg || null);
+          applyKoutMode(S.user.profile_kout || 'none');
+          applyProfileFont(S.user.profile_font || 'dmsans');
+          applyPageBg(S.user.profile_page_bg || 'default', S.user.profile_page_bg_img || null);
+          applyAvatarBorder(S.user.avatar_border || 'none');
+          applyProfileThemeCls(S.user.profile_theme || 'default');
+        }
+      }
+
+      // ── SAVE EDIT ──
+      async function saveProfileEdit() {
+        const u = S.user; if (!u || !_pendingUser) return;
+        const nomeRaw = document.getElementById('peNome')?.value?.trim()?.slice(0, 20);
+        const nome = (nomeRaw && nomeRaw.length > 0) ? nomeRaw : _pendingUser.nome;
+        const rawHandle = document.getElementById('peHandle')?.value?.replace(/^@+/, '').trim().slice(0, 20) || '';
+        const handle = rawHandle.length >= 2 ? ('@' + rawHandle) : _pendingUser.handle;
+        const bioInputVal = (document.getElementById('peBio')?.value?.trim() || '').slice(0, 100);
+        const social1 = document.getElementById('peSocial1')?.value?.trim() || '';
+        const social2 = document.getElementById('peSocial2')?.value?.trim() || '';
+
+        const slBgOp = document.getElementById('peBgOpacity');
+        const slPgBgOp = document.getElementById('pePageBgOpacity');
+
+        const updateData = {
+          nome,
+          handle,
+          bio: bioInputVal,
+          social1,
+          social2,
+          profile_page_bg: _pendingUser.profile_page_bg,
+          profile_page_bg_img: _pendingUser.profile_page_bg_img,
+          profile_kout: _pendingUser.profile_kout,
+          profile_font: _pendingUser.profile_font,
+          profile_bg: _pendingUser.profile_bg,
+          avatar_border: _pendingUser.avatar_border,
+          profile_theme: _pendingUser.profile_theme,
+          avatar: _pendingUser.avatar,
+          avatar_type: _pendingUser.avatar_type,
+          profile_bg_opacity: slBgOp ? parseInt(slBgOp.value) : (_pendingUser.profile_bg_opacity ?? 30),
+          profile_page_bg_opacity: slPgBgOp ? parseInt(slPgBgOp.value) : (_pendingUser.profile_page_bg_opacity ?? 18),
+          customization_json: Object.assign(_pendingUser.customization_json || {}, {
+            profile_bg_opacity: slBgOp ? parseInt(slBgOp.value) : 30,
+            profile_page_bg_opacity: slPgBgOp ? parseInt(slPgBgOp.value) : 18
+          })
+        };
+
+        try {
+          toast('Salvando perfil...');
+          const updateRes = await window.api.updateProfile(updateData);
+          S.user = updateRes.user;
+          localStorage.setItem('minsq_auth_user', JSON.stringify(S.user));
+          closeProfileEdit();
+          renderProfile(S.user);
+          toast('Perfil salvo! ✓');
+        } catch (err) {
+          toast('Erro ao atualizar perfil: ' + err.message, 'err');
+        }
+      }
+
+      // ── CHAR COUNTER / HANDLE ──
+      function updateCharCounter(inputId, counterId, max, min = 0) {
+        const input = document.getElementById(inputId); const counter = document.getElementById(counterId); if (!input || !counter) return;
+        const len = input.value.length; counter.textContent = len + ' / ' + max;
+        let className = 'char-counter';
+        if (len < min || len >= max) className += ' over';
+        else if (len > max * .9) className += ' warn';
+        counter.className = className;
+      }
+      function enforceHandleAt(input) {
+        let val = input.value.replace(/^@+/, '').replace(/[^a-zA-Z0-9_]/g, '').slice(0, 30);
+        input.value = val; updateCharCounter('peHandle', 'peHandleCount', 30, 3);
+      }
+      function preventHandleDelete(e, input) {
+        const val = input.value.replace(/^@+/, '');
+        if ((e.key === 'Backspace' || e.key === 'Delete') && val.length <= 0) e.preventDefault();
+      }
+
+      let _checkHandleTimeout = null;
+      async function checkHandleAvailability(val) {
+        const clean = val.replace(/^@+/, '');
+        const balloon = document.getElementById('handleBalloon');
+        const textSpan = document.getElementById('handleBalloonText');
+        const input = document.getElementById('peHandle');
+        if (!balloon || !input) return;
+
+        function hideBalloon() {
+          balloon.style.opacity = '0';
+          balloon.style.transform = 'translateY(10px)';
+          input.style.borderColor = '';
+        }
+
+        function showBalloon(msg) {
+          if (textSpan) textSpan.textContent = msg;
+          balloon.style.opacity = '1';
+          balloon.style.transform = 'translateY(0)';
+          input.style.borderColor = 'var(--danger)';
+        }
+
+        if (clean.length < 3) {
+          hideBalloon();
+          return;
+        }
+
+        clearTimeout(_checkHandleTimeout);
+        _checkHandleTimeout = setTimeout(async () => {
+          try {
+            hideBalloon();
+            const res = await api.checkHandle(clean);
+            if (!res.available) {
+              showBalloon('Username indisponível');
+            }
+          } catch (e) {
+            showBalloon('Erro ao verificar username');
+          }
+        }, 500);
+      }
+
+      function checkSocialLink(input, slot) {
+        const val = input.value;
+        const banned = [
+          'xvideos.com', 'xvideos.red', 'pornhub.com', 'xhamster.com', 'xnxx.com',
+          'onlyfans.com', 'fatalmodel.com', 'privacy.com.br', 'socialmediagirls.com',
+          'sambaporno.com', 'animeshentai.biz', 'hentaistube.com', 'thehentai.net',
+          'cameraprive.com', 'hyper.cool', 'shokka.com', 'thisvid.com',
+          'photoacompanhantes.com', 'muitohentai.com', 'pornocarioca.com',
+          'betano.bet.br', 'sportingbet.bet.br', 'betboo.bet.br', 'novibet.bet.br',
+          'betfair.bet.br', 'pix.bet.br', 'esportesdasorte.bet.br', 'betnacional.bet.br',
+          'kto.bet.br', 'superbet.bet.br', 'bet365.bet.br', 'betboom.bet.br',
+          'br4bet.bet.br', 'estrelabet.bet.br', 'betsson.bet.br', 'vaidebet.bet.br',
+          '1xbet.bet.br', 'betcaixa.bet.br', 'betvip.bet.br', 'betpix365.bet.br'
+        ];
+        let isBanned = false;
+        if (val) {
+          try {
+            let parseUrl = val;
+            if (!parseUrl.startsWith('http://') && !parseUrl.startsWith('https://')) {
+              parseUrl = 'https://' + parseUrl;
+            }
+            const u = new URL(parseUrl);
+            const hostname = u.hostname.toLowerCase();
+            isBanned = banned.some(word => hostname === word || hostname.endsWith('.' + word));
+          } catch (e) {
+            const lowerUrl = val.toLowerCase();
+            isBanned = banned.some(word => lowerUrl.includes(word));
+          }
+        }
+        const b = document.getElementById('socialBalloon' + slot);
+        if (isBanned) {
+          input.style.borderColor = 'var(--danger)';
+          if (b) { b.style.opacity = '1'; b.style.transform = 'translateY(0)'; }
+        } else {
+          input.style.borderColor = '';
+          if (b) { b.style.opacity = '0'; b.style.transform = 'translateY(10px)'; }
+        }
+      }
+
+      // ── SOCIAL ICONS ──
+      function getSocialIcon(url) {
+        if (!url) return '';
+        const u = url.toLowerCase();
+        const b = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0">';
+
+        if (u.includes('instagram')) return b + '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>';
+        if (u.includes('twitter') || u.includes('x.com')) return '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none" style="width:16px;height:16px;flex-shrink:0"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path></svg>';
+        if (u.includes('youtube')) return b + '<path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>';
+        if (u.includes('github')) return b + '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>';
+        if (u.includes('discord')) return b + '<path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44a1 1 0 0 1-.95 0l-7.9-4.44a1 1 0 0 1-.53-.88V7.5c0-.38.21-.71.53-.88l7.9-4.44a1 1 0 0 1 .95 0l7.9 4.44c.32.17.53.5.53.88v9z"></path><path d="M12 22V12"></path><path d="M21 7.5L12 12 3 7.5"></path><path d="M12 12l8.5-4.5"></path></svg>';
+        if (u.includes('twitch')) return b + '<path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"></path></svg>';
+        if (u.includes('spotify')) return b + '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="M15.46 16.14a8.13 8.13 0 0 0-6.92 0"></path><path d="M16.8 13.43a10.02 10.02 0 0 0-9.6 0"></path><path d="M18.25 10.51a12 12 0 0 0-12.5 0"></path></svg>';
+        if (u.includes('behance')) return b + '<path d="M18 9h-4V7h4v2zm-7 6H5V7h6c3.08 0 3.08 4 0 4 3.08 0 3.08 4 0 4z"></path></svg>';
+
+        return b + '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>';
+      }
+      function updateSocialIcon(slot) {
+        const input = document.getElementById('peSocial' + slot); const icon = document.getElementById('socialIcon' + slot);
+        if (input && icon) icon.innerHTML = getSocialIcon(input.value);
+      }
+      function renderProfileSocialLinks(social1, social2) {
+        const el = document.getElementById('profileSocialLinks'); if (!el) return; el.innerHTML = '';
+        [social1, social2].forEach(url => {
+          if (!url) return; const chip = document.createElement('a'); chip.className = 'pnew-btn-social';
+          chip.href = url.startsWith('http') ? url : 'https://' + url; chip.target = '_blank'; chip.rel = 'noopener';
+          chip.innerHTML = getSocialIcon(url);
+          el.appendChild(chip);
+        });
+      }
+
+
+      // ── BACKGROUND DO HERO (ESTILOS) ──
+      function selectProfileBgStyle(el, style) {
+        document.querySelectorAll('#peBgStylePicker .picker-card').forEach(c => c.classList.remove('sel'));
+        el.classList.add('sel');
+        if (_pendingUser) _pendingUser.profile_bg = style;
+        renderProfileBg(style);
+        const labels = { blackout: 'Blackout ⬛', offwhite: 'Offwhite ⬜', vidro: 'Efeito Vidro 🪟', transparente: 'Transparente 🫥' };
+        toast(labels[style] || 'Estilo alterado');
+      }
+
+      function loadBgInEditor(style) {
+        const validStyles = ['blackout', 'offwhite', 'vidro', 'transparente'];
+        if (!validStyles.includes(style)) style = 'vidro';
+        document.querySelectorAll('#peBgStylePicker .picker-card').forEach(c => c.classList.toggle('sel', c.dataset.bgstyle === style));
+      }
+
+      function renderProfileBg(style) {
+        const validStyles = ['blackout', 'offwhite', 'vidro', 'transparente'];
+        if (!validStyles.includes(style)) style = 'vidro';
+
+        const page = document.getElementById('page-profile');
+        if (page) {
+          page.setAttribute('data-profile-bg-style', style);
+        }
+
+        // Remove old img tag if it exists to clean up
+        const bgImg = document.getElementById('profileHeroBgImg');
+        if (bgImg) bgImg.remove();
+      }
+
+
+      // ── CONTROLE DE SLIDER — OPACIDADE BG HERO ──
+      window.onBgOpacityChange = function onBgOpacityChange() {
+        const sl = document.getElementById('peBgOpacity'); const lb = document.getElementById('peBgOpacityLabel');
+        const val = parseInt(sl?.value || 30);
+        if (lb) lb.textContent = val + '%';
+
+        // Aplica na visualização principal e no editor
+        const bgImg = document.getElementById('profileHeroBgImg');
+        if (bgImg) bgImg.style.opacity = (val / 100);
+        const peBgImg = document.getElementById('peBgPreviewImg');
+        if (peBgImg) peBgImg.style.opacity = (val / 100);
+
+        if (_pendingUser) _pendingUser.profile_bg_opacity = val;
+      }
+
+      // ── CONTROLE DE SLIDER — OPACIDADE FUNDO PÁGINA ──
+      window.onPageBgOpacityChange = function onPageBgOpacityChange() {
+        const sl = document.getElementById('pePageBgOpacity'); const lb = document.getElementById('pePageBgOpacityLabel');
+        const val = parseInt(sl?.value || 18);
+        if (lb) lb.textContent = val + '%';
+
+        // Aplica na visualização principal e no editor
+        const bgImg = document.getElementById('profilePageBgImg');
+        if (bgImg) bgImg.style.opacity = (val / 100);
+        const peThumb = document.getElementById('pePageBgThumb');
+        if (peThumb) peThumb.style.opacity = (val / 100);
+
+        if (_pendingUser) _pendingUser.profile_page_bg_opacity = val;
+      }
+
+
+      // ── FUNDO DA PÁGINA ──
+      function applyPageBg(mode, imgUrl) {
+        return new Promise((resolve) => {
+          const page = document.getElementById('page-profile'); const bgDiv = document.getElementById('profilePageBg'); const bgImg = document.getElementById('profilePageBgImg');
+          if (!page || !bgDiv || !bgImg) return resolve();
+          PAGE_BG_CLASSES.forEach(c => page.classList.remove(c)); bgDiv.style.background = ''; bgImg.style.display = 'none'; bgImg.src = '';
+          if (mode === 'white') { bgDiv.style.background = '#ffffff'; page.classList.add('pbg-white'); resolve(); }
+          else if (mode === 'black') { bgDiv.style.background = '#000000'; page.classList.add('pbg-black'); resolve(); }
+          else if (mode === 'image' && imgUrl) {
+            const activeUser = getActiveUserContext();
+            const op = (activeUser.customization_json?.profile_page_bg_opacity ?? activeUser.profile_page_bg_opacity ?? 18) / 100;
+            bgImg.onload = () => resolve();
+            bgImg.onerror = () => resolve();
+            bgImg.src = imgUrl; bgImg.style.opacity = op; bgImg.style.display = 'block'; page.classList.add('pbg-image');
+          } else {
+            resolve();
+          }
+        });
+      }
+      async function selectPageBg(el, mode) {
+        if (mode !== 'image') {
+          document.querySelectorAll('#pePageBgPicker .picker-card').forEach(c => c.classList.remove('sel'));
+          el.classList.add('sel');
+          if (_pendingUser) {
+            _pendingUser.profile_page_bg = mode;
+            _pendingUser.profile_page_bg_img = null;
+          }
+          applyPageBg(mode, null);
+          loadPageBgInEditor(mode, null);
+          toast(mode === 'black' ? 'Fundo preto ⬛' : 'Fundo padrão');
+        }
+      }
+      async function handlePageBgUpload(event) {
+        const file = event.target.files?.[0]; if (!file) return;
+        if (file.size > 3 * 1024 * 1024) { toast('Imagem muito grande (máx 3MB)', 'error'); return; }
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        if (!validTypes.includes(file.type)) { toast('Formato inválido. Use JPG, PNG ou WEBP.', 'error'); return; }
+
+        try {
+          toast('Enviando fundo...');
+          const res = await window.api.uploadFile(file, 'pagebgs');
+          const url = res.url;
+
+          if (_pendingUser) {
+            _pendingUser.profile_page_bg = 'image';
+            _pendingUser.profile_page_bg_img = url;
+          }
+
+          applyPageBg('image', url);
+          loadPageBgInEditor('image', url);
+          toast('Fundo da página carregado! 🖼');
+        } catch (err) {
+          toast('Erro no upload: ' + err.message, 'err');
+        } finally {
+          event.target.value = '';
+        }
+      }
+      function removePageBg() {
+        if (_pendingUser) {
+          _pendingUser.profile_page_bg = 'default';
+          _pendingUser.profile_page_bg_img = null;
+        }
+        applyPageBg('default', null);
+        loadPageBgInEditor('default', null);
+        toast('Fundo excluído');
+      }
+      function loadPageBgInEditor(mode, imgUrl) {
+        document.querySelectorAll('#pePageBgPicker .picker-card').forEach(c => c.classList.toggle('sel', c.dataset.pbg === (mode || 'default')));
+        const thumb = document.getElementById('pePageBgThumb'); const icon = document.getElementById('pePageBgImageIcon');
+        const rm = document.getElementById('pePageBgRemoveWrap'); const imgCard = document.getElementById('pePageBgImageCard');
+        const opWrap = document.getElementById('pePageBgOpacityWrap');
+        if (mode === 'image' && imgUrl) {
+          if (thumb) { thumb.src = imgUrl; thumb.style.display = 'block'; } if (icon) icon.style.opacity = '0';
+          if (rm) rm.style.display = 'block'; if (imgCard) imgCard.classList.add('sel');
+          if (opWrap) opWrap.style.display = 'block';
+        } else {
+          if (thumb) { thumb.src = ''; thumb.style.display = 'none'; } if (icon) icon.style.opacity = '1';
+          if (rm) rm.style.display = 'none'; if (imgCard) imgCard.classList.remove('sel');
+          if (opWrap) opWrap.style.display = 'none';
+        }
+      }
+
+      // ── KOUT MODE ──
+      function applyKoutMode(mode) { const page = document.getElementById('page-profile'); if (!page) return; KOUT_CLASSES.forEach(c => page.classList.remove(c)); if (mode && mode !== 'none') page.classList.add('pkout-' + mode); }
+      function selectKoutMode(el, mode) {
+        document.querySelectorAll('#peKoutPicker .picker-card').forEach(c => c.classList.remove('sel')); el.classList.add('sel'); applyKoutMode(mode);
+        if (_pendingUser) _pendingUser.profile_kout = mode;
+        const labels = { none: 'Modo padrão', black: 'BLACKOUT ⬛', purple: 'PURPLEKOUT 💜', pink: 'PINKOUT 🩷', red: 'REDKOUT ❤️‍🔥' }; toast(labels[mode] || mode);
+      }
+      function loadKoutInEditor(mode) { document.querySelectorAll('#peKoutPicker .picker-card').forEach(c => c.classList.toggle('sel', (c.dataset.kout === (mode || 'none')))); }
+
+      // ── FONTE DO PERFIL ──
+      function applyProfileFont(font) { const page = document.getElementById('page-profile'); if (!page) return; FONT_CLASSES.forEach(c => page.classList.remove(c)); if (font && font !== 'dmsans') page.classList.add('pfont-' + font); }
+      function selectProfileFont(el, font) {
+        document.querySelectorAll('#peFontPicker .font-card').forEach(c => c.classList.remove('sel')); el.classList.add('sel'); applyProfileFont(font);
+        if (_pendingUser) _pendingUser.profile_font = font;
+      }
+      function loadFontInEditor(font) { document.querySelectorAll('#peFontPicker .font-card').forEach(c => c.classList.toggle('sel', (c.dataset.font === (font || 'dmsans')))); }
+
+      // ── TABS ──
+      function switchPnewTab(btn, tab) {
+        document.querySelectorAll('.pnew-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.pnew-tab-pane').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active'); const el = document.getElementById('pnewTab' + tab); if (el) el.classList.add('active');
+      }
+
+      // ── AVATAR PICKER ──
+      function openAvatarPicker() {
+        const overlay = document.getElementById('avatarPickerOverlay'); if (!overlay) return;
+        const preview = document.getElementById('avatarUploadPreview'); if (preview) preview.style.display = 'none';
+        overlay.style.display = 'flex';
+      }
+      function closeAvatarPicker() { const overlay = document.getElementById('avatarPickerOverlay'); if (overlay) overlay.style.display = 'none'; }
+      async function handleAvatarUpload(event) {
+        const file = event.target.files?.[0]; if (!file) return;
+        if (!file.type.startsWith('image/')) { toast('Selecione uma imagem válida', 'err'); return; }
+        if (file.size > 3 * 1024 * 1024) { toast('Imagem muito grande (máx 3MB)', 'err'); return; }
+
+        try {
+          toast('loading...', 'info');
+          const res = await window.api.uploadFile(file, 'avatars');
+          const url = res.url;
+
+          if (_pendingUser) {
+            _pendingUser.avatar = url;
+            _pendingUser.avatar_type = 'photo';
+          }
+
+          const preview = document.getElementById('avatarUploadPreview'); const previewImg = document.getElementById('avatarPreviewImg');
+          if (preview && previewImg) { previewImg.src = url; preview.style.display = 'block'; }
+
+          const updateRes = await window.api.updateProfile({ avatar: url, avatar_type: 'photo' });
+          S.user = updateRes.user;
+          localStorage.setItem('minsq_auth_user', JSON.stringify(S.user));
+
+          closeAvatarPicker();
+          renderProfile(_pendingUser || S.user);
+        } catch (err) {
+          toast('Erro no upload: ' + err.message, 'err');
+        } finally {
+          event.target.value = '';
+        }
+      }
+
+      async function useInitialAvatar() {
+        const u = _pendingUser || S.user; if (!u) return;
+        const initial = (u.nome || 'U')[0].toUpperCase();
+        if (_pendingUser) {
+          _pendingUser.avatar = initial;
+          _pendingUser.avatar_type = 'initial';
+        }
+        try {
+          toast('loading...', 'info');
+          const updateRes = await window.api.updateProfile({ avatar: initial, avatar_type: 'initial' });
+          S.user = updateRes.user;
+          localStorage.setItem('minsq_auth_user', JSON.stringify(S.user));
+          closeAvatarPicker();
+          renderProfile(_pendingUser || S.user);
+        } catch (err) {
+          toast('Erro ao salvar avatar: ' + err.message, 'err');
+        }
+      }
+
+
+      // ── TABS (NEW) ──
+      document.querySelectorAll('.overlay-nav .nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.overlay-nav .nav-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const tab = btn.dataset.tab;
+          document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.tabPanel === tab));
+        });
+      });
+
+      (function setupSlowScroll() {
+        const SCROLL_FACTOR = 0.35;
+        document.querySelectorAll('.overlay-body').forEach(el => {
+          el.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            el.scrollTop += e.deltaY * SCROLL_FACTOR;
+          }, { passive: false });
+        });
+      })();
+
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
+    <script src="shared.js?v=3"></script>
+    <!-- ── MODAL DE SEGUIR ── -->
+    <div class="fm-overlay" id="fmOverlay" onclick="if(event.target===this) closeFollowModal()">
+      <div class="fm-modal">
+        <div class="fm-head">
+          <div class="fm-head-top">
+            <div class="fm-title">Conexões <span id="fmUserLabel"></span></div>
+            <button class="fm-close" onclick="closeFollowModal()" aria-label="Fechar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+          <div class="fm-tabs">
+            <button class="fm-tab active" id="fmTabFollowers" onclick="switchFollowTab('followers')">
+              Seguidores <span class="fm-tab-count" id="fmCountFollowers">0</span>
+            </button>
+            <button class="fm-tab" id="fmTabFollowing" onclick="switchFollowTab('following')">
+              Seguindo <span class="fm-tab-count" id="fmCountFollowing">0</span>
+            </button>
+            <button class="fm-tab" id="fmTabPending" style="display: none;" onclick="switchFollowTab('pending')">
+              Pendentes <span class="fm-tab-count" id="fmCountPending">0</span>
+            </button>
+          </div>
+          <div class="fm-search-wrap">
+            <svg class="fm-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input class="fm-search" id="fmSearch" type="text" placeholder="Buscar" oninput="renderFollowList()">
+          </div>
+        </div>
+        <div class="fm-body" id="fmBody"></div>
+      </div>
+    </div>
+
+    <script>
+      let fmState = {
+        tab: 'followers',
+        userId: null,
+
+        followers: [],
+        followersPage: 1,
+        followersHasMore: true,
+
+        following: [],
+        followingPage: 1,
+        followingHasMore: true,
+        pending: [],
+        pendingPage: 1,
+        pendingHasMore: true,
+
+        isLoading: false
+      };
+
+      async function openFollowModal(initialTab = 'followers', userId = null) {
+        fmState.tab = initialTab;
+        fmState.userId = userId || window.currentViewedUserId;
+        fmState.followers = [];
+        fmState.followersPage = 1;
+        fmState.followersHasMore = true;
+        fmState.following = [];
+        fmState.followingPage = 1;
+        fmState.followingHasMore = true;
+        fmState.pending = [];
+        fmState.pendingPage = 1;
+        fmState.pendingHasMore = true;
+        fmState.isLoading = false;
+
+        // Pegar a contagem inicial já disponível no perfil
+        const elFollowers = document.getElementById('profileFollowersCount');
+        const elFollowing = document.getElementById('profileFollowingCount');
+        document.getElementById('fmCountFollowers').textContent = elFollowers ? elFollowers.textContent : '0';
+        document.getElementById('fmCountFollowing').textContent = elFollowing ? elFollowing.textContent : '0';
+
+        const overlay = document.getElementById('fmOverlay');
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        const isOwnProfile = (typeof S !== 'undefined' && S.user && S.user.id === fmState.userId);
+        const isPrivate = (typeof S !== 'undefined' && S.user && S.user.perfil_publico === false);
+        const tabPending = document.getElementById('fmTabPending');
+        if (tabPending) {
+          if (isOwnProfile && isPrivate) {
+            tabPending.style.display = 'inline-block';
+            document.getElementById('fmCountPending').textContent = '...';
+            if (initialTab !== 'pending' && window.api) {
+              window.api.getFollowRequests(1).then(res => {
+                const arr = res.users || res || [];
+                document.getElementById('fmCountPending').textContent = arr.length + (arr.length === 30 ? '+' : '');
+                fmState.pending = arr;
+                fmState.pendingPage = 2;
+                if (arr.length < 30) fmState.pendingHasMore = false;
+              }).catch(() => {
+                document.getElementById('fmCountPending').textContent = '0';
+              });
+            }
+          } else {
+            tabPending.style.display = 'none';
+            if (initialTab === 'pending') initialTab = 'followers';
+          }
+        }
+
+        switchFollowTab(initialTab, true);
+        await loadCurrentTab();
+      }
+
+      function closeFollowModal() {
+        document.getElementById('fmOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      async function switchFollowTab(tab, skipLoad) {
+        fmState.tab = tab;
+        document.getElementById('fmTabFollowers').classList.toggle('active', tab === 'followers');
+        document.getElementById('fmTabFollowing').classList.toggle('active', tab === 'following');
+        if (document.getElementById('fmTabPending')) {
+          document.getElementById('fmTabPending').classList.toggle('active', tab === 'pending');
+        }
+        document.getElementById('fmSearch').value = '';
+
+        renderFollowList();
+        if (!skipLoad && fmState[tab].length === 0 && fmState[tab + 'HasMore']) {
+          await loadCurrentTab();
+        }
+      }
+
+      async function loadCurrentTab() {
+        if (fmState.isLoading) return;
+        const tab = fmState.tab;
+        if (!fmState[tab + 'HasMore']) return;
+
+        fmState.isLoading = true;
+
+        // Se for a primeira página, limpa
+        if (fmState[tab + 'Page'] === 1) {
+          document.getElementById('fmBody').innerHTML = '<div class="fm-empty"><div class="fm-empty-title">Carregando…</div></div>';
+        } else {
+          // Appending loader
+          const loader = document.createElement('div');
+          loader.className = 'fm-empty fm-loader';
+          loader.style.padding = '10px';
+          loader.innerHTML = '<div class="fm-empty-sub">Carregando mais...</div>';
+          document.getElementById('fmBody').appendChild(loader);
+        }
+
+        try {
+          if (window.api) {
+            const page = fmState[tab + 'Page'];
+            let res;
+            if (tab === 'followers') {
+              res = await window.api.getFollowers(fmState.userId, page);
+            } else if (tab === 'following') {
+              res = await window.api.getFollowing(fmState.userId, page);
+            } else if (tab === 'pending') {
+              res = await window.api.getFollowRequests(page);
+            }
+
+            const newUsers = res.users || res || [];
+
+            const limitCount = tab === 'pending' ? 30 : 10;
+            if (newUsers.length < limitCount) {
+              fmState[tab + 'HasMore'] = false;
+            }
+
+            fmState[tab] = [...fmState[tab], ...newUsers];
+            fmState[tab + 'Page']++;
+          } else {
+            fmState[tab + 'HasMore'] = false;
+          }
+        } catch (e) {
+          console.warn('Falha ao carregar conexões:', e);
+          fmState[tab + 'HasMore'] = false;
+        }
+
+        fmState.isLoading = false;
+        renderFollowList();
+      }
+
+      function renderFollowList() {
+        const body = document.getElementById('fmBody');
+        const query = document.getElementById('fmSearch').value.trim().toLowerCase();
+
+        if (fmState.tab === 'pending') {
+          const countEl = document.getElementById('fmCountPending');
+          if (countEl) countEl.textContent = fmState.pending.length + (fmState.pendingHasMore ? '+' : '');
+        }
+
+        const list = fmState[fmState.tab]
+          .filter(u => !query || u.nome.toLowerCase().includes(query) || (u.handle || u.username || '').toLowerCase().includes(query));
+
+        if (!list.length) {
+          if (fmState.isLoading) return; // Mantém o loading
+          body.innerHTML = `
+          <div class="fm-empty">
+            <div class="fm-empty-title">${query ? 'Ninguém encontrado' : (fmState.tab === 'followers' ? 'Ainda sem seguidores' : 'Ainda não segue ninguém')}</div>
+            <div class="fm-empty-sub">${query ? 'Tente outro termo de busca.' : ''}</div>
+          </div>`;
+          return;
+        }
+
+        const myId = (typeof S !== 'undefined' && S.user) ? S.user.id : null;
+
+        body.innerHTML = list.map(u => {
+          const hasImage = u.avatar_url || (u.avatar && u.avatar.length > 2);
+          const imgSrc = u.avatar_url || u.avatar;
+          const avatarHtml = hasImage ? `<img src="${imgSrc}" alt="">` : (u.avatar || (u.nome || '?')[0].toUpperCase());
+
+          return `
+        <div class="fm-row" data-user-id="${u.id}">
+          <div style="display:flex; align-items:center; flex:1; gap:12px; cursor:pointer;" onclick="window.location.href='?u='+encodeURIComponent('${u.handle || u.id}')">
+            <div class="fm-avatar">${avatarHtml}</div>
+            <div class="fm-info">
+              <div class="fm-name">${escapeHtml(u.nome)}</div>
+              <div class="fm-handle">${escapeHtml(u.handle || u.username || '')}</div>
+            </div>
+          </div>
+          ${u.id === myId ? '' : (
+              fmState.tab === 'pending' ? `
+            <div style="display:flex; gap:8px;">
+              <button class="fm-follow-btn btn-accept" onclick="acceptFollowRequest('${u.id}', this)">Aceitar</button>
+              <button class="fm-follow-btn btn-reject" onclick="rejectFollowRequest('${u.id}', this)">Recusar</button>
+            </div>
+            ` : `
+            <button class="fm-follow-btn ${u.is_following ? 'is-following' : ''}" onclick="toggleFollowInModal('${u.id}', this)">
+              ${u.is_following ? 'Seguindo' : 'Seguir'}
+            </button>
+            `
+            )}
+        </div>
+      `;
+        }).join('');
+      }
+
+      // Infinite Scroll
+      document.getElementById('fmBody').addEventListener('scroll', function () {
+        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 30) {
+          loadCurrentTab();
+        }
+      });
+
+      async function toggleFollowInModal(userId, btn) {
+        const isFollowing = btn.classList.contains('is-following');
+        btn.disabled = true;
+
+        try {
+          if (window.api && typeof window.api.followUser === 'function' && typeof window.api.unfollowUser === 'function') {
+            if (isFollowing) await window.api.unfollowUser(userId);
+            else await window.api.followUser(userId);
+          }
+          btn.classList.toggle('is-following', !isFollowing);
+          btn.textContent = !isFollowing ? 'Seguindo' : 'Seguir';
+
+          [...fmState.followers, ...fmState.following].forEach(u => {
+            if (u.id === userId) u.is_following = !isFollowing;
+          });
+        } catch (e) {
+          console.warn('Erro ao alternar follow:', e);
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      async function acceptFollowRequest(userId, btn) {
+        btn.disabled = true;
+        btn.textContent = '...';
+        try {
+          await window.api.acceptFollowRequest(userId);
+          fmState.pending = fmState.pending.filter(u => u.id !== userId);
+          renderFollowList();
+        } catch (e) {
+          console.warn('Erro:', e);
+          btn.disabled = false;
+          btn.textContent = 'Aceitar';
+        }
+      }
+
+      async function rejectFollowRequest(userId, btn) {
+        btn.disabled = true;
+        btn.textContent = '...';
+        try {
+          await window.api.rejectFollowRequest(userId);
+          fmState.pending = fmState.pending.filter(u => u.id !== userId);
+          renderFollowList();
+        } catch (e) {
+          console.warn('Erro:', e);
+          btn.disabled = false;
+          btn.textContent = 'Recusar';
+        }
+      }
+
+      function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.textContent = str || '';
+        return d.innerHTML;
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeFollowModal();
+      });
+    </script>
+</body>
+
+</html>

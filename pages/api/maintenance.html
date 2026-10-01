@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <title>Minsq · Em manutenção</title>
+  <style>html,body{background:#fafafa !important}</style>
+  <link rel="icon" type="image/svg+xml" href="../../assets/logo/favcon.svg" id="mh-favicon-root">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Exo+2:wght@300;400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Exo+2:wght@300;400;500;600;700;800&family=Quicksand:wght@500;600;700&display=swap"></noscript>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      background: #fafafa !important;
+      color: #0a0a0a;
+    }
+    .hero-bg {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow: hidden;
+      background: #fafafa;
+    }
+    .hero-dots {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%);
+    }
+    .hero-dots.show { opacity: 1; }
+
+    .onboarding {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .onboarding-card {
+      width: 100%;
+      max-width: 280px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(8px);
+      animation: fadeInUp 0.9s ease 0.3s forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes fadeInUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .mnt-icon {
+      margin: 0 auto 20px;
+      display: block;
+    }
+    .mnt-loading {
+      width: 48px;
+      height: 48px;
+    }
+
+    .onboarding-title {
+      font-family: 'Exo', sans-serif;
+      font-weight: 600;
+      font-size: 19px;
+      letter-spacing: -0.01em;
+      color: #0a0a0a;
+      margin-bottom: 8px;
+    }
+    .onboarding-subtitle {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 500;
+      font-size: 11.5px;
+      color: #626262;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .mnt-notice {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 500;
+      font-size: 11px;
+      color: #626262;
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.05);
+      padding: 6px 14px;
+      border-radius: 50px;
+      margin-bottom: 24px;
+      letter-spacing: 0.01em;
+    }
+    .mnt-notice span {
+      font-weight: 600;
+      color: #0a0a0a;
+    }
+    .mnt-notice svg {
+      width: 12px;
+      height: 12px;
+      color: #0a0a0a;
+    }
+
+    .mnt-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .continue-btn {
+      width: 100%;
+      height: 38px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Exo 2', sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .btn-primary {
+      background: #0a0a0a;
+      color: #fafafa;
+    }
+    .btn-primary:hover {
+      background: #222222;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #4a4a4a;
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+    .btn-secondary:hover {
+      color: #0a0a0a;
+      background: rgba(0,0,0,0.03);
+      border-color: rgba(0,0,0,0.2);
+    }
+
+    #mntETA {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 10px;
+      color: #838383;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-bg">
+    <div class="hero-dots" id="heroDots"></div>
+    <div class="onboarding">
+      <div class="onboarding-card">
+        
+        <svg class="mnt-icon mnt-loading" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="4" cy="12" r="2" fill="#0a0a0a">
+            <animate id="mntDot1" begin="0;mntDot3.end+0.25s" attributeName="cy" calcMode="spline" dur="0.6s"
+              values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33" />
+          </circle>
+          <circle cx="12" cy="12" r="2" fill="#0a0a0a">
+            <animate begin="mntDot1.begin+0.1s" attributeName="cy" calcMode="spline" dur="0.6s" values="12;6;12"
+              keySplines=".33,.66,.66,1;.33,0,.66,.33" />
+          </circle>
+          <circle cx="20" cy="12" r="2" fill="#0a0a0a">
+            <animate id="mntDot3" begin="mntDot1.begin+0.2s" attributeName="cy" calcMode="spline" dur="0.6s"
+              values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33" />
+          </circle>
+        </svg>
+
+        <h1 class="onboarding-title">Estamos em manutenção</h1>
+        <p class="onboarding-subtitle" id="mntMessage">Melhorando a infraestrutura do Minsq.<br>Agradecemos a paciência.</p>
+
+        <div class="mnt-notice">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3.5 1.5"></path>
+          </svg>
+          <span>Retorno estimado:</span> máximo de 20 min
+        </div>
+
+        <div class="mnt-actions">
+          <button class="continue-btn btn-primary" id="btnAtualizar" onclick="checkMaintenance()">Atualizar página</button>
+          <button class="continue-btn btn-secondary" onclick="window.location.href='status.html'">Verificar status</button>
+        </div>
+
+        <div id="mntETA"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fundo animado (theme branco)
+    const cvs = document.createElement('canvas');
+    const ctx = cvs.getContext('2d', { alpha: false });
+    const dotsEl = document.getElementById('heroDots');
+    let w, h;
+    const spacing = 28;
+    function resize() {
+      w = cvs.width = window.innerWidth;
+      h = cvs.height = window.innerHeight;
+      draw();
+    }
+    function draw() {
+      ctx.fillStyle = '#fafafa';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#e2e2e2'; // Dots levemente mais escuros que o fundo branco
+      const cols = Math.ceil(w / spacing);
+      const rows = Math.ceil(h / spacing);
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          ctx.beginPath();
+          ctx.arc(i * spacing + (spacing / 2), j * spacing + (spacing / 2), 1, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      dotsEl.style.backgroundImage = `url(${cvs.toDataURL()})`;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    setTimeout(() => dotsEl.classList.add('show'), 100);
+
+    // Lógica de Manutenção
+    async function loadMaintenanceInfo() {
+      try {
+        const res = await fetch('/api/status');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.isMaintenanceMode) {
+            if (data.maintMessage) {
+              document.getElementById('mntMessage').innerText = data.maintMessage;
+            }
+            if (data.maintStartTime || data.maintETA) {
+              const startStr = data.maintStartTime ? new Date(data.maintStartTime).toLocaleString('pt-BR') : 'N/A';
+              const etaStr = data.maintETA ? new Date(data.maintETA).toLocaleString('pt-BR') : 'N/A';
+              document.getElementById('mntETA').innerHTML = `Início: ${startStr}<br>Retorno previsto: ${etaStr}`;
+            }
+          } else {
+            localStorage.removeItem('minsq_is_maintenance');
+            window.location.href = '/index.html';
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("Erro ao carregar status", e);
+      }
+    }
+    loadMaintenanceInfo();
+
+    async function checkMaintenance() {
+      const btn = document.getElementById('btnAtualizar');
+      btn.textContent = 'Verificando...';
+      btn.style.opacity = '0.6';
+      btn.style.pointerEvents = 'none';
+
+      try {
+        const res = await fetch('/api/status');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.isMaintenanceMode) {
+            btn.textContent = 'Ainda em manutenção';
+            setTimeout(() => {
+              btn.textContent = 'Atualizar página';
+              btn.style.opacity = '1';
+              btn.style.pointerEvents = 'auto';
+            }, 2000);
+          } else {
+            localStorage.removeItem('minsq_is_maintenance');
+            window.location.href = '/pages/dashboard.html';
+          }
+        }
+      } catch (e) {
+        btn.textContent = 'Servidor offline';
+        setTimeout(() => {
+          btn.textContent = 'Atualizar página';
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = 'auto';
+        }, 2000);
+      }
+    }
+  </script>
+</body>
+</html>

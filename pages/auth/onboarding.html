@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Onboarding</title>
+<style>html,body{background:#0a0a0a !important}</style>
+<link rel="icon" type="image/svg+xml" href="../../assets/logo/favcon.svg" id="mh-favicon-root">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Exo+2:wght@300;400;500;600;700;800&family=Quicksand:wght@500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Exo+2:wght@300;400;500;600;700;800&family=Quicksand:wght@500;600&display=swap"></noscript>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    background: #0a0a0a !important;
+  }
+  .hero-bg {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    background: #0a0a0a;
+  }
+  .hero-dots {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%);
+  }
+  .hero-dots.show {
+    opacity: 1;
+  }
+
+  /* ===== Onboarding: campo de @usuário ===== */
+  .onboarding {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .onboarding-card {
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeInUp 0.9s ease 0.3s forwards;
+  }
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .onboarding-title {
+    font-family: 'Exo', sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: #fafafa;
+    margin-bottom: 5px;
+  }
+  .onboarding-subtitle {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 10.5px;
+    color: #838383;
+    margin-bottom: 16px;
+    line-height: 1.45;
+  }
+  .username-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.035);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 2px 2px 2px 11px;
+    transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  }
+  .username-field:focus-within {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+  }
+  .username-field .at-sign {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: #6e6e6e;
+    transition: color 0.25s ease;
+  }
+  .username-field:focus-within .at-sign {
+    color: #fafafa;
+  }
+  .username-field input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 7px 6px;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 500;
+    font-size: 11.5px;
+    color: #fafafa;
+    letter-spacing: 0.01em;
+  }
+  .username-field input::placeholder {
+    color: #525252;
+  }
+  .username-field .continue-btn {
+    flex-shrink: 0;
+    width: 0;
+    height: 26px;
+    margin-left: 0;
+    border-radius: 7px;
+    border: none;
+    background: #fafafa;
+    color: #0a0a0a;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1), margin-left 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease, transform 0.15s ease;
+  }
+  .username-field .continue-btn.show {
+    width: 26px;
+    margin-left: 5px;
+    opacity: 0.35;
+  }
+  .username-field .continue-btn.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .username-field .continue-btn.active:hover {
+    transform: scale(1.06);
+  }
+  .username-hint {
+    margin-top: 8px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 10px;
+    color: #626262;
+    min-height: 13px;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .username-hint.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .username-hint.taken {
+    color: #d98888;
+  }
+  .username-hint.ok {
+    color: #7ecca6;
+  }
+
+  /* ===== Transição entre etapas ===== */
+  .onboarding-step {
+    transition: opacity 0.25s ease, transform 0.3s ease;
+  }
+  .onboarding-step.leave {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  .onboarding-step.enter {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  /* ===== Etapa: como conheceu a gente ===== */
+  .source-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 2px;
+  }
+  .source-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.02);
+    cursor: pointer;
+    text-align: left;
+  }
+  .source-item:hover {
+    border-color: rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.045);
+  }
+  .source-item.selected {
+    border-color: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.065);
+  }
+  .source-item .icon {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    color: #767676;
+  }
+  .source-item:hover .icon,
+  .source-item.selected .icon {
+    color: #fafafa;
+  }
+  .source-item .label {
+    flex: 1;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: 10.5px;
+    color: #a2a2a2;
+  }
+  .source-item:hover .label,
+  .source-item.selected .label {
+    color: #fafafa;
+  }
+  .source-item .radio {
+    position: relative;
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    transition: border-color 0.2s ease;
+  }
+  .source-item.selected .radio {
+    border-color: #fafafa;
+  }
+  .source-item .radio::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: #fafafa;
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .source-item.selected .radio::after {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .finish-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 8px 0;
+    border: none;
+    border-radius: 8px;
+    background: #fafafa;
+    color: #0a0a0a;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    cursor: pointer;
+    opacity: 0.3;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.15s ease;
+  }
+  .finish-btn.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .finish-btn.active:hover {
+    transform: scale(1.015);
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <section class="hero-bg">
+    <div class="hero-dots show" id="heroDots"></div>
+
+    <div class="onboarding">
+      <div class="onboarding-card">
+
+        <div class="onboarding-step" id="stepUsername">
+          <div class="onboarding-title">Escolha seu @usuário</div>
+          <div class="onboarding-subtitle">É assim que as pessoas vão te encontrar no app.<br>Pode mudar depois, sem problema.</div>
+
+          <div class="username-field">
+            <span class="at-sign">@</span>
+            <input type="text" id="usernameInput" placeholder="seunome" autocomplete="off" spellcheck="false" maxlength="24">
+            <button class="continue-btn" id="continueBtn" type="button" aria-label="Continuar">&gt;</button>
+          </div>
+          <div class="username-hint" id="usernameHint"></div>
+        </div>
+
+        <div class="onboarding-step" id="stepSource" hidden>
+          <div class="onboarding-title">Como você conheceu a gente?</div>
+          <div class="onboarding-subtitle">Isso nos ajuda a entender de onde você veio.</div>
+
+          <div class="source-list" id="sourceGrid">
+            <button class="source-item" type="button" data-source="YouTube">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              <span class="label">YouTube</span>
+              <span class="radio"></span>
+            </button>
+            <button class="source-item" type="button" data-source="Instagram">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.13 1.38A5.86 5.86 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.66.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.66 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.86 5.86 0 0 0-1.38-2.13A5.86 5.86 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.41-10.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>
+              <span class="label">Instagram</span>
+              <span class="radio"></span>
+            </button>
+            <button class="source-item" type="button" data-source="TikTok">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82c-.85-.93-1.32-2.14-1.32-3.4h-3.29v13.6c0 1.62-1.31 2.94-2.93 2.94a2.93 2.93 0 0 1-2.93-2.94 2.93 2.93 0 0 1 2.93-2.93c.31 0 .6.05.88.13v-3.35a6.3 6.3 0 0 0-.88-.06 6.26 6.26 0 0 0-6.26 6.25 6.26 6.26 0 0 0 6.26 6.26 6.26 6.26 0 0 0 6.26-6.26V9.02a8.16 8.16 0 0 0 4.78 1.53V7.26c-1.35 0-2.6-.53-3.5-1.44z"/></svg>
+              <span class="label">TikTok</span>
+              <span class="radio"></span>
+            </button>
+            <button class="source-item" type="button" data-source="X">
+              <svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 2.25h3.31l-7.23 8.26 8.5 11.24h-6.66l-5.22-6.82-5.97 6.82H1.66l7.73-8.84L1.25 2.25h6.83l4.72 6.23zM17.08 19.77h1.83L7.08 4.13H5.12z"/></svg>
+              <span class="label">X</span>
+              <span class="radio"></span>
+            </button>
+            <button class="source-item" type="button" data-source="GitHub">
+              <svg class="icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+              <span class="label">GitHub</span>
+              <span class="radio"></span>
+            </button>
+            <button class="source-item" type="button" data-source="Outros">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="12" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="19" cy="12" r="1.4"></circle></svg>
+              <span class="label">Outros</span>
+              <span class="radio"></span>
+            </button>
+          </div>
+
+          <button class="finish-btn" id="finishBtn" type="button">Continuar</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+<script>
+    class ScatterPointGenerator {
+      constructor(width, height, minDistance, maxAttempts) {
+        this.width = width;
+        this.height = height;
+        this.minDistance = minDistance;
+        this.maxAttempts = maxAttempts;
+        this.cellSize = minDistance * Math.SQRT1_2;
+        this.cellMap = new Map();
+      }
+
+      _cellKey(x, y) {
+        const cx = Math.floor(x / this.cellSize);
+        const cy = Math.floor(y / this.cellSize);
+        return `${cx}:${cy}`;
+      }
+
+      _neighborsOf(x, y) {
+        const cx = Math.floor(x / this.cellSize);
+        const cy = Math.floor(y / this.cellSize);
+        const found = [];
+        for (let ox = -2; ox <= 2; ox++) {
+          for (let oy = -2; oy <= 2; oy++) {
+            const key = `${cx + ox}:${cy + oy}`;
+            const entry = this.cellMap.get(key);
+            if (entry) found.push(entry);
+          }
+        }
+        return found;
+      }
+
+      _fitsHere(x, y) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) return false;
+        return this._neighborsOf(x, y).every(([nx, ny]) => {
+          const dx = nx - x;
+          const dy = ny - y;
+          return (dx * dx + dy * dy) >= this.minDistance * this.minDistance;
+        });
+      }
+
+      _place(x, y) {
+        const point = [x, y];
+        this.cellMap.set(this._cellKey(x, y), point);
+        return point;
+      }
+
+      run() {
+        const accepted = [];
+        const frontier = [];
+
+        const seed = this._place(Math.random() * this.width, Math.random() * this.height);
+        accepted.push(seed);
+        frontier.push(seed);
+
+        while (frontier.length) {
+          const pick = Math.floor(Math.random() * frontier.length);
+          const [ox, oy] = frontier[pick];
+          let placed = false;
+
+          for (let attempt = 0; attempt < this.maxAttempts; attempt++) {
+            const theta = Math.random() * Math.PI * 2;
+            const radius = this.minDistance * (1 + Math.random());
+            const px = ox + Math.cos(theta) * radius;
+            const py = oy + Math.sin(theta) * radius;
+
+            if (this._fitsHere(px, py)) {
+              const point = this._place(px, py);
+              accepted.push(point);
+              frontier.push(point);
+              placed = true;
+              break;
+            }
+          }
+
+          if (!placed) frontier.splice(pick, 1);
+        }
+
+        return accepted;
+      }
+    }
+
+    // Reescala 'value' de [oldMin, oldMax] para [newMin, newMax].
+    function remapValue(value, oldMin, oldMax, newMin, newMax) {
+      const t = (value - oldMin) / (oldMax - oldMin);
+      return newMin + t * (newMax - newMin);
+    }
+
+    /*
+     * Função de ruído 3D usada para variar a posição, a forma e a cor das
+     * partículas ao longo do tempo, criando o movimento orgânico do efeito.
+     */
+    const GLSL_NOISE = `
+    float hashNoiseSeed(vec3 p) {
+      p = fract(p * vec3(0.1031, 0.1030, 0.0973));
+      p += dot(p, p.yzx + 33.33);
+      return fract((p.x + p.y) * p.z);
+    }
+
+    float valueNoise3D(vec3 p) {
+      vec3 cellId = floor(p);
+      vec3 localPos = fract(p);
+      vec3 curve = localPos * localPos * (3.0 - 2.0 * localPos);
+
+      float corner000 = hashNoiseSeed(cellId + vec3(0.0, 0.0, 0.0));
+      float corner100 = hashNoiseSeed(cellId + vec3(1.0, 0.0, 0.0));
+      float corner010 = hashNoiseSeed(cellId + vec3(0.0, 1.0, 0.0));
+      float corner110 = hashNoiseSeed(cellId + vec3(1.0, 1.0, 0.0));
+      float corner001 = hashNoiseSeed(cellId + vec3(0.0, 0.0, 1.0));
+      float corner101 = hashNoiseSeed(cellId + vec3(1.0, 0.0, 1.0));
+      float corner011 = hashNoiseSeed(cellId + vec3(0.0, 1.0, 1.0));
+      float corner111 = hashNoiseSeed(cellId + vec3(1.0, 1.0, 1.0));
+
+      float edgeX00 = mix(corner000, corner100, curve.x);
+      float edgeX10 = mix(corner010, corner110, curve.x);
+      float edgeX01 = mix(corner001, corner101, curve.x);
+      float edgeX11 = mix(corner011, corner111, curve.x);
+
+      float faceY0 = mix(edgeX00, edgeX10, curve.y);
+      float faceY1 = mix(edgeX01, edgeX11, curve.y);
+
+      float sample3D = mix(faceY0, faceY1, curve.z);
+
+      return sample3D * 2.0 - 1.0;
+    }
+    `;
+
+    // Shader de simulação: roda num quad de tela cheia e escreve a próxima
+    // posição/escala/velocidade de cada partícula numa render target.
+    const SIM_VERTEX = `
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+
+    function createSimulationShader(gridSize) {
+      return `
+        precision highp float;
+        uniform sampler2D uStateMap;
+        uniform sampler2D uOriginMap;
+        uniform vec2 uPulseCenter;
+        uniform float uElapsedTime;
+        uniform float uDeltaTime;
+        uniform float uPulseRadius;
+        uniform float uPulseBandWidth;
+        uniform float uPulseBandWidthInner;
+        uniform float uPulseDisplaceStrength;
+
+        ${GLSL_NOISE}
+
+        vec2 wanderOffset(vec2 originPos, float t) {
+          float driftNoiseX = valueNoise3D(vec3(originPos * 4.0 + vec2(88.494, 32.4397), t * 0.35));
+          float driftNoiseY = valueNoise3D(vec3(originPos * 4.0 + vec2(50.904, 120.947), t * 0.35));
+          float fineNoiseX  = valueNoise3D(vec3(originPos * 20.0 + vec2(18.4924, 72.9744), t * 0.5));
+          float fineNoiseY  = valueNoise3D(vec3(originPos * 20.0 + vec2(50.904, 120.947), t * 0.5));
+
+          vec2 drift = vec2(driftNoiseX, driftNoiseY) * 0.03;
+          drift += vec2(fineNoiseX, fineNoiseY) * 0.005;
+          return drift;
+        }
+
+        float pulseMask(vec2 originPos, float pulseDist, float pulseDistJittered, float bandCore) {
+          float bandOuter = smoothstep(uPulseRadius - (uPulseBandWidth * 2.0), uPulseRadius, pulseDist)
+                           - smoothstep(uPulseRadius, uPulseRadius + uPulseBandWidth, pulseDistJittered);
+          bandOuter = pow(bandOuter, 2.0);
+          return bandOuter;
+        }
+
+        void main() {
+          vec2 texelUV = gl_FragCoord.xy / vec2(${gridSize.toFixed(1)}, ${gridSize.toFixed(1)});
+          vec4 stateSample = texture2D(uStateMap, texelUV);
+
+          float pointScale = stateSample.z;
+          float pointVelocity = stateSample.w;
+          vec2 originPos = texture2D(uOriginMap, texelUV).xy;
+
+          float t = uElapsedTime * 0.5;
+          vec2 offsetPos = stateSample.xy * 0.8;
+
+          float pulseDist = distance(originPos, uPulseCenter);
+          float jitterNoise = valueNoise3D(vec3(originPos * 0.2 + vec2(18.4924, 72.9744), t * 0.5));
+          float pulseDistJittered = distance(originPos + (jitterNoise * 0.005), uPulseCenter);
+
+          float bandInner = smoothstep(uPulseRadius - (uPulseBandWidthInner * 2.0), uPulseRadius, pulseDist)
+                           - smoothstep(uPulseRadius, uPulseRadius + uPulseBandWidthInner, pulseDistJittered);
+          bandInner = pow(bandInner, 3.0);
+
+          float bandCore = smoothstep(uPulseRadius + uPulseBandWidthInner, uPulseRadius, pulseDist);
+
+          float intensity = pulseMask(originPos, pulseDist, pulseDistJittered, bandCore);
+          intensity += bandInner * 3.0;
+          intensity += bandCore * 0.4;
+          intensity += valueNoise3D(vec3(originPos * 30.0 + vec2(11.4924, 12.9744), t * 0.5)) * bandCore * 0.5;
+
+          float radialNoise = valueNoise3D(vec3(originPos * 2.0 + vec2(18.4924, 72.9744), t * 0.5));
+          intensity += pow((radialNoise + 1.5) * 0.5, 2.0) * 0.12;
+
+          vec2 drift = wanderOffset(originPos, t);
+          drift.x += sin((originPos.x * 20.0) + (t * 4.0)) * 0.02 * clamp(pulseDist, 0.0, 1.0);
+          drift.y += cos((originPos.y * 20.0) + (t * 3.0)) * 0.02 * clamp(pulseDist, 0.0, 1.0);
+
+          offsetPos -= (uPulseCenter - (originPos + drift)) * pow(bandInner, 0.75) * uPulseDisplaceStrength;
+
+          pointScale += (intensity - pointScale) * 0.2;
+
+          vec2 nextPos = originPos + drift + (offsetPos * 0.25);
+
+          pointVelocity = pointVelocity * 0.5 + pointScale * 0.25;
+
+          gl_FragColor = vec4(nextPos, pointScale, pointVelocity);
+        }
+      `;
+    }
+
+    // Shader de render: cada partícula vira um quadrado arredondado com
+    // gradiente de cor entre três tons e leve rotação orientada pelo ruído.
+    const RENDER_VERTEX = `
+      precision highp float;
+      attribute vec4 randomSeeds;
+
+      uniform sampler2D uStateMap;
+      uniform float uPointSizeFactor;
+      uniform float uDevicePixelRatio;
+
+      varying vec4 vRandomSeeds;
+      varying float vPointVelocity;
+      varying vec2 vWorldPos;
+      varying vec2 vClipPos;
+      varying float vPointScale;
+
+      void main() {
+        vec4 stateSample = texture2D(uStateMap, uv);
+        vRandomSeeds = randomSeeds;
+        vPointVelocity = stateSample.w;
+        vPointScale = stateSample.z;
+        vWorldPos = stateSample.xy;
+
+        vec4 viewSpace = modelViewMatrix * vec4(vWorldPos, 0.0, 1.0);
+        gl_Position = projectionMatrix * viewSpace;
+        vClipPos = gl_Position.xy;
+
+        gl_PointSize = vPointScale * 7.0 * uDevicePixelRatio * 0.5 * uPointSizeFactor;
+      }
+    `;
+
+    const RENDER_FRAGMENT = `
+      precision highp float;
+
+      varying vec4 vRandomSeeds;
+      varying vec2 vClipPos;
+      varying vec2 vWorldPos;
+      varying float vPointScale;
+      varying float vPointVelocity;
+
+      uniform vec3 uPaletteA;
+      uniform vec3 uPaletteB;
+      uniform vec3 uPaletteC;
+      uniform vec2 uPulseCenter;
+      uniform vec2 uResolution;
+      uniform float uOpacity;
+      uniform float uElapsedTime;
+      uniform int uPaletteMode;
+
+      ${GLSL_NOISE}
+
+      float roundedBoxSDF(in vec2 p, in vec2 halfSize, in vec4 cornerRadius) {
+        cornerRadius.xy = (p.x > 0.0) ? cornerRadius.xy : cornerRadius.zw;
+        cornerRadius.x  = (p.y > 0.0) ? cornerRadius.x  : cornerRadius.y;
+        vec2 q = abs(p) - halfSize + cornerRadius.x;
+        return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - cornerRadius.x;
+      }
+
+      vec2 rotate2D(vec2 v, float angle) {
+        float s = sin(angle);
+        float c = cos(angle);
+        return mat2(c, s, -s, c) * v;
+      }
+
+      vec3 tricolorGradient(float progress) {
+        float split = 0.8;
+        vec3 lowerHalf = mix(uPaletteA, uPaletteB, progress / split);
+        vec3 upperHalf = mix(uPaletteB, uPaletteC, (progress - split) / (1.0 - split));
+        return mix(lowerHalf, upperHalf, step(split, progress));
+      }
+
+      void main() {
+        const float edgeSoftness = 0.2;
+        float aspect = uResolution.x / uResolution.y;
+
+        float spinNoise = valueNoise3D(vec3(vWorldPos * 10.0 + vec2(18.4924, 72.9744), uElapsedTime * 0.85));
+        float tintNoise = valueNoise3D(vec3(vWorldPos * 2.0 + vec2(74.664, 91.556), uElapsedTime * 0.5));
+        tintNoise = tintNoise * 0.5 + 0.5;
+
+        float pulseAngle = atan(vWorldPos.y - uPulseCenter.y, vWorldPos.x - uPulseCenter.x);
+
+        vec2 pointUV = gl_PointCoord.xy - vec2(0.5);
+        pointUV.y = -pointUV.y;
+        pointUV = rotate2D(pointUV, spinNoise * 0.5 - pulseAngle);
+
+        float colorProgress = smoothstep(0.0, 0.75, pow(tintNoise, 2.0));
+        vec3 particleColor = tricolorGradient(colorProgress);
+
+        float edgeDist = length(pointUV);
+        float baseRadius = 0.5;
+        float edgeMask = clamp(smoothstep(baseRadius + edgeSoftness + 0.0001, baseRadius - edgeSoftness, edgeDist), 0.0, 1.0);
+
+        float shapeMask = smoothstep(0.1, 0.0, roundedBoxSDF(pointUV, vec2(0.5, 0.2), vec4(0.25)));
+
+        float pointAlpha = uOpacity * shapeMask * smoothstep(0.1, 0.2, vPointScale);
+        if (pointAlpha < 0.01) discard;
+
+        particleColor = clamp(particleColor, 0.0, 1.0);
+        particleColor = mix(particleColor, particleColor * clamp(vPointVelocity, 0.0, 1.0), float(uPaletteMode));
+
+        gl_FragColor = vec4(particleColor, clamp(pointAlpha, 0.0, 1.0));
+      }
+    `;
+
+    /*
+     * Sistema de partículas: simula a posição, a escala e a velocidade de
+     * milhares de pontos a cada frame e desenha o resultado na tela, dentro
+     * de um container específico (fundo transparente, para sobrepor o dark bg).
+     */
+    class ParticleSystem {
+      static DEFAULTS = {
+        density: 170,
+        pointSizeFactor: 0.75,
+        pulseBandWidth: 0.15,
+        pulseBandWidthInner: 0.05,
+        pulseDisplaceStrength: 0.15,
+        paletteMode: 0, // 0 = mantém as cores cheias (branco/cinza) sobre fundo escuro
+        gridResolution: 220,
+        sampleArea: 460,
+        scatterAttempts: 20,
+        colors: {
+          a: '#e6e6e6', // cinza quase branco
+          b: '#ffffff', // branco
+          c: '#3a3a3a', // cinza escuro
+        },
+      };
+
+      constructor(container, options = {}) {
+        this.container = container;
+        Object.assign(this, ParticleSystem.DEFAULTS, options);
+        this.colors = Object.assign({}, ParticleSystem.DEFAULTS.colors, options.colors || {});
+        this.palette = {
+          a: new THREE.Color(this.colors.a),
+          b: new THREE.Color(this.colors.b),
+          c: new THREE.Color(this.colors.c),
+        };
+
+        this.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        this.frameClock = new THREE.Clock();
+        this.elapsedTime = 0;
+        this.previousElapsedTime = 0;
+        this.pulseCenter = new THREE.Vector2(0, 0);
+        this.pointerTarget = new THREE.Vector2(0, 0);
+        this.pointerNDC = new THREE.Vector2(10, 10); // fora da tela até o usuário mover
+        this.pointerInsideContainer = false;
+        this.pointerActive = false;
+        this.pointerWorldPoint = new THREE.Vector3();
+        this.hasSimulatedOnce = false;
+        this.running = false;
+        this.animationId = null;
+
+        this._buildRenderer();
+        this._buildCamera();
+        this._buildScene();
+        this._buildParticleData();
+        this._buildSimulationPass();
+        this._buildPointsMesh();
+        this._bindEvents();
+
+        this.renderFrame = this.renderFrame.bind(this);
+      }
+
+      _buildRenderer() {
+        this.canvas = document.createElement('canvas');
+        this.container.appendChild(this.canvas);
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance',
+          precision: 'highp',
+        });
+        this.renderer.setClearColor(0x000000, 0);
+        this.handleResize();
+        this.renderer.setPixelRatio(this.devicePixelRatio);
+      }
+
+      _buildCamera() {
+        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+        this.camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 1000);
+        this.camera.position.z = 3.1;
+      }
+
+      _buildScene() {
+        this.scene = new THREE.Scene();
+        this.pointerPlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(12.5, 12.5),
+          new THREE.MeshBasicMaterial({ visible: false })
+        );
+        this.scene.add(this.pointerPlane);
+        this.pointerRaycaster = new THREE.Raycaster();
+      }
+
+      _buildParticleData() {
+        const area = this.sampleArea;
+        const minDistance = remapValue(this.density, 0, 300, 10, 2);
+        const cloud = new ScatterPointGenerator(area, area, minDistance, this.scatterAttempts).run();
+
+        this.texelCount = this.gridResolution * this.gridResolution;
+        this.seedPositions = [];
+        const half = area / 2;
+        for (let i = 0; i < cloud.length && i < this.texelCount; i++) {
+          this.seedPositions.push(cloud[i][0] - half, cloud[i][1] - half);
+        }
+        this.particleCount = this.seedPositions.length / 2;
+
+        const originArray = new Float32Array(this.texelCount * 4);
+        for (let i = 0; i < this.particleCount; i++) {
+          const base = i * 4;
+          originArray[base] = this.seedPositions[i * 2] / half;
+          originArray[base + 1] = this.seedPositions[i * 2 + 1] / half;
+          originArray[base + 2] = 0;
+          originArray[base + 3] = 0;
+        }
+
+        this.originTexture = new THREE.DataTexture(
+          originArray, this.gridResolution, this.gridResolution, THREE.RGBAFormat, THREE.FloatType
+        );
+        this.originTexture.needsUpdate = true;
+      }
+
+      _buildSimulationPass() {
+        const bufferOptions = {
+          wrapS: THREE.ClampToEdgeWrapping,
+          wrapT: THREE.ClampToEdgeWrapping,
+          minFilter: THREE.NearestFilter,
+          magFilter: THREE.NearestFilter,
+          format: THREE.RGBAFormat,
+          type: THREE.FloatType,
+          depthBuffer: false,
+          stencilBuffer: false,
+        };
+        this.simBufferA = new THREE.WebGLRenderTarget(this.gridResolution, this.gridResolution, bufferOptions);
+        this.simBufferB = new THREE.WebGLRenderTarget(this.gridResolution, this.gridResolution, bufferOptions);
+
+        this.simPassScene = new THREE.Scene();
+        this.simPassCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        this.simPassMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            uStateMap: { value: this.originTexture },
+            uOriginMap: { value: this.originTexture },
+            uPulseCenter: { value: new THREE.Vector2(0, 0) },
+            uPulseRadius: { value: 0.2 },
+            uDeltaTime: { value: 0 },
+            uPulseBandWidth: { value: this.pulseBandWidth },
+            uPulseBandWidthInner: { value: this.pulseBandWidthInner },
+            uPulseDisplaceStrength: { value: this.pulseDisplaceStrength },
+            uElapsedTime: { value: 0 },
+          },
+          vertexShader: SIM_VERTEX,
+          fragmentShader: createSimulationShader(this.gridResolution),
+        });
+
+        const fullScreenQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.simPassMaterial);
+        this.simPassScene.add(fullScreenQuad);
+      }
+
+      _buildPointsMesh() {
+        const geometry = new THREE.BufferGeometry();
+        const uv = new Float32Array(this.particleCount * 2);
+        const positions = new Float32Array(this.particleCount * 3);
+        const randomSeeds = new Float32Array(this.particleCount * 4);
+
+        for (let i = 0; i < this.particleCount; i++) {
+          const gx = i % this.gridResolution;
+          const gy = Math.floor(i / this.gridResolution);
+          uv[i * 2] = gx / this.gridResolution;
+          uv[i * 2 + 1] = gy / this.gridResolution;
+          randomSeeds[i * 4] = Math.random();
+          randomSeeds[i * 4 + 1] = Math.random();
+          randomSeeds[i * 4 + 2] = Math.random();
+          randomSeeds[i * 4 + 3] = Math.random();
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+        geometry.setAttribute('randomSeeds', new THREE.BufferAttribute(randomSeeds, 4));
+
+        this.pointSizePixels = this._computePointSizePixels();
+
+        this.pointsMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            uStateMap: { value: this.originTexture },
+            uElapsedTime: { value: 0 },
+            uPaletteA: { value: this.palette.a },
+            uPaletteB: { value: this.palette.b },
+            uPaletteC: { value: this.palette.c },
+            uOpacity: { value: 1 },
+            uPulseCenter: { value: new THREE.Vector2(0, 0) },
+            uResolution: { value: new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight) },
+            uPointSizeFactor: { value: this.pointSizePixels },
+            uDevicePixelRatio: { value: this.devicePixelRatio },
+            uPaletteMode: { value: this.paletteMode },
+          },
+          vertexShader: RENDER_VERTEX,
+          fragmentShader: RENDER_FRAGMENT,
+          transparent: true,
+          depthTest: false,
+          depthWrite: false,
+        });
+
+        this.particlePoints = new THREE.Points(geometry, this.pointsMaterial);
+        this.particlePoints.scale.set(5, 5, 5);
+        this.scene.add(this.particlePoints);
+      }
+
+      _computePointSizePixels() {
+        return (this.canvas.clientWidth / this.devicePixelRatio / 2000) * this.pointSizeFactor;
+      }
+
+      _bindEvents() {
+        let resizeTimer = null;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => this.handleResize(), 150);
+        });
+
+        // Coordenadas do ponteiro relativas a ESTE container (não à janela
+        // inteira), para que cada instância reaja só quando o mouse está
+        // sobre a sua própria seção.
+        const trackPointer = (clientX, clientY) => {
+          const rect = this.container.getBoundingClientRect();
+          this.pointerInsideContainer = (
+            clientX >= rect.left && clientX <= rect.right &&
+            clientY >= rect.top && clientY <= rect.bottom
+          );
+          this.pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+          this.pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+        };
+
+        window.addEventListener('mousemove', (e) => trackPointer(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+          if (e.touches.length > 0) trackPointer(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+      }
+
+      handleResize() {
+        const w = this.container.clientWidth;
+        const h = this.container.clientHeight;
+        if (!w || !h) return;
+        this.canvas.width = w;
+        this.canvas.height = h;
+        this.renderer.setSize(w, h, false);
+
+        if (this.camera) {
+          this.camera.aspect = w / h;
+          this.camera.updateProjectionMatrix();
+        }
+        if (this.pointsMaterial) {
+          this.pointsMaterial.uniforms.uResolution.value.set(w, h);
+        }
+      }
+
+      _updatePointerTarget() {
+        const wanderX = Math.sin(this.elapsedTime * 0.66 + 94.234) * 0.2;
+        const wanderY = Math.cos(this.elapsedTime * 0.75 + 21.028) * 0.1;
+        this.pointerTarget.set(wanderX, wanderY);
+
+        this.pointerRaycaster.setFromCamera(this.pointerNDC, this.camera);
+        const hits = this.pointerRaycaster.intersectObject(this.pointerPlane);
+        this.pointerActive = this.pointerInsideContainer && hits.length > 0;
+
+        if (this.pointerActive) {
+          this.pointerWorldPoint.copy(hits[0].point);
+          this.pointerTarget.set(
+            this.pointerWorldPoint.x * 0.175 + wanderX * 0.5,
+            this.pointerWorldPoint.y * 0.175 + wanderY * 0.5
+          );
+        }
+
+        const easing = this.pointerActive ? 0.02 : 0.01;
+        this.pulseCenter.lerp(this.pointerTarget, easing);
+      }
+
+      stepSimulation(dt) {
+        this._updatePointerTarget();
+        this.pointSizePixels = this._computePointSizePixels();
+
+        const elapsed = this.frameClock.getElapsedTime();
+        const sim = this.simPassMaterial.uniforms;
+        sim.uStateMap.value = this.hasSimulatedOnce ? this.simBufferA.texture : this.originTexture;
+        sim.uElapsedTime.value = elapsed;
+        sim.uDeltaTime.value = dt;
+        sim.uPulseRadius.value = 0.175 + Math.sin(this.elapsedTime) * 0.03 + Math.cos(this.elapsedTime * 3) * 0.02;
+        sim.uPulseCenter.value = this.pulseCenter;
+        sim.uPulseBandWidth.value = this.pulseBandWidth;
+        sim.uPulseBandWidthInner.value = this.pulseBandWidthInner;
+        sim.uPulseDisplaceStrength.value = this.pulseDisplaceStrength;
+
+        this.renderer.setRenderTarget(this.simBufferB);
+        this.renderer.render(this.simPassScene, this.simPassCamera);
+        this.renderer.setRenderTarget(null);
+
+        const pts = this.pointsMaterial.uniforms;
+        pts.uStateMap.value = this.hasSimulatedOnce ? this.simBufferB.texture : this.originTexture;
+        pts.uElapsedTime.value = elapsed;
+        pts.uPulseCenter.value = this.pulseCenter;
+        pts.uPointSizeFactor.value = this.pointSizePixels;
+
+        [this.simBufferA, this.simBufferB] = [this.simBufferB, this.simBufferA];
+        this.hasSimulatedOnce = true;
+      }
+
+      renderFrame() {
+        if (!this.running) return;
+        this.animationId = requestAnimationFrame(this.renderFrame);
+
+        const now = this.frameClock.getElapsedTime();
+        const dt = now - this.previousElapsedTime;
+        this.previousElapsedTime = now;
+        this.elapsedTime += dt;
+
+        this.stepSimulation(dt);
+
+        this.renderer.setRenderTarget(null);
+        this.renderer.autoClear = false;
+        this.renderer.clear();
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      start() {
+        if (this.running) return;
+        this.running = true;
+        this.previousElapsedTime = this.frameClock.getElapsedTime();
+        this.renderFrame();
+      }
+
+      stop() {
+        this.running = false;
+        if (this.animationId) cancelAnimationFrame(this.animationId);
+      }
+    }
+
+    // Cria uma instância do campo de partículas dentro de um container, só
+    // rodando a animação enquanto a seção correspondente está visível.
+    function initOrganicParticles(containerId, sectionSelector, overrides) {
+      const container = document.getElementById(containerId);
+      if (!container || typeof THREE === 'undefined') return null;
+
+      const system = new ParticleSystem(container, overrides || {});
+
+      const section = document.querySelector(sectionSelector);
+      if ('IntersectionObserver' in window && section) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) system.start();
+            else system.stop();
+          });
+        }, { threshold: 0.05 });
+        observer.observe(section);
+      } else {
+        system.start();
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) system.stop();
+        else if (!section || section.getBoundingClientRect().top < window.innerHeight) system.start();
+      });
+
+      return system;
+    }
+
+    initOrganicParticles('heroDots', '.hero-bg', {
+      density: 170,
+      gridResolution: 220,
+      sampleArea: 460,
+    });
+
+    // ===== Campo de @usuário (onboarding) =====
+    (function () {
+      const input = document.getElementById('usernameInput');
+      const btn = document.getElementById('continueBtn');
+      const hint = document.getElementById('usernameHint');
+
+      // Troque por uma checagem real na sua API (ex.: fetch por debounce)
+      const takenUsernames = ['admin', 'minsq', 'suporte', 'teste'];
+
+      function setHint(message, kind) {
+        hint.textContent = message || '';
+        hint.className = message ? 'username-hint show ' + kind : 'username-hint';
+      }
+
+      let checkTimeout;
+
+      input.addEventListener('input', () => {
+        // remove espaços, converte pra minúscula em tempo real e permite apenas letras, numeros, _ e .
+        input.value = input.value.replace(/\s/g, '').replace(/[^a-zA-Z0-9_.]/g, '').toLowerCase();
+        const clean = input.value;
+        
+        btn.classList.remove('show', 'active');
+        setHint('', '');
+        
+        const authUserStr = localStorage.getItem('minsq_auth_user');
+        let isAdmin = false;
+        if (authUserStr) {
+          try {
+            const userObj = JSON.parse(authUserStr);
+            isAdmin = userObj.role === 'admin' || userObj.role === 'dev';
+          } catch(e){}
+        }
+        const minLen = isAdmin ? 1 : 3;
+
+        if (clean.length < minLen) {
+          if (clean.length > 0) setHint(`Mínimo ${minLen} caracteres`, 'taken');
+          return;
+        }
+        
+        clearTimeout(checkTimeout);
+        checkTimeout = setTimeout(async () => {
+          try {
+            const res = await window.api.checkHandle(clean);
+            if (res.available) {
+              setHint('@' + clean + ' está disponível', 'ok');
+              btn.classList.add('show', 'active');
+            } else {
+              setHint(res.error || 'Esse @usuário já está em uso', 'taken');
+            }
+          } catch (err) {
+            setHint('Erro ao verificar handle', 'taken');
+          }
+        }, 300);
+      });
+
+      function submitUsername() {
+        if (!btn.classList.contains('active')) return;
+        window.onboardingHandle = input.value.trim().toLowerCase();
+        goToStep('stepSource');
+      }
+
+      btn.addEventListener('click', submitUsername);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitUsername();
+      });
+    })();
+
+    // ===== Transição entre etapas do onboarding =====
+    function goToStep(nextId) {
+      const current = document.querySelector('.onboarding-step:not([hidden])');
+      const next = document.getElementById(nextId);
+      if (!current || !next || current === next) return;
+
+      current.classList.add('leave');
+      setTimeout(() => {
+        current.hidden = true;
+        current.classList.remove('leave');
+
+        next.hidden = false;
+        next.classList.add('enter');
+        requestAnimationFrame(() => requestAnimationFrame(() => next.classList.remove('enter')));
+      }, 250);
+    }
+
+    // ===== Etapa: como conheceu a gente =====
+    (function () {
+      const grid = document.getElementById('sourceGrid');
+      const finishBtn = document.getElementById('finishBtn');
+      let selected = null;
+
+      grid.addEventListener('click', (e) => {
+        const item = e.target.closest('.source-item');
+        if (!item) return;
+        grid.querySelectorAll('.source-item').forEach(c => c.classList.remove('selected'));
+        item.classList.add('selected');
+        selected = item.dataset.source;
+        finishBtn.classList.add('active');
+      });
+
+      finishBtn.addEventListener('click', async () => {
+        if (!selected) return;
+        finishBtn.disabled = true;
+        finishBtn.style.opacity = '0.5';
+        finishBtn.textContent = 'Configurando sua conta...';
+        try {
+          await window.api.completeOnboarding(window.onboardingHandle, selected);
+          sessionStorage.removeItem('minsq_force_onboarding');
+          sessionStorage.removeItem('minsq_onboarding_token');
+          if (window.top !== window) {
+            window.top.postMessage({ type: 'MINSQ_NAVIGATE', url: '/pages/dashboard.html' }, '*');
+          } else {
+            window.location.replace('/pages/dashboard.html');
+          }
+        } catch (err) {
+          alert('Erro ao finalizar o cadastro: ' + err.message);
+          finishBtn.disabled = false;
+          finishBtn.style.opacity = '1';
+          finishBtn.textContent = 'Mergulhar no Mohi';
+        }
+      });
+    })();
+
+</script>
+<script src="/pages/api-client.js"></script>
+<script src="/pages/shared.js"></script>
+</body>
+</html>

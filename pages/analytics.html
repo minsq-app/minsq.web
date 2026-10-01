@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <script>try{if(localStorage.getItem('minsq_is_maintenance')==='true'){document.documentElement.style.display='none';window.top.location.replace('/pages/api/maintenance.html');}}catch(e){}</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics — standalone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ════════════════════════════════════════════════
+     1) BASE DO DESIGN SYSTEM
+     (se você já tem essas variáveis/classes no seu
+     projeto, pode pular e só usar a seção 2)
+     ════════════════════════════════════════════════ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #070707;
+      --s1: #0d0d0d;
+      --b1: rgba(255, 255, 255, .04);
+      --b2: rgba(255, 255, 255, .08);
+      --t1: #f0f0f0;
+      --t4: #444;
+      --up: #b8e0b8;
+      --dn: #888;
+      --r16: 16px;
+      --fm: 'Exo 2', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    html,
+    body {
+      background: var(--bg);
+      color: var(--t1);
+      font-family: var(--fm);
+    }
+
+    body {
+      padding: 32px 32px 32px 0;
+    }
+
+    body>.content {
+      padding-left: 32px;
+    }
+
+    .content {
+      width: 100%;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* stagger de entrada dos cards */
+    .stg>* {
+      opacity: 0;
+      animation: fadeUp .3s ease forwards;
+    }
+
+    .stg>*:nth-child(1) {
+      animation-delay: .03s;
+    }
+
+    .stg>*:nth-child(2) {
+      animation-delay: .07s;
+    }
+
+    .stg>*:nth-child(3) {
+      animation-delay: .11s;
+    }
+
+    .stg>*:nth-child(4) {
+      animation-delay: .15s;
+    }
+
+    .stg>*:nth-child(5) {
+      animation-delay: .19s;
+    }
+
+    .stg>*:nth-child(6) {
+      animation-delay: .23s;
+    }
+
+    .stg>*:nth-child(7) {
+      animation-delay: .27s;
+    }
+
+    .card {
+      position: relative;
+      background: var(--s1);
+      border: 1px solid var(--b1);
+      border-radius: var(--r16);
+      padding: 18px;
+      transition: border-color .2s;
+    }
+
+    .card:hover {
+      border-color: var(--b2);
+    }
+
+    .card span[id^="az"] {
+      transition: color 0.15s ease;
+    }
+
+    .sh {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .st {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -.3px;
+      color: var(--t1);
+    }
+
+    .delta {
+      font-size: 10px;
+      font-family: var(--mono);
+      margin-top: 4px;
+    }
+
+    .delta-up {
+      color: var(--up);
+    }
+
+    .delta-dn {
+      color: var(--dn);
+    }
+
+    /* ════════════════════════════════════════════════
+     2) CSS ESPECÍFICO DA ABA ANALYTICS
+     ════════════════════════════════════════════════ */
+    .az-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .az-chart {
+      width: 100%;
+      height: 110px;
+      display: block;
+      margin-top: 14px;
+    }
+
+    .az-empty {
+      height: 110px;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-family: var(--mono);
+      color: var(--t4);
+      text-align: center;
+      padding: 0 16px;
+      line-height: 1.5;
+    }
+
+    .card-double {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 600px) {
+      .az-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-double {
+        grid-column: span 1;
+      }
+
+    }
+
+    /* Ocultar barra de rolagem da direita mantendo a funcionalidade */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    html,
+    body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+      /* ══════════ TOPBAR (embutida nesta página) ══════════ */
+    @keyframes mhTopbarSlideDown {
+      from { transform: translate3d(0, -100%, 0); opacity: 0; }
+      to { transform: translate3d(0, 0, 0); opacity: 1; }
+    }
+
+    .topbar {
+      animation: mhTopbarSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+      transition: background 0.5s ease, border-bottom-color 0.5s ease;
+      background: rgba(7, 7, 7, .82) !important;
+      border: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, .04) !important;
+      box-shadow: none !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border-radius: 0 !important;
+      clip-path: none !important;
+      margin: 0 !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      height: 52px !important;
+      padding: 0 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 16px !important;
+      overflow: visible !important;
+      left: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 52 !important;
+    }
+
+    .tb-path {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-family: 'DM Mono', monospace !important;
+      font-size: 12px !important;
+      letter-spacing: .2px !important;
+    }
+
+    .tb-root {
+      color: #888 !important;
+      font-weight: 500 !important;
+    }
+
+    .tb-sep {
+      color: rgba(255, 255, 255, .22) !important;
+    }
+
+    .tb-cur {
+      color: #f0f0f0 !important;
+    }
+
+    .tb-r {
+      background: transparent !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin-left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+
+    </style>
+</head>
+
+<body>
+
+  <div class="content">
+
+    <!-- ════════════════════════════════════════════════
+       3) HTML DA ABA ANALYTICS
+       ════════════════════════════════════════════════ -->
+    <div class="page" id="page-analytics">
+      <div class="topbar">
+        <div class="tb-path">
+          <span class="tb-root">Minsq</span>
+          <span class="tb-sep">/</span>
+          <span class="tb-cur">Analytics</span>
+        </div>
+        <div class="tb-r"></div>
+      </div>
+      <div class="content">
+
+        <!-- ── CARDS COM GRÁFICO ── -->
+        <div class="az-grid stg">
+
+          <!-- Estudos -->
+          <div class="card">
+            <div class="sh">
+              <div class="st">Estudos</div>
+              <span style="font-size:9px;font-family:var(--mono);color:var(--t4)">horas · 20 semanas</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span
+                style="font-size:36px;font-weight:300;color:var(--t1);letter-spacing:-2px;font-family:var(--fm);line-height:1"
+                id="azEstudoNum">—</span>
+              <span style="font-size:11px;font-family:var(--mono);color:var(--t4)">horas</span>
+              <span class="delta" id="azEstudoTrend" style="margin-left:auto;margin-top:0"></span>
+            </div>
+            <canvas class="az-chart" id="azChartEstudos"></canvas>
+          </div>
+
+          <!-- Finanças -->
+          <div class="card">
+            <div class="sh">
+              <div class="st">Finanças</div>
+              <span style="font-size:9px;font-family:var(--mono);color:var(--t4)">saldo · 12 meses</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span
+                style="font-size:36px;font-weight:300;color:var(--t1);letter-spacing:-2px;font-family:var(--fm);line-height:1"
+                id="azFinNum">—</span>
+              <span style="font-size:11px;font-family:var(--mono);color:var(--t4)">este mês</span>
+              <span class="delta" id="azFinTrend" style="margin-left:auto;margin-top:0"></span>
+            </div>
+            <canvas class="az-chart" id="azChartFinancas"></canvas>
+          </div>
+
+          <!-- Treino -->
+          <div class="card">
+            <div class="sh">
+              <div class="st">Treino</div>
+              <span style="font-size:9px;font-family:var(--mono);color:var(--t4)">últimas 20 semanas</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span
+                style="font-size:36px;font-weight:300;color:var(--t1);letter-spacing:-2px;font-family:var(--fm);line-height:1"
+                id="azTreinoNum">—</span>
+              <span style="font-size:11px;font-family:var(--mono);color:var(--t4)">treinos</span>
+              <span class="delta" id="azTreinoTrend" style="margin-left:auto;margin-top:0"></span>
+            </div>
+            <canvas class="az-chart" id="azChartTreino"></canvas>
+          </div>
+
+          <!-- Tarefas -->
+          <div class="card">
+            <div class="sh">
+              <div class="st">Tarefas</div>
+              <span style="font-size:9px;font-family:var(--mono);color:var(--t4)">concluídas · 20 semanas</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span
+                style="font-size:36px;font-weight:300;color:var(--t1);letter-spacing:-2px;font-family:var(--fm);line-height:1"
+                id="azTasksNum">—</span>
+              <span style="font-size:11px;font-family:var(--mono);color:var(--t4)">concluídas</span>
+              <span class="delta" id="azTasksTrend" style="margin-left:auto;margin-top:0"></span>
+            </div>
+            <canvas class="az-chart" id="azChartTasks"></canvas>
+          </div>
+
+          <!-- Hidratação -->
+          <div class="card">
+            <div class="sh">
+              <div class="st">Hidratação</div>
+              <span style="font-size:9px;font-family:var(--mono);color:var(--t4)">últimas 20 semanas</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span
+                style="font-size:36px;font-weight:300;color:var(--t1);letter-spacing:-2px;font-family:var(--fm);line-height:1"
+                id="azAguaNum">—</span>
+              <span style="font-size:11px;font-family:var(--mono);color:var(--t4)">ml hoje</span>
+              <span class="delta" id="azAguaTrend" style="margin-left:auto;margin-top:0"></span>
+            </div>
+            <canvas class="az-chart" id="azChartAgua"></canvas>
+          </div>
+
+          <!-- Peso -->
+          <div class="card">
+            <div class="sh">
+              <div class="st">Peso</div>
+              <span style="font-size:9px;font-family:var(--mono);color:var(--t4)">últimas 20 semanas</span>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:6px">
+              <span
+                style="font-size:36px;font-weight:300;color:var(--t1);letter-spacing:-2px;font-family:var(--fm);line-height:1"
+                id="azPesoNum">—</span>
+              <span style="font-size:11px;font-family:var(--mono);color:var(--t4)">kg</span>
+              <span class="delta" id="azPesoTrend" style="margin-left:auto;margin-top:0"></span>
+            </div>
+            <canvas class="az-chart" id="azChartPeso"></canvas>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="api-client.js"></script>
+  <script>
+    /* ════════════════════════════════════════════════════════
+       4) JS DA ABA ANALYTICS
+       ────────────────────────────────────────────────────────
+       Abaixo tem DUAS partes:
+    
+       A) DADOS DE EXEMPLO (S, Store) — isso é só pra essa
+          demo funcionar sozinha. NO SEU PROJETO você troca
+          isso pela sua fonte de dados real (seu objeto de
+          estado, sua API, seu localStorage, etc) — o que
+          importa é que cada função azData*() abaixo devolva
+          { labels, data } no formato certo.
+    
+       B) MOTOR DO GRÁFICO (renderAnalytics, azDrawCard,
+          azDrawMiniChart, etc) — isso você copia direto,
+          não precisa mexer em quase nada.
+       ════════════════════════════════════════════════════════ */
+
+    const S = {
+      healthLogs: [],
+      goals: [],
+      finances: [],
+      studySessions: [],
+      tasks: [],
+      profile: null,
+      rankingMe: null
+    };
+
+    function setEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+    /* ── B) MOTOR DO GRÁFICO ── */
+
+    function renderAnalytics() {
+      azDrawCard('azChartEstudos', 'azEstudoNum', 'azEstudoTrend', azDataEstudos());
+      azDrawCard('azChartFinancas', 'azFinNum', 'azFinTrend', azDataFinancas(), { money: true });
+      azDrawCard('azChartTreino', 'azTreinoNum', 'azTreinoTrend', azDataTreino(), { emptyMessage: 'Disponível após a beta' });
+      azDrawCard('azChartTasks', 'azTasksNum', 'azTasksTrend', azDataTasks());
+      azDrawCard('azChartAgua', 'azAguaNum', 'azAguaTrend', azDataAgua());
+      azDrawCard('azChartPeso', 'azPesoNum', 'azPesoTrend', azDataPeso());
+    }
+
+    // ── DADOS POR CARD (adaptados às fontes reais da API) ──
+
+    function azDataTreino() {
+      const weeks = [];
+      for (let i = 19; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i * 7); weeks.push(d.toISOString().split('T')[0]); }
+      
+      const data = weeks.map(() => 0); // Always 0 to force the empty state
+      
+      return { labels: weeks.map((_, i) => `S-${19 - i}`), data };
+    }
+
+    function azDataAgua() {
+      const weeks = [];
+      for (let i = 19; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i * 7); weeks.push(d.toISOString().split('T')[0]); }
+      const data = weeks.map(w => {
+        const start = new Date(w + 'T00:00:00'); const end = new Date(start); end.setDate(end.getDate() + 7);
+        return S.healthLogs.filter(h => h.tipo === 'agua' && h.data && new Date(h.data + 'T12:00') >= start && new Date(h.data + 'T12:00') < end)
+                           .reduce((a, b) => {
+                             let q = b.dados_json?.quantidade || 0;
+                             if (q > 0 && q < 20) q *= 1000;
+                             return a + Math.round(q);
+                           }, 0);
+      });
+      return { labels: weeks.map((_, i) => `S-${19 - i}`), data };
+    }
+
+    function azDataTasks() {
+      const weeks = [];
+      for (let i = 19; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i * 7); weeks.push(d.toISOString().split('T')[0]); }
+      const data = weeks.map(w => {
+        const start = new Date(w + 'T00:00:00'); const end = new Date(start); end.setDate(end.getDate() + 7);
+        return S.tasks.filter(t => t.concluida && t.data && new Date(t.data + 'T12:00') >= start && new Date(t.data + 'T12:00') < end).length;
+      });
+      return { labels: weeks.map((_, i) => `S-${19 - i}`), data };
+    }
+
+    function azDataFinancas() {
+      const months = [];
+      for (let i = 11; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); months.push(d.toISOString().slice(0, 7)); }
+      const ns = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+      const labels = months.map(m => ns[parseInt(m.slice(5)) - 1]);
+      const data = months.map(m => {
+        const finMes = S.finances.filter(f => f.data && f.data.startsWith(m));
+        const entradas = finMes.filter(f => f.tipo === 'entrada' || f.tipo === 'receita').reduce((a, f) => a + parseFloat(f.valor || 0), 0);
+        const saidas = finMes.filter(f => f.tipo !== 'entrada' && f.tipo !== 'receita' && f.tipo !== 'investimento').reduce((a, f) => a + parseFloat(f.valor || 0), 0);
+        return Math.round(entradas - saidas);
+      });
+      return { labels, data };
+    }
+
+    function azDataEstudos() {
+      const weeks = [];
+      for (let i = 19; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i * 7); weeks.push(d.toISOString().split('T')[0]); }
+      const data = weeks.map(w => {
+        const start = new Date(w + 'T00:00:00'); const end = new Date(start); end.setDate(end.getDate() + 7);
+        const min = S.studySessions.filter(s => s.data && new Date(s.data + 'T12:00') >= start && new Date(s.data + 'T12:00') < end).reduce((a, b) => a + (b.duracao_min || 0), 0);
+        return +(min / 60).toFixed(1);
+      });
+      return { labels: weeks.map((_, i) => `S-${19 - i}`), data };
+    }
+
+    function azDataPeso() {
+      const weeks = [];
+      for (let i = 19; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i * 7); weeks.push(d.toISOString().split('T')[0]); }
+      
+      const logs = (S.healthLogs || [])
+        .filter(h => h.tipo === 'peso')
+        .sort((a, b) => new Date(a.data) - new Date(b.data));
+      
+      let lastWeight = 0;
+      if (logs.length > 0) {
+        const firstWeekStart = new Date(weeks[0] + 'T00:00:00');
+        const prevLogs = logs.filter(l => new Date(l.data + 'T12:00') < firstWeekStart);
+        if (prevLogs.length > 0) lastWeight = prevLogs[prevLogs.length - 1].dados_json?.peso;
+      }
+
+      const data = weeks.map(w => {
+        const start = new Date(w + 'T00:00:00'); const end = new Date(start); end.setDate(end.getDate() + 7);
+        // Find all logs in this week
+        const weekLogs = logs.filter(l => new Date(l.data + 'T12:00') >= start && new Date(l.data + 'T12:00') < end);
+        
+        if (weekLogs.length > 0) {
+          // If there are logs this week, take the last recorded weight of the week
+          lastWeight = weekLogs[weekLogs.length - 1].dados_json?.peso;
+        }
+        // If no logs this week, it naturally forward-fills the 'lastWeight' from previous weeks
+        return lastWeight || 0;
+      });
+      
+      return { labels: weeks.map((_, i) => `S-${19 - i}`), data };
+    }
+
+    // ── TENDÊNCIA: compara o último ponto com o anterior ──
+    function azTrendHTML(data) {
+      if (data.length < 2) return '';
+      const last = data[data.length - 1];
+      const prev = data[data.length - 2];
+      if (!prev && !last) return '';
+      let diff, pct;
+      if (prev === 0) { diff = last; pct = last > 0 ? 100 : 0; }
+      else { diff = last - prev; pct = Math.round((diff / Math.abs(prev)) * 100); }
+      if (diff === 0) return `<span style="color:var(--t4)">— estável</span>`;
+      const up = diff > 0;
+      const cls = up ? 'delta-up' : 'delta-dn';
+      const arrow = up ? '↑' : '↓';
+      const pctAbs = Math.min(999, Math.abs(pct));
+      return `<span class="${cls}">${arrow} ${pctAbs}%</span>`;
+    }
+
+    // ── Cor do gráfico conforme a tendência: subindo/estável = branco, caindo ou negativo = cinza ──
+    function azTrendColor(vals) {
+      if (!vals || vals.length < 2) return 'rgba(255,255,255,.85)';
+      const last = vals[vals.length - 1];
+      const prev = vals[vals.length - 2];
+      if (last < 0) return 'rgba(140,140,140,.8)';
+      return last >= prev ? 'rgba(255,255,255,.85)' : 'rgba(140,140,140,.8)';
+    }
+
+    // ── DESENHA UM CARD (gráfico + número atual + tendência) ──
+    function azDrawCard(canvasId, numId, trendId, payload, opts = {}) {
+      const canvas = document.getElementById(canvasId);
+      const hasData = opts.countMode === 'metas' ? payload.data.length > 0 : payload.data.some(v => v && v !== 0);
+      const last = payload.data[payload.data.length - 1] || 0;
+
+      if (numId) {
+        if (opts.countMode === 'metas') {
+          setEl(numId, S.goals.filter(g => (g.progresso || 0) >= 100).length);
+        } else if (opts.money) {
+          const txt = 'R$' + (last >= 0 ? '+' : '') + Math.round(last).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+          const el = document.getElementById(numId);
+          if (el) { el.textContent = txt; el.style.color = last >= 0 ? 'var(--up)' : '#e08080'; }
+        } else {
+          setEl(numId, last);
+        }
+      }
+
+      if (trendId) {
+        const trendEl = document.getElementById(trendId);
+        if (trendEl) trendEl.innerHTML = hasData ? azTrendHTML(payload.data) : '';
+      }
+
+      if (!canvas) return;
+      if (!hasData) {
+        canvas.style.display = 'none';
+        let empty = canvas.parentElement.querySelector('.az-empty');
+        if (!empty) {
+          empty = document.createElement('div');
+          empty.className = 'az-empty';
+          empty.textContent = opts.emptyMessage || 'Sem dados ainda — comece a registrar para ver o gráfico aqui.';
+          canvas.after(empty);
+        } else if (opts.emptyMessage) {
+          empty.textContent = opts.emptyMessage;
+        }
+        empty.style.display = 'flex';
+        return;
+      }
+      canvas.style.display = 'block';
+      const empty = canvas.parentElement.querySelector('.az-empty');
+      if (empty) empty.style.display = 'none';
+
+      azDrawMiniChart(canvasId, payload.data, payload.labels, azTrendColor(payload.data), opts);
+    }
+
+    // ── helpers do mini gráfico ──
+    function azColorAlpha(c, alpha) {
+      return c.replace(/,\s*[\d.]+\)$/, ',' + alpha + ')');
+    }
+
+    // Curva suave (Catmull-Rom → Bézier) passando por todos os pontos
+    function azSmoothPath(ctx, pts, tension) {
+      tension = tension == null ? 0.85 : tension;
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[i - 1] || pts[i];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[i + 2] || p2;
+        const cp1x = p1.x + (p2.x - p0.x) / 6 * tension;
+        const cp1y = p1.y + (p2.y - p0.y) / 6 * tension;
+        const cp2x = p2.x - (p3.x - p1.x) / 6 * tension;
+        const cp2y = p2.y - (p3.y - p1.y) / 6 * tension;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      }
+    }
+
+    // ── Desenho estático (usado no hover e repouso) ──
+    function azDrawStaticChart(canvas, activeIdx = null) {
+      const info = canvas._azChartInfo;
+      if (!info) return;
+      const { vals, color: c, pts } = info;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width / (window.devicePixelRatio || 1);
+      const H = 110;
+
+      ctx.clearRect(0, 0, W, H);
+      if (vals.length < 2) return;
+
+      const fillTop = azColorAlpha(c, .16);
+      const fillBottom = azColorAlpha(c, 0);
+      const glow = azColorAlpha(c, .45);
+
+      ctx.save();
+      // preenchimento em degradê
+      ctx.beginPath();
+      azSmoothPath(ctx, pts);
+      ctx.lineTo(pts[pts.length - 1].x, H - 2);
+      ctx.lineTo(pts[0].x, H - 2);
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, 16, 0, H);
+      grad.addColorStop(0, fillTop);
+      grad.addColorStop(1, fillBottom);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // linha curva com leve brilho
+      ctx.beginPath();
+      azSmoothPath(ctx, pts);
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.shadowColor = glow;
+      ctx.shadowBlur = 6;
+      ctx.lineWidth = 1.8;
+      ctx.strokeStyle = c;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+
+      // Se tiver um índice ativo (hover)
+      if (activeIdx !== null && activeIdx >= 0 && activeIdx < pts.length) {
+        const pt = pts[activeIdx];
+
+        // Desenha linha vertical guia (glowing/tracejada)
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(pt.x, 10);
+        ctx.lineTo(pt.x, H - 10);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = azColorAlpha(c, .25);
+        ctx.stroke();
+        ctx.restore();
+
+        // Desenha ponto ativo com halo brilhante
+        const halo = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, 10);
+        halo.addColorStop(0, azColorAlpha(c, .45));
+        halo.addColorStop(1, azColorAlpha(c, 0));
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = halo; ctx.fill();
+
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff'; ctx.fill();
+        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = c;
+        ctx.stroke();
+      } else {
+        // Desenha o ponto final original (estático)
+        const lastX = pts[pts.length - 1].x, lastY = pts[pts.length - 1].y;
+        const halo = ctx.createRadialGradient(lastX, lastY, 0, lastX, lastY, 9);
+        halo.addColorStop(0, azColorAlpha(c, .35));
+        halo.addColorStop(1, azColorAlpha(c, 0));
+        ctx.beginPath(); ctx.arc(lastX, lastY, 9, 0, Math.PI * 2);
+        ctx.fillStyle = halo; ctx.fill();
+
+        ctx.beginPath(); ctx.arc(lastX, lastY, 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = c; ctx.fill();
+      }
+    }
+
+    // ── Loop de animação interativa (suavização/magnetismo orgânico) ──
+    function startInteractiveLoop(canvas) {
+      if (canvas._interactiveAnim) return;
+
+      const info = canvas._azChartInfo;
+      if (!info) return;
+      const { vals, color: c, pts } = info;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width / (window.devicePixelRatio || 1);
+      const H = 110;
+
+      if (canvas._currentX === undefined) {
+        canvas._currentX = pts[pts.length - 1].x;
+        canvas._currentY = pts[pts.length - 1].y;
+      }
+
+      canvas._targetX = canvas._currentX;
+      canvas._targetY = canvas._currentY;
+      canvas._rippleRadius = 0;
+
+      function loop() {
+        // Se o mouse saiu e o ponto voltou ao repouso final, encerra o loop
+        const targetReposeX = pts[pts.length - 1].x;
+        if (!canvas._isHovered && Math.abs(canvas._currentX - targetReposeX) < 0.25) {
+          canvas._currentX = targetReposeX;
+          canvas._currentY = pts[pts.length - 1].y;
+          azDrawStaticChart(canvas, null);
+          canvas._interactiveAnim = null;
+          return;
+        }
+
+        // Interpolação Orgânica (Easing Magnético / Lag Sutil)
+        canvas._currentX += (canvas._targetX - canvas._currentX) * 0.16;
+        canvas._currentY += (canvas._targetY - canvas._currentY) * 0.16;
+
+        ctx.clearRect(0, 0, W, H);
+
+        const fillTop = azColorAlpha(c, .16);
+        const fillBottom = azColorAlpha(c, 0);
+        const glow = azColorAlpha(c, .45);
+
+        ctx.save();
+        // preenchimento em degradê
+        ctx.beginPath();
+        azSmoothPath(ctx, pts);
+        ctx.lineTo(pts[pts.length - 1].x, H - 2);
+        ctx.lineTo(pts[0].x, H - 2);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0, 16, 0, H);
+        grad.addColorStop(0, fillTop);
+        grad.addColorStop(1, fillBottom);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // linha curva com leve brilho
+        ctx.beginPath();
+        azSmoothPath(ctx, pts);
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.shadowColor = glow;
+        ctx.shadowBlur = 6;
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = c;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+
+        // 1. Radar Glow (Aura de luz vertical que varre o gráfico)
+        if (canvas._isHovered) {
+          const beamGrad = ctx.createLinearGradient(canvas._currentX - 24, 0, canvas._currentX + 24, 0);
+          beamGrad.addColorStop(0, azColorAlpha(c, 0));
+          beamGrad.addColorStop(0.5, azColorAlpha(c, 0.05));
+          beamGrad.addColorStop(1, azColorAlpha(c, 0));
+          ctx.fillStyle = beamGrad;
+          ctx.fillRect(canvas._currentX - 24, 8, 48, H - 16);
+        }
+
+        // 2. Linha Guia Tracejada
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.moveTo(canvas._currentX, 8);
+        ctx.lineTo(canvas._currentX, H - 8);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = azColorAlpha(c, .2);
+        ctx.stroke();
+        ctx.restore();
+
+        // 3. Ripple Ring Pulse (Onda emitida ao mudar de índice)
+        if (canvas._rippleRadius > 0 && canvas._rippleRadius < 24) {
+          canvas._rippleRadius += 0.9;
+          const opacity = Math.max(0, 1 - (canvas._rippleRadius / 24));
+          ctx.beginPath();
+          ctx.arc(canvas._currentX, canvas._currentY, canvas._rippleRadius, 0, Math.PI * 2);
+          ctx.strokeStyle = azColorAlpha(c, opacity * 0.45);
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        // 4. Glow Radial sob a bolinha ativa
+        const aura = ctx.createRadialGradient(canvas._currentX, canvas._currentY, 0, canvas._currentX, canvas._currentY, 15);
+        aura.addColorStop(0, azColorAlpha(c, .4));
+        aura.addColorStop(1, azColorAlpha(c, 0));
+        ctx.beginPath(); ctx.arc(canvas._currentX, canvas._currentY, 15, 0, Math.PI * 2);
+        ctx.fillStyle = aura; ctx.fill();
+
+        // 5. Ponto de Intersecção Magnético
+        ctx.beginPath(); ctx.arc(canvas._currentX, canvas._currentY, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff'; ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = c;
+        ctx.stroke();
+
+        canvas._interactiveAnim = requestAnimationFrame(loop);
+      }
+
+      canvas._interactiveAnim = requestAnimationFrame(loop);
+    }
+
+    // ── Mini gráfico — curva suave, revelação animada, glow e halo no ponto final ──
+    function azDrawMiniChart(canvasId, vals, labels, color, opts = {}) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const c = color || 'rgba(255,255,255,.75)';
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.offsetWidth || 300, H = 110;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      if (canvas._azAnim) { cancelAnimationFrame(canvas._azAnim); canvas._azAnim = null; }
+      ctx.clearRect(0, 0, W, H);
+      if (vals.length < 2) return;
+
+      // Zoom no intervalo real dos dados — evita a linha "reta" de escala fixa
+      const min0 = Math.min(...vals), max0 = Math.max(...vals);
+      const range = max0 - min0;
+      const pad = range > 0 ? range * 0.3 : Math.max(1, Math.abs(max0) * 0.25 || 1);
+      const min = min0 - pad, max = max0 + pad;
+      const padX = 6, padTop = 16, padBottom = 18;
+      const innerW = W - padX * 2;
+      const xStep = innerW / (vals.length - 1);
+      const yScale = v => padTop + (H - padTop - padBottom) - ((v - min) / (max - min)) * (H - padTop - padBottom);
+      const pts = vals.map((v, i) => ({ x: padX + i * xStep, y: yScale(v) }));
+
+      // Salva info para interações
+      canvas._azChartInfo = { vals, labels, color: c, pts, opts };
+
+      const fillTop = azColorAlpha(c, .16);
+      const fillBottom = azColorAlpha(c, 0);
+      const glow = azColorAlpha(c, .45);
+      const duration = 650;
+      const t0 = performance.now();
+      const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+      function frame(now) {
+        const t = Math.min(1, (now - t0) / duration);
+        const p = easeOutCubic(t);
+        ctx.clearRect(0, 0, W, H);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, W * p, H);
+        ctx.clip();
+
+        // área suave, preenchimento em degradê
+        ctx.beginPath();
+        azSmoothPath(ctx, pts);
+        ctx.lineTo(pts[pts.length - 1].x, H - 2);
+        ctx.lineTo(pts[0].x, H - 2);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0, padTop, 0, H);
+        grad.addColorStop(0, fillTop);
+        grad.addColorStop(1, fillBottom);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // linha curva com leve brilho
+        ctx.beginPath();
+        azSmoothPath(ctx, pts);
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.shadowColor = glow;
+        ctx.shadowBlur = 6;
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = c;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+
+        // ponto final com halo suave, surgindo perto do fim da animação
+        if (p > 0.9) {
+          const dotA = Math.min(1, (p - 0.9) / 0.1);
+          const lastX = pts[pts.length - 1].x, lastY = pts[pts.length - 1].y;
+          const halo = ctx.createRadialGradient(lastX, lastY, 0, lastX, lastY, 9);
+          halo.addColorStop(0, azColorAlpha(c, .35 * dotA));
+          halo.addColorStop(1, azColorAlpha(c, 0));
+          ctx.beginPath(); ctx.arc(lastX, lastY, 9, 0, Math.PI * 2);
+          ctx.fillStyle = halo; ctx.fill();
+
+          ctx.globalAlpha = dotA;
+          ctx.beginPath(); ctx.arc(lastX, lastY, 2.6, 0, Math.PI * 2);
+          ctx.fillStyle = c; ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+
+        canvas._azAnim = t < 1 ? requestAnimationFrame(frame) : null;
+      }
+
+      canvas._azAnim = requestAnimationFrame(frame);
+
+      // Setup de interações caso não existam
+      if (!canvas._hasHoverEvents) {
+        canvas._hasHoverEvents = true;
+
+        canvas.addEventListener('mousemove', function (e) {
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const info = canvas._azChartInfo;
+          if (!info) return;
+
+          canvas._isHovered = true;
+
+          // Encontra o ponto mais próximo
+          const W = canvas.offsetWidth;
+          const step = (W - 12) / (info.vals.length - 1);
+          let idx = Math.round((x - 6) / step);
+          idx = Math.max(0, Math.min(info.vals.length - 1, idx));
+
+          const pt = info.pts[idx];
+          canvas._targetX = pt.x;
+          canvas._targetY = pt.y;
+
+          // Dispara o ripple se mudou o ponto ativo
+          if (idx !== canvas._lastIdx) {
+            canvas._lastIdx = idx;
+            canvas._rippleRadius = 1;
+          }
+
+          startInteractiveLoop(canvas);
+
+          // Atualiza os cabeçalhos do card pai
+          const card = canvas.closest('.card');
+          if (card) {
+            const numEl = card.querySelector('[id$="Num"]');
+            const trendEl = card.querySelector('[id$="Trend"]');
+
+            if (numEl && trendEl) {
+              // Salva os originais se ainda não fez
+              if (card._originalNum === undefined) {
+                card._originalNum = numEl.textContent;
+                card._originalTrend = trendEl.innerHTML;
+                card._originalTrendColor = numEl.style.color;
+              }
+
+              // Formata valor
+              const val = info.vals[idx];
+              let formattedVal = val;
+              if (info.opts.money) {
+                formattedVal = 'R$' + (val >= 0 ? '+' : '') + Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                numEl.style.color = val >= 0 ? 'var(--up)' : '#e08080';
+              } else {
+                numEl.style.color = 'var(--t1)';
+              }
+
+              numEl.textContent = formattedVal;
+              trendEl.innerHTML = `<span style="color:var(--t4);font-family:var(--mono);font-size:10px;letter-spacing:0.5px;text-transform:uppercase">${info.labels[idx]}</span>`;
+            }
+          }
+        });
+
+        canvas.addEventListener('mouseleave', function () {
+          canvas._isHovered = false;
+          canvas._targetX = canvas._azChartInfo.pts[canvas._azChartInfo.pts.length - 1].x;
+          canvas._targetY = canvas._azChartInfo.pts[canvas._azChartInfo.pts.length - 1].y;
+
+          // Restaura o cabeçalho original com transição de volta
+          const card = canvas.closest('.card');
+          if (card) {
+            const numEl = card.querySelector('[id$="Num"]');
+            const trendEl = card.querySelector('[id$="Trend"]');
+
+            if (numEl && trendEl && card._originalNum !== undefined) {
+              numEl.textContent = card._originalNum;
+              trendEl.innerHTML = card._originalTrend;
+              numEl.style.color = card._originalTrendColor || 'var(--t1)';
+
+              card._originalNum = undefined; // reseta
+            }
+          }
+        });
+      }
+    }
+
+    async function initAnalytics() {
+      try {
+        const d20Days = new Date(); d20Days.setDate(d20Days.getDate() - 20);
+        const date20DaysStr = d20Days.toISOString().split('T')[0];
+
+        const d20Weeks = new Date(); d20Weeks.setDate(d20Weeks.getDate() - 140);
+        const date20WeeksStr = d20Weeks.toISOString().split('T')[0];
+
+        const d12Months = new Date(); d12Months.setDate(1); d12Months.setMonth(d12Months.getMonth() - 12);
+        const date12MonthsStr = d12Months.toISOString().split('T')[0];
+
+        const [healthLogs, goals, finances, studySessions, profile, rankingMe, tasks] = await Promise.all([
+          // Health covers Water/Weight (20 days) and Treino (20 weeks). Fetch the longest window (20 weeks).
+          window.api.getHealthLogs(date20WeeksStr).catch(err => { console.error('Error fetching health logs:', err); return []; }),
+          window.api.getGoals().catch(err => { console.error('Error fetching goals:', err); return []; }),
+          window.api.getFinances(date12MonthsStr).catch(err => { console.error('Error fetching finances:', err); return []; }),
+          window.api.getStudySessions(date20WeeksStr).catch(err => { console.error('Error fetching study sessions:', err); return []; }),
+          window.api.getProfile().catch(err => { console.error('Error fetching profile:', err); return null; }),
+          window.api.getRankingMe().catch(err => { console.error('Error fetching ranking:', err); return null; }),
+          window.api.getTasks(date20WeeksStr).catch(err => { console.error('Error fetching tasks:', err); return []; })
+        ]);
+
+        S.healthLogs = healthLogs || [];
+        S.goals = goals || [];
+        S.finances = (finances || []).map(t => ({
+          id: t.id,
+          tipo: t.tipo,
+          valor: parseFloat(t.valor),
+          descricao: t.descricao,
+          categoria: t.categoria,
+          data: t.data,
+          criado_em: t.criado_em
+        }));
+        S.studySessions = studySessions || [];
+        S.profile = profile;
+        S.rankingMe = rankingMe;
+        S.tasks = tasks || [];
+      } catch (e) {
+        console.error('[Analytics] Error initializing data:', e);
+      } finally {
+        renderAnalytics();
+        if (typeof window.hideMhLoader === 'function') {
+          window.hideMhLoader();
+        }
+      }
+    }
+
+    /* ── inicializa ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.api) {
+        initAnalytics();
+      } else {
+        renderAnalytics();
+        if (typeof window.hideMhLoader === 'function') {
+          window.hideMhLoader();
+        }
+      }
+    });
+
+    /* opcional: redesenha ao redimensionar a janela, pra ficar nítido em qualquer tela */
+    let azResizeT;
+    window.addEventListener('resize', () => {
+      clearTimeout(azResizeT);
+      azResizeT = setTimeout(renderAnalytics, 150);
+    });
+  </script>
+  <script src="api-client.js?v=4"></script>
+  <script src="shared.js?v=1788736543501"></script>
+</body>
+
+</html>

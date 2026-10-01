@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Minsq</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/logo/favcon.svg" id="mh-favicon-root">
+  <style>
+    :root {
+      --mh-sb: 60px;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #070707;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #mh-content-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #070707;
+    }
+    #mh-curtain {
+      position: absolute;
+      inset: 0;
+      background: #070707;
+      z-index: 10;
+      opacity: 1;
+      transition: opacity .15s ease;
+      pointer-events: none;
+    }
+    #mh-curtain.hide {
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="mh-curtain"></div>
+  <iframe id="mh-content-frame" name="mh-content-frame" src="about:blank"></iframe>
+
+  <script>
+    /* ==========================================================================
+       AUTH BUS — Minsq Shell
+       Único responsável por disparar /auth/refresh.
+       Iframes pedem o token via postMessage em vez de chamar /auth/refresh sozinhos,
+       eliminando a corrida shell-vs-iframe que causava revogação de sessão.
+       ========================================================================== */
+    (function () {
+      var BASE_URL = '/api';
+
+      /* ---- Estado centralizado de auth ---- */
+      var auth = {
+        token: null,
+        isRefreshing: false,
+        subscribers: [],   // resolvers aguardando o token
+
+        _notify: function (token) {
+          var subs = this.subscribers.slice();
+          this.subscribers = [];
+          subs.forEach(function (fn) { fn(token); });
+        },
+
+        /* Dispara /auth/refresh UMA vez; chamadas concorrentes ficam na fila */
+        refresh: function () {
+          var self = this;
+          if (self.isRefreshing) {
+            return new Promise(function (resolve) {
+              self.subscribers.push(resolve);
+            });
+          }
+          self.isRefreshing = true;
+          return fetch(BASE_URL + '/auth/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+          })
+            .then(function (res) {
+              return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+            })
+            .then(function (r) {
+              var token = (r.ok && r.data.token) ? r.data.token : null;
+              self.token = token;
+              self._notify(token);
+              return token;
+            })
+            .catch(function () {
+              self.token = null;
+              self._notify(null);
+              return null;
+            })
+            .finally(function () {
+              self.isRefreshing = false;
+            });
+        },
+
+        getToken: function () {
+          if (this.token) return Promise.resolve(this.token);
+          return this.refresh();
+        },
+
+        setToken: function (token) { this.token = token; },
+        invalidate: function () { this.token = null; }
+      };
+
+      window.__mohiAuth = auth;
+
+      /* ---- Listener postMessage: atende iframes ---- */
+      window.addEventListener('message', function (event) {
+        if (event.origin !== window.location.origin) return;
+        var msg = event.data;
+        if (!msg || !event.source) return;
+
+        /* Iframe pedindo o token atual (ou refresh inicial) */
+        if (msg.type === 'MINSQ_GET_TOKEN') {
+          auth.getToken().then(function (token) {
+            event.source.postMessage(
+              { type: 'MINSQ_TOKEN_RESPONSE', token: token, requestId: msg.requestId },
+              window.location.origin
+            );
+          });
+          return;
+        }
+
+        /* Iframe recebeu 401 — pede refresh explícito */
+        if (msg.type === 'MINSQ_REFRESH_TOKEN') {
+          auth.invalidate();
+          auth.refresh().then(function (token) {
+            event.source.postMessage(
+              { type: 'MINSQ_TOKEN_RESPONSE', token: token, requestId: msg.requestId },
+              window.location.origin
+            );
+          });
+          return;
+        }
+
+        /* Iframe informou novo token após login */
+        if (msg.type === 'MINSQ_SET_TOKEN') {
+          auth.setToken(msg.token);
+          if (msg.user) localStorage.setItem('minsq_auth_user', JSON.stringify(msg.user));
+          return;
+        }
+
+        /* Popup do Google OAuth: OTC recebido via postMessage */
+        if (msg.type === 'GOOGLE_OTC' && msg.otc) {
+          fetch(BASE_URL + '/auth/verify-otc', {
+            method: 'POST', credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ otc: msg.otc })
+          })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (data.pendingAuth && data.onboardingToken) {
+                sessionStorage.setItem('minsq_onboarding_token', data.onboardingToken);
+                var iframe = document.getElementById('mh-content-frame');
+                if (iframe) {
+                  iframe.src = '/pages/auth/onboarding.html';
+                }
+                return;
+              }
+              if (data.token) {
+                auth.setToken(data.token);
+                if (data.user) localStorage.setItem('minsq_auth_user', JSON.stringify(data.user));
+                if (data.isNewUser) {
+                  sessionStorage.setItem('minsq_force_onboarding', 'true');
+                } else {
+                  sessionStorage.removeItem('minsq_force_onboarding');
+                }
+                window.location.reload();
+              }
+            })
+            .catch(function () { });
+          return;
+        }
+
+        /* Token já resolvido pelo iframe (auth.html trocou o OTC) */
+        if (msg.type === 'GOOGLE_SET_TOKEN' && msg.token) {
+          auth.setToken(msg.token);
+          if (msg.user) localStorage.setItem('minsq_auth_user', JSON.stringify(msg.user));
+          if (msg.isNewUser) {
+            sessionStorage.setItem('minsq_force_onboarding', 'true');
+          } else {
+            sessionStorage.removeItem('minsq_force_onboarding');
+          }
+          window.location.reload();
+          return;
+        }
+
+        /* Popup sinaliza que fechou sem OTC (polling fallback) */
+        if (msg.type === 'GOOGLE_AUTH_SUCCESS' || msg.type === 'GOOGLE_AUTH_POLL_COMPLETE') {
+          auth.refresh().then(function (token) {
+            if (token) window.location.reload();
+          });
+          return;
+        }
+
+        /* Iframe pediu logout / invalidação */
+        if (msg.type === 'MINSQ_INVALIDATE') {
+          auth.invalidate();
+          return;
+        }
+
+        /* Iframe pediu para navegar mostrando a cortina */
+        if (msg.type === 'MINSQ_NAVIGATE') {
+          var safePath = (msg.url && typeof msg.url === 'string' && msg.url.startsWith('/')) ? msg.url : '/';
+          navigateIframe(safePath);
+          return;
+        }
+
+        /* Iframe pediu atualização da URL no shell */
+        if (msg.type === 'MINSQ_UPDATE_URL') {
+          if (msg.url) {
+            window.history.replaceState({}, '', msg.url);
+          }
+          return;
+        }
+      });
+
+      /* ---- Roteamento do iframe ---- */
+      var pathname = window.location.pathname.replace(/^\/+/, '');
+      var hashParam = window.location.hash.replace(/^#\/?/, '');
+      var params = new URLSearchParams(window.location.search);
+
+      var targetPage = null;
+      if (pathname && pathname !== 'index.html') {
+        if (pathname.startsWith('@')) {
+          targetPage = 'profile/' + pathname;
+        } else {
+          targetPage = pathname;
+        }
+      } else if (hashParam) {
+        targetPage = hashParam;
+        if (targetPage.startsWith('@')) targetPage = 'profile/' + targetPage;
+      } else if (params.get('page')) {
+        targetPage = params.get('page');
+      }
+
+      // Limpa URLs antigas (hash, ?page ou .html) para a nova URL amigável
+      if (window.location.hash || params.get('page') || (pathname && pathname.indexOf('.html') !== -1)) {
+        var cleanPath = targetPage ? '/' + targetPage.replace(/\.html$/, '').replace(/^profile\//, '') : '/';
+        params.delete('page');
+        var qs = params.toString();
+        window.history.replaceState({}, '', cleanPath + (qs ? '?' + qs : ''));
+      }
+
+      var iframe = document.getElementById('mh-content-frame');
+
+      // Páginas que aceitam um "slug" depois da barra (estilo Instagram: /?page=profile/ruok)
+      // e o nome do parâmetro de query que esse slug deve virar internamente.
+      var SLUG_PARAM_BY_PAGE = { profile: 'u' };
+
+      function explicitPage() {
+        if (!targetPage) return null;
+
+        var slashIdx = targetPage.indexOf('/');
+        var rawPage = slashIdx === -1 ? targetPage : targetPage.slice(0, slashIdx);
+        var rawSlug = slashIdx === -1 ? null : targetPage.slice(slashIdx + 1);
+
+        var clean = rawPage.replace(/[^a-zA-Z0-9.\-_]/g, '');
+        if (!clean) return null;
+        
+        var pageKey = clean.replace(/\.html$/, '');
+        if (clean.indexOf('.') === -1) clean += '.html';
+
+        var prefix = '/pages/';
+        var AUTH_PAGES = ['auth', 'onboarding', 'logout', 'confirm-account'];
+        var API_PAGES = ['maintenance', 'status'];
+
+        if (AUTH_PAGES.indexOf(pageKey) !== -1) {
+          prefix = '/pages/auth/';
+        } else if (API_PAGES.indexOf(pageKey) !== -1) {
+          prefix = '/pages/api/';
+        }
+
+        var p = new URLSearchParams(window.location.search);
+        p.delete('page');
+
+        if (rawSlug) {
+          var cleanSlug = rawSlug.replace(/[^a-zA-Z0-9._\-@]/g, '');
+          var slugParam = SLUG_PARAM_BY_PAGE[pageKey] || 'u';
+          if (cleanSlug) p.set(slugParam, cleanSlug);
+        }
+
+        var qs = p.toString();
+        return prefix + clean + (qs ? '?' + qs : '');
+      }
+
+      function navigateIframe(url) {
+        var curtain = document.getElementById('mh-curtain');
+        if (curtain) curtain.classList.remove('hide');
+
+        iframe.addEventListener('load', function onLoad() {
+          iframe.removeEventListener('load', onLoad);
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              if (curtain) curtain.classList.add('hide');
+            });
+          });
+        });
+
+        try {
+          if (iframe.contentWindow && iframe.contentWindow.location) {
+            iframe.contentWindow.location.replace(url);
+            return;
+          }
+        } catch (e) { }
+        iframe.src = url;
+      }
+
+      function checkSessionAndLoad() {
+        var onboardingToken = sessionStorage.getItem('minsq_onboarding_token');
+        if (onboardingToken) {
+          auth.setToken(onboardingToken);
+          navigateIframe('/pages/auth/onboarding.html');
+          return;
+        }
+
+        /* Shell faz O refresh inicial — o único que vai existir por navegação */
+        auth.refresh().then(function (token) {
+          if (token) {
+            if (sessionStorage.getItem('minsq_force_onboarding') === 'true') {
+              navigateIframe('/pages/auth/onboarding.html');
+            } else {
+              navigateIframe('/pages/dashboard.html');
+            }
+          } else {
+            navigateIframe('/pages/auth/auth.html');
+          }
+        });
+      }
+
+      var explicit = explicitPage();
+      if (explicit) {
+        navigateIframe(explicit);
+      } else {
+        checkSessionAndLoad();
+      }
+
+      /* Fallback localStorage: OTC do Google OAuth (mesma origem, funciona no Brave) */
+      window.addEventListener('storage', function (e) {
+        if ((e.key === 'minsq_google_otc' || e.key === 'minsq_google_done') && e.newValue) {
+          var otc = e.newValue;
+          localStorage.removeItem(e.key);
+
+          if (e.key === 'minsq_google_otc') {
+            fetch(BASE_URL + '/auth/verify-otc', {
+              method: 'POST', credentials: 'include',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ otc: otc })
+            })
+              .then(function (r) { return r.json(); })
+              .then(function (data) {
+                if (data.pendingAuth && data.onboardingToken) {
+                  sessionStorage.setItem('minsq_onboarding_token', data.onboardingToken);
+                  var iframe = document.getElementById('mh-content-frame');
+                  if (iframe) {
+                    iframe.src = '/pages/auth/onboarding.html';
+                  }
+                  return;
+                }
+                if (data.token) {
+                  auth.setToken(data.token);
+                  if (data.user) localStorage.setItem('minsq_auth_user', JSON.stringify(data.user));
+                  if (data.isNewUser) {
+                    sessionStorage.setItem('minsq_force_onboarding', 'true');
+                  } else {
+                    sessionStorage.removeItem('minsq_force_onboarding');
+                  }
+                  window.location.reload();
+                }
+              })
+              .catch(function () { });
+          } else {
+            // fallback sem OTC
+            auth.refresh().then(function (token) {
+              if (token) window.location.reload();
+            });
+          }
+        }
+      });
+
+      /* auth.html detecta popup fechado via poll e sinaliza POLL_COMPLETE */
+
+      /* PREVENIR MÚLTIPLAS GUIAS ABERTAS */
+      var tabChannel = new BroadcastChannel('minsq_tab_sync');
+      var tabId = Math.random().toString(36).substring(2);
+      
+      tabChannel.postMessage({ type: 'NEW_TAB_OPENED', tabId: tabId });
+
+      tabChannel.onmessage = function (event) {
+        if (event.data.type === 'NEW_TAB_OPENED' && event.data.tabId !== tabId) {
+          tabChannel.postMessage({ type: 'ALREADY_OPEN' });
+        }
+        if (event.data.type === 'ALREADY_OPEN') {
+          // Rederiza a tela completa de bloqueio
+          var html = [
+            '<!DOCTYPE html>',
+            '<html lang="pt-BR">',
+            '<head>',
+            '<meta charset="UTF-8">',
+            '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+            '<link rel="preconnect" href="https://fonts.googleapis.com">',
+            '<link href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">',
+            '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>',
+            '<style>',
+            '* { margin: 0; padding: 0; box-sizing: border-box; }',
+            'html, body { height: 100%; background: #0a0a0a; overflow: hidden; }',
+            '.hero-bg { position: relative; width: 100%; height: 100vh; overflow: hidden; background: #0a0a0a; display: flex; align-items: center; justify-content: center; }',
+            '#heroDots { position: absolute; inset: 0; z-index: 0; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%); }',
+            '.tab-card { position: relative; z-index: 1; width: 100%; max-width: 260px; text-align: center; opacity: 0; transform: translateY(8px); animation: fadeInUp 0.9s ease 0.3s forwards; }',
+            '.tab-card::before { content: \'\'; position: absolute; inset: -28px -22px -24px; background: #0a0a0a; border-radius: 18px; z-index: -1; }',
+            '@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }',
+            '.tab-title { font-family: \'Exo\', sans-serif; font-weight: 500; font-size: 18px; letter-spacing: -0.01em; color: #fafafa; margin-bottom: 6px; }',
+            '.tab-subtitle { font-family: \'Quicksand\', sans-serif; font-weight: 500; font-size: 10.5px; color: #838383; margin-bottom: 24px; line-height: 1.5; }',
+            '.tab-btn { width: 100%; padding: 9px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.035); backdrop-filter: blur(6px); cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: \'Quicksand\', sans-serif; font-weight: 600; font-size: 11.5px; color: #fafafa; letter-spacing: 0.01em; transition: border-color 0.25s ease, background 0.25s ease; }',
+            '.tab-btn:hover { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.055); }',
+            '</style>',
+            '</head>',
+            '<body>',
+            '<section class="hero-bg">',
+            '<div id="heroDots"></div>',
+            '<div class="tab-card">',
+            '<div class="tab-title">Minsq já está aberto</div>',
+            '<div class="tab-subtitle">Você já tem o aplicativo aberto em outra guia. Para evitar conflitos de dados, feche esta aba.</div>',
+            '<button class="tab-btn" onclick="var w=window.open(\'\',\'_self\');w.close();setTimeout(function(){if(!window.closed)window.location.href=\'about:blank\'},100);">Fechar esta guia</button>',
+            '<div style="margin-top:14px;font-family:\'Quicksand\',sans-serif;font-size:9.5px;color:#444;letter-spacing:0.05em;">ou pressione <kbd style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;font-size:9px;color:#666;">Ctrl+W</kbd></div>',
+            '</div>',
+            '</section>',
+            '</body>',
+            '</html>'
+          ].join('\n');
+
+          var newDoc = document.open('text/html', 'replace');
+          newDoc.write(html);
+          newDoc.close();
+
+          // Injeta o script das particulas depois do Three.js carregar
+          setTimeout(function() {
+            var w = document.defaultView || window;
+            if (!w || typeof w.THREE === 'undefined') return;
+            var s = w.document.createElement('script');
+            s.src = '/pages/particles-init.js';
+            w.document.body.appendChild(s);
+          }, 800);
+
+          tabChannel.close();
+        }
+      };
+    })();
+  </script>
+
+  <!-- Injeta a lógica compartilhada global no nível do Shell -->
+  <script src="/pages/shared.js?v=1786684464573"></script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Autenticando...</title>
+  <style>body { margin: 0; background: #070707; }</style>
+</head>
+<body>
+  <script>
+    const otc = new URLSearchParams(location.hash.slice(1)).get('otc');
+    history.replaceState(null, '', location.pathname);
+
+    if (otc) {
+      // Passa o OTC ao shell/opener via postMessage e localStorage
+      if (window.opener && window.opener !== window) {
+        try { window.opener.postMessage({ type: 'GOOGLE_OTC', otc }, window.location.origin); } catch(e) {}
+        try { window.opener.top.postMessage({ type: 'GOOGLE_OTC', otc }, window.location.origin); } catch(e) {}
+      }
+      // Fallback: localStorage (mesma origem localhost:3000)
+      localStorage.setItem('minsq_google_otc', otc);
+      // Tenta fechar a janela automaticamente
+      window.close();
+      
+      // Se não fechar em 1 segundo, mostra uma mensagem pro usuário
+      setTimeout(() => {
+        document.body.innerHTML = `
+          <div style="color:white; font-family:sans-serif; text-align:center; margin-top:40px;">
+            <h3>Autenticação concluída!</h3>
+            <p>Você já pode fechar esta janela manualmente.</p>
+            <button onclick="window.close()" style="padding:10px 20px; cursor:pointer;">Fechar</button>
+          </div>
+        `;
+      }, 1000);
+    } else {
+      document.body.innerHTML = '<h3 style="color:red; text-align:center; margin-top:40px;">Erro: OTC não recebido</h3>';
+    }
+  </script>
+</body>
+</html>

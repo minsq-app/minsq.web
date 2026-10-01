@@ -1,0 +1,3003 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <script>try { if (localStorage.getItem('minsq_is_maintenance') === 'true') { document.documentElement.style.display = 'none'; window.top.location.replace('/pages/api/maintenance.html'); } } catch (e) { }</script>
+  <meta charset="UTF-8">
+  <style id="mh-early">
+    body {
+      padding-left: 60px;
+      opacity: 0;
+      background: #070707;
+      transition: opacity .18s ease
+    }
+  </style>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minsq</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Exo+2:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ════════════════════════════════════════════
+       DESIGN SYSTEM
+    ════════════════════════════════════════════ */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    :root {
+      --mh-sb: 60px;
+      --bg: #070707;
+      --s1: #0d0d0d;
+      --s2: #121212;
+      --s3: #181818;
+      --s4: #1e1e1e;
+      --s5: #242424;
+      --b1: rgba(255, 255, 255, .04);
+      --b2: rgba(255, 255, 255, .08);
+      --b3: rgba(255, 255, 255, .14);
+      --b4: rgba(255, 255, 255, .22);
+      --t1: #f0f0f0;
+      --t2: #c0c0c0;
+      --t3: #888;
+      --t4: #444;
+      --t5: #2a2a2a;
+      --up: #b8e0b8;
+      --dn: #888;
+      --warn: #c8a060;
+      --accent: #e8e8e8;
+      --r4: 4px;
+      --r8: 8px;
+      --r12: 12px;
+      --r16: 16px;
+      --r20: 20px;
+      --r24: 24px;
+      --fm: 'Exo 2', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    html,
+    body {
+      scroll-behavior: smooth
+    }
+
+    body {
+      font-family: var(--fm);
+      background: var(--bg);
+      color: var(--t2);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    ::selection {
+      background: rgba(255, 255, 255, .15);
+      color: var(--t1)
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    /* ════ ANIMATIONS ════ */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    @keyframes moRunPulse {
+
+      0%,
+      100% {
+        opacity: .15;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: .6;
+        transform: scale(1.4);
+      }
+    }
+
+    /* ════ LAYOUT ════ */
+    .app {
+      height: 100vh;
+      position: relative;
+    }
+
+    .page {
+      display: none;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      will-change: opacity, transform;
+    }
+
+    .page.on {
+      display: block;
+      animation: pageIn .3s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    .content {
+      padding: 22px 24px
+    }
+
+    /* ════ COMPONENTS ════ */
+    .btn {
+      padding: 7px 13px;
+      border-radius: var(--r8);
+      font-size: 11px;
+      font-family: var(--fm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid;
+      letter-spacing: -.1px;
+    }
+
+    .btn-p {
+      background: var(--t1);
+      color: var(--bg);
+      border-color: var(--t1)
+    }
+
+    .btn-p:hover {
+      background: var(--t2)
+    }
+
+    .btn-g {
+      background: transparent;
+      color: var(--t3);
+      border-color: var(--b2)
+    }
+
+    .btn-g:hover {
+      background: var(--s3);
+      color: var(--t2);
+      border-color: var(--b3)
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      backdrop-filter: blur(16px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+
+    .modal-bg.on {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .modal {
+      background: var(--s1);
+      border: 1px solid var(--b2);
+      border-radius: var(--r20);
+      padding: 24px;
+      width: 420px;
+      max-width: 90vw;
+      transform: scale(.96) translateY(8px);
+      transition: transform .25s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .modal-bg.on .modal {
+      transform: scale(1) translateY(0)
+    }
+
+    .m-t {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      margin-bottom: 3px;
+      color: var(--t1)
+    }
+
+    .m-s {
+      font-size: 12px;
+      color: var(--t3);
+      margin-bottom: 20px
+    }
+
+    .fr {
+      margin-bottom: 13px
+    }
+
+    .fr label {
+      display: block;
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4);
+      margin-bottom: 6px;
+      letter-spacing: .8px
+    }
+
+    .fr input,
+    .fr select,
+    .fr textarea {
+      width: 100%;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      border-radius: var(--r8);
+      color: var(--t2);
+      font-family: var(--fm);
+      font-size: 12px;
+      padding: 9px 11px;
+      outline: none;
+      transition: border-color .2s;
+      resize: none;
+    }
+
+    .fr input:focus,
+    .fr select:focus,
+    .fr textarea:focus {
+      border-color: var(--b3);
+      color: var(--t1)
+    }
+
+    .fr select {
+      color-scheme: dark;
+      cursor: pointer;
+    }
+
+    .fr select option {
+      background: var(--s3);
+      color: var(--t2);
+    }
+
+    /* ════ FOCO PAGE ════ */
+    .foco-layout {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 0;
+      align-items: start;
+      border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    /* ── Empty state ── */
+    .foco-empty-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 460px;
+      gap: 10px;
+      text-align: center;
+      padding: 48px 24px;
+      border-right: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-empty-icon {
+      width: 40px;
+      height: 40px;
+      color: rgba(255, 255, 255, .12);
+      margin-bottom: 4px;
+    }
+
+    .foco-empty-t {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .3);
+      letter-spacing: -.2px;
+    }
+
+    .foco-empty-s {
+      font-size: 11px;
+      color: rgba(255, 255, 255, .15);
+      line-height: 1.6;
+    }
+
+    /* ── Sidebar de ações ── */
+    .foco-actions-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .foco-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      cursor: pointer;
+      transition: background .12s;
+      user-select: none;
+    }
+
+    .foco-action-btn:last-child {
+      border-bottom: none;
+    }
+
+    .foco-action-btn:hover {
+      background: rgba(255, 255, 255, .03);
+    }
+
+    .foco-action-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: rgba(255, 255, 255, .35);
+    }
+
+    .foco-action-label {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, .6);
+      flex: 1;
+    }
+
+    .foco-action-chevron {
+      color: rgba(255, 255, 255, .18);
+      flex-shrink: 0;
+    }
+
+    /* ── Stats block (histórico) ── */
+    .foco-stats-block {
+      border-top: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-stats-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-stats-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .22);
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    .foco-stats-sub {
+      font-family: var(--mono);
+      font-size: 8px;
+      color: rgba(255, 255, 255, .18);
+      letter-spacing: .5px;
+    }
+
+    .foco-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .foco-stat-cell {
+      padding: 14px 18px;
+      border-right: 1px solid rgba(255, 255, 255, .06);
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-stat-cell:nth-child(even) {
+      border-right: none;
+    }
+
+    .foco-stat-cell:nth-last-child(-n+2) {
+      border-bottom: none;
+    }
+
+    .foco-stat-name {
+      font-family: var(--mono);
+      font-size: 7px;
+      color: rgba(255, 255, 255, .22);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .foco-stat-val {
+      font-family: var(--fm);
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--t1);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    /* ── Calendário de treinos — widget flutuante e independente ── */
+    .foco-cal-float {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 240px;
+      background: var(--s1);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: var(--r12);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, .45);
+      z-index: 60;
+      overflow: hidden;
+    }
+
+    .foco-cal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-cal-nav {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, .05);
+      color: rgba(255, 255, 255, .45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      padding: 0;
+      transition: background .15s, color .15s;
+    }
+
+    .foco-cal-nav:hover {
+      background: rgba(255, 255, 255, .1);
+      color: rgba(255, 255, 255, .85);
+    }
+
+    .foco-cal-nav.disabled {
+      opacity: .25;
+      cursor: not-allowed;
+    }
+
+    .foco-cal-nav svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .foco-cal-title {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .75);
+      letter-spacing: -.1px;
+      text-transform: capitalize;
+    }
+
+    .foco-cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 10px 10px 4px;
+    }
+
+    .foco-cal-weekdays span {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .22);
+      letter-spacing: .5px;
+    }
+
+    .foco-cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      row-gap: 4px;
+      padding: 2px 10px 14px;
+    }
+
+    .foco-cal-cell {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .foco-cal-num {
+      width: 24px;
+      height: 24px;
+      max-width: 88%;
+      max-height: 88%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-family: var(--fm);
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .5);
+      transition: background .15s, color .15s;
+    }
+
+    .foco-cal-cell.out .foco-cal-num {
+      color: rgba(255, 255, 255, .12);
+    }
+
+    .foco-cal-cell.today .foco-cal-num {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* dia com treino concluído — feature futura preenche isto */
+    .foco-cal-cell.done .foco-cal-num {
+      background: #f2f2f2;
+      color: #0a0a0a;
+      font-weight: 600;
+    }
+
+    /* ── Rotinas list (estado populado) ── */
+    .foco-routines-col {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-separator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      cursor: pointer;
+      user-select: none;
+      transition: background .12s;
+    }
+
+    .foco-separator:hover {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .foco-separator-arrow {
+      color: rgba(255, 255, 255, .2);
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+
+    .foco-separator-arrow.open {
+      transform: rotate(90deg);
+    }
+
+    .foco-separator-name {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: rgba(255, 255, 255, .28);
+      letter-spacing: .5px;
+      flex: 1;
+    }
+
+    .foco-separator-menu {
+      color: rgba(255, 255, 255, .2);
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      padding: 2px 5px;
+      cursor: pointer;
+      transition: color .12s;
+    }
+
+    .foco-separator-menu:hover {
+      color: rgba(255, 255, 255, .6);
+    }
+
+    .foco-routine-card {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      cursor: pointer;
+      transition: background .12s;
+    }
+
+    .foco-routine-card:hover {
+      background: rgba(255, 255, 255, .025);
+    }
+
+    .foco-routine-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    .foco-routine-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .75);
+      letter-spacing: -.2px;
+      line-height: 1.3;
+    }
+
+    .foco-routine-menu {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      cursor: pointer;
+      color: rgba(255, 255, 255, .18);
+      font-size: 14px;
+      line-height: 1;
+      transition: color .15s, background .15s;
+      background: transparent;
+      border: none;
+      font-family: var(--mono);
+      padding: 0;
+    }
+
+    .foco-routine-menu:hover {
+      color: rgba(220, 80, 80, .85);
+      background: rgba(220, 80, 80, .1);
+    }
+
+    /* ════ CONFIRM MODAL ════ */
+    .foco-confirm-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99998;
+      background: rgba(0, 0, 0, .55);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .foco-confirm-bg.on {
+      display: flex;
+    }
+
+    .foco-confirm-box {
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 10px;
+      padding: 24px 28px;
+      min-width: 280px;
+      max-width: 360px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, .7);
+      animation: fcConfirmIn .18s cubic-bezier(.16, 1, .3, 1) both;
+    }
+
+    @keyframes fcConfirmIn {
+      from {
+        opacity: 0;
+        transform: scale(.94) translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .foco-confirm-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .9);
+      margin-bottom: 6px;
+    }
+
+    .foco-confirm-desc {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .4);
+      font-family: var(--mono);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    .foco-confirm-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .foco-confirm-cancel {
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 7px;
+      color: rgba(255, 255, 255, .55);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      font-family: var(--fm);
+    }
+
+    .foco-confirm-cancel:hover {
+      background: rgba(255, 255, 255, .1);
+      color: rgba(255, 255, 255, .8);
+    }
+
+    .foco-confirm-delete {
+      background: rgba(200, 60, 60, .15);
+      border: 1px solid rgba(200, 60, 60, .3);
+      border-radius: 7px;
+      color: rgba(220, 100, 100, .9);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      font-family: var(--fm);
+    }
+
+    .foco-confirm-delete:hover {
+      background: rgba(200, 60, 60, .28);
+      color: #f07070;
+    }
+
+    .foco-routine-exercises {
+      font-size: 11px;
+      color: rgba(255, 255, 255, .22);
+      line-height: 1.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: var(--mono);
+      letter-spacing: .2px;
+    }
+
+    /* ════ MODAL — segue o padrão dos outros modais do Foco:
+       cantos quase retos (4px), borda fina rgba(255,255,255,.08) ════ */
+    .foco-detail-modal {
+      background: var(--s1);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 6px;
+      width: 860px;
+      max-width: 92vw;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      overflow: hidden;
+      transform: scale(.96) translateY(8px);
+      transition: transform .25s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .modal-bg.on .foco-detail-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    /* ── Coluna esquerda ── */
+    .foco-detail-left {
+      border-right: 1px solid rgba(255, 255, 255, .07);
+      display: flex;
+      flex-direction: column;
+      min-height: 240px;
+    }
+
+    .foco-detail-head {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 22px 22px;
+      background: #101010;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-circle-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    .foco-circle-icon.sm {
+      width: 60px;
+      height: 60px;
+    }
+
+    .foco-detail-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .9);
+      letter-spacing: -.3px;
+      margin-bottom: 4px;
+    }
+
+    .foco-detail-sets {
+      font-size: 13px;
+      color: rgba(255, 255, 255, .45);
+      margin-bottom: 6px;
+    }
+
+    .foco-detail-author-inline {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: rgba(255, 255, 255, .2);
+    }
+
+    .foco-detail-right {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .foco-detail-created {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 22px 20px 18px;
+    }
+
+    .foco-detail-created-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, .5);
+      margin-bottom: 2px;
+      line-height: 1.45;
+    }
+
+    .foco-detail-created-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .9);
+      line-height: 1.45;
+    }
+
+    .foco-detail-actions {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px 8px;
+    }
+
+    .foco-detail-btn {
+      flex: 1;
+      text-align: center;
+      padding: 11px 10px;
+      background: var(--s4);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 6px;
+      color: rgba(255, 255, 255, .8);
+      font-family: var(--fm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+
+    .foco-detail-btn:hover {
+      background: #262626;
+      border-color: rgba(255, 255, 255, .16);
+    }
+
+    .foco-detail-share {
+      margin: 0 20px 18px;
+    }
+
+    .foco-detail-summary {
+      border-top: 1px solid rgba(255, 255, 255, .07);
+      padding: 18px 20px 20px;
+      flex: 1;
+    }
+
+    .foco-detail-summary-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, .92);
+      letter-spacing: -.3px;
+      margin-bottom: 14px;
+    }
+
+    .foco-detail-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: #101010;
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .foco-detail-stat {
+      padding: 10px 8px;
+      border-right: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .foco-detail-stat:last-child {
+      border-right: none;
+    }
+
+    .foco-detail-stat-label {
+      font-family: var(--mono);
+      font-size: 7px;
+      color: rgba(255, 255, 255, .3);
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    .foco-detail-stat-val {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .9);
+    }
+
+    .foco-detail-musclehead {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(255, 255, 255, .22);
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .foco-detail-muscle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+      font-size: 15px;
+      color: rgba(255, 255, 255, .75);
+    }
+
+    .foco-detail-muscle-row:last-child {
+      border-bottom: none;
+    }
+
+    .foco-detail-muscle-val {
+      font-weight: 600;
+      color: rgba(255, 255, 255, .92);
+    }
+
+    /* ── Background layer ── */
+    #focoBgLayer {
+      position: fixed;
+      top: 0;
+      left: var(--mh-sb);
+      width: calc(100% - var(--mh-sb));
+      height: 100%;
+      background-size: 100% 100%;
+      background-position: center center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Glass morphism ── */
+    .glass-card {
+      --s2: rgba(255, 255, 255, .04);
+      --s3: rgba(255, 255, 255, .06);
+      --s4: rgba(255, 255, 255, .07);
+      --b1: rgba(255, 255, 255, .08);
+      --b2: rgba(255, 255, 255, .11);
+    }
+
+    .foco-layout.glass-card,
+    .foco-cal-float.glass-card {
+      background: rgba(15, 15, 15, .6) !important;
+      backdrop-filter: blur(12px) saturate(1.6) brightness(1.08) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(1.6) brightness(1.08) !important;
+      border: 1px solid rgba(255, 255, 255, .13) !important;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .07) !important;
+    }
+
+    .foco-layout.glass-card .foco-empty-card,
+    .foco-layout.glass-card .foco-stats-block,
+    .foco-layout.glass-card .foco-actions-col,
+    .foco-layout.glass-card .foco-routines-col,
+    .foco-layout.glass-card .foco-stat-cell,
+    .foco-layout.glass-card .foco-action-btn,
+    .foco-layout.glass-card .foco-stats-header {
+      border-color: rgba(255, 255, 255, .1) !important;
+    }
+
+    /* ── Dashboard customization panel ── */
+
+    .dash-custom-section {
+      margin-bottom: 20px;
+    }
+
+    .dash-custom-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .dash-custom-title {
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .dash-glass-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: var(--r8);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      user-select: none;
+    }
+
+    .dash-glass-toggle-row:hover {
+      border-color: var(--b2);
+      background: var(--s3);
+    }
+
+    .dash-glass-toggle-row span {
+      font-size: 11px;
+      color: var(--t2);
+      font-weight: 500;
+    }
+
+    .dash-glass-switch {
+      width: 34px;
+      height: 19px;
+      border-radius: 10px;
+      background: var(--s4);
+      border: 1px solid var(--b2);
+      position: relative;
+      flex-shrink: 0;
+      transition: background .22s, border-color .22s;
+    }
+
+    .dash-glass-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--t4);
+      transition: transform .22s cubic-bezier(.4, 0, .2, 1), background .22s;
+    }
+
+    .dash-glass-toggle-row.active .dash-glass-switch {
+      background: rgba(255, 255, 255, .18);
+      border-color: rgba(255, 255, 255, .28);
+    }
+
+    .dash-glass-toggle-row.active .dash-glass-switch::after {
+      transform: translateX(15px);
+      background: #fff;
+    }
+
+    /* ── Sidebar style picker ── */
+    .dc-sb-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .dc-sb-card {
+      position: relative;
+      padding: 14px 10px 12px;
+      border-radius: var(--r12);
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      cursor: pointer;
+      transition: border-color .18s, background .18s;
+      text-align: center;
+      user-select: none;
+    }
+
+    .dc-sb-card:hover {
+      border-color: var(--b2);
+      background: var(--s3);
+    }
+
+    .dc-sb-card.sel {
+      border-color: rgba(255, 255, 255, .35);
+      background: var(--s3);
+    }
+
+    .dc-sb-card.sel::after {
+      content: '✓';
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 9px;
+      color: var(--t3);
+      font-family: var(--mono);
+    }
+
+    .dc-sb-preview {
+      width: 36px;
+      height: 48px;
+      border-radius: 8px;
+      margin: 0 auto 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dc-sb-preview-default {
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .dc-sb-preview-branco {
+      background: #e8e0d5;
+      border: 1px solid rgba(0, 0, 0, .08);
+    }
+
+    .dc-sb-preview-branco .dc-sb-dot {
+      background: rgba(0, 0, 0, .12);
+    }
+
+    .dc-sb-preview-blackout {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, .03);
+    }
+
+    .dc-sb-dot {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .12);
+    }
+
+    .dc-sb-dot:nth-child(1) {
+      top: 8px;
+    }
+
+    .dc-sb-dot:nth-child(2) {
+      top: 22px;
+    }
+
+    .dc-sb-dot:nth-child(3) {
+      top: 36px;
+    }
+
+    .dc-sb-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--t2);
+      margin-bottom: 3px;
+      letter-spacing: -.1px;
+    }
+
+    .dc-sb-sub {
+      font-size: 9px;
+      color: var(--t4);
+      font-family: var(--mono);
+      line-height: 1.45;
+    }
+
+    /* Sidebar modo branco */
+    body.sb-branco .mh-sidebar {
+      background: #e8e0d5 !important;
+      border-right-color: rgba(0, 0, 0, .08) !important;
+    }
+
+
+
+
+
+    body.sb-branco .mh-nb {
+      color: #888 !important;
+    }
+
+    body.sb-branco .mh-nb:hover {
+      background: rgba(0, 0, 0, .06) !important;
+      color: #222 !important;
+    }
+
+    body.sb-branco .mh-nb.on {
+      background: rgba(0, 0, 0, .1) !important;
+      color: #111 !important;
+      border-color: rgba(0, 0, 0, .12) !important;
+    }
+
+    body.sb-branco .mh-div {
+      background: rgba(0, 0, 0, .08) !important;
+    }
+
+    body.sb-branco .mh-av {
+      background: rgba(0, 0, 0, .08) !important;
+      border-color: rgba(0, 0, 0, .12) !important;
+      color: #333 !important;
+    }
+
+    /* Sidebar modo blackout */
+    body.sb-blackout .mh-sidebar {
+      background: #000 !important;
+      border-right-color: transparent !important;
+      backdrop-filter: none !important;
+    }
+
+    /* ── Botão Visual Foco: checklist tick ── */
+    @keyframes focoTickDraw {
+      0% {
+        stroke-dashoffset: 16;
+        opacity: .3;
+      }
+
+      60% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+
+      100% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+    }
+
+    @keyframes focoGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(185, 28, 28, 0);
+      }
+
+      50% {
+        box-shadow: 0 0 10px 3px rgba(185, 28, 28, .4);
+      }
+    }
+
+    .btn-foco-visual {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      background: transparent;
+      border: 1px solid var(--b2);
+      color: var(--t3);
+      cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+
+    .btn-foco-visual:hover {
+      background: rgba(185, 28, 28, .2);
+      border-color: rgba(185, 28, 28, .55);
+      color: #fca5a5;
+      animation: focoGlow .6s ease-out;
+    }
+
+    .btn-foco-visual:hover .foco-tick-path {
+      animation: focoTickDraw .5s cubic-bezier(.4, 0, .2, 1) forwards;
+    }
+
+    /* ══════════ TOPBAR (embutida nesta página) ══════════ */
+    @keyframes mhTopbarSlideDown {
+      from {
+        transform: translate3d(0, -100%, 0);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+      }
+    }
+
+    .topbar {
+      animation: mhTopbarSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+      transition: background 0.5s ease, border-bottom-color 0.5s ease;
+      background: rgba(7, 7, 7, .82) !important;
+      border: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, .04) !important;
+      box-shadow: none !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border-radius: 0 !important;
+      clip-path: none !important;
+      margin: 0 !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      height: 52px !important;
+      padding: 0 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 16px !important;
+      overflow: visible !important;
+      left: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 52 !important;
+    }
+
+    .tb-path {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-family: 'DM Mono', monospace !important;
+      font-size: 12px !important;
+      letter-spacing: .2px !important;
+    }
+
+    .tb-root {
+      color: #888 !important;
+      font-weight: 500 !important;
+    }
+
+    .tb-sep {
+      color: rgba(255, 255, 255, .22) !important;
+    }
+
+    .tb-cur {
+      color: #f0f0f0 !important;
+    }
+
+    .tb-r {
+      background: transparent !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin-left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+  </style>
+  <script>// Body opacity will be faded in after data load to prevent flashes of unstyled content</script>
+</head>
+
+<body>
+
+  <!-- APP -->
+  <div class="app">
+    <div id="focoBgLayer"></div>
+    <div class="page on" id="page-foco">
+
+      <div class="topbar">
+        <div class="tb-path">
+          <span class="tb-root">Minsq</span>
+          <span class="tb-sep">/</span>
+          <span class="tb-cur">Foco</span>
+        </div>
+        <div class="tb-r"></div>
+      </div>
+
+      <div class="content">
+
+        <!-- ESTADO VAZIO — sem rotinas -->
+        <div class="foco-layout" id="focoEmptyState" data-glass-label="Rotinas">
+
+          <div class="foco-empty-card" data-mh-help="Área de Treinos: É exatamente neste painel que as suas rotinas e pastas ficarão listadas depois de criadas.">
+            <svg class="foco-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="8" y1="8" x2="16" y2="8" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+              <line x1="8" y1="16" x2="12" y2="16" />
+            </svg>
+            <div class="foco-empty-t">Começar</div>
+            <div class="foco-empty-s">Começa por criar uma rotina!</div>
+          </div>
+
+          <div>
+            <div class="foco-actions-col">
+              <div class="foco-action-btn" onclick="window.location.href='create-rotine.html'" data-mh-help="Criar Rotina: Monte seus treinos do zero aqui, definindo exatamente quais exercícios, séries e tempos de descanso você vai usar.">
+                <div class="foco-action-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="8" y1="8" x2="16" y2="8" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="8" y1="16" x2="12" y2="16" />
+                  </svg>
+                </div>
+                <span class="foco-action-label">Nova rotina</span>
+                <svg class="foco-action-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </div>
+              <div class="foco-action-btn" onclick="openFocoFolderModal()" data-mh-help="Criar Pasta: Organize seus treinos. Você pode agrupar rotinas por mesociclos, por divisões (ABCDE) ou como preferir.">
+                <div class="foco-action-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    <line x1="12" y1="11" x2="12" y2="17" />
+                    <line x1="9" y1="14" x2="15" y2="14" />
+                  </svg>
+                </div>
+                <span class="foco-action-label">Nova pasta</span>
+                <svg class="foco-action-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </div>
+            </div>
+
+            <div class="foco-stats-block" data-mh-help="Seus Números: Acompanhe quantas horas você já suou e quantas sessões de treino já acumulou na sua jornada.">
+              <div class="foco-stats-grid">
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">horas totais</div>
+                  <div class="foco-stat-val" id="focoStatHorasEmpty">0.0</div>
+                </div>
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">sessões totais</div>
+                  <div class="foco-stat-val" id="focoStatSessoesEmpty">0</div>
+                </div>
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">total de dias</div>
+                  <div class="foco-stat-val" id="focoStatDiasEmpty">0</div>
+                </div>
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">melhor dia</div>
+                  <div class="foco-stat-val" id="focoStatMelhorEmpty">—</div>
+                </div>
+                <div class="foco-stat-cell"
+                  style="grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,.06); border-bottom: none; border-right: none;">
+                  <div class="foco-stat-name">streak de semanas</div>
+                  <div class="foco-stat-val" id="focoStatStreakEmpty">0</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ESTADO POPULADO — com rotinas -->
+        <div class="foco-layout" id="focoPopulatedState" style="display:none" data-glass-label="Rotinas">
+
+          <div class="foco-routines-col" id="focoRoutinesListCol" data-mh-help="Seus Treinos: Suas rotinas e pastas ficam agrupadas aqui. Clique em uma rotina para iniciá-la e registrar seus resultados do dia.">
+            <!-- renderizado via JS -->
+          </div>
+
+          <div>
+            <div class="foco-actions-col">
+              <div class="foco-action-btn" onclick="window.location.href='create-rotine.html'" data-mh-help="Criar Rotina: Monte seus treinos do zero aqui, definindo exatamente quais exercícios, séries e tempos de descanso você vai usar.">
+                <div class="foco-action-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="8" y1="8" x2="16" y2="8" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                    <line x1="8" y1="16" x2="12" y2="16" />
+                  </svg>
+                </div>
+                <span class="foco-action-label">Nova rotina</span>
+                <svg class="foco-action-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </div>
+              <div class="foco-action-btn" onclick="openFocoFolderModal()" data-mh-help="Criar Pasta: Organize seus treinos. Você pode agrupar rotinas por mesociclos, por divisões (ABCDE) ou como preferir.">
+                <div class="foco-action-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                    <line x1="12" y1="11" x2="12" y2="17" />
+                    <line x1="9" y1="14" x2="15" y2="14" />
+                  </svg>
+                </div>
+                <span class="foco-action-label">Nova pasta</span>
+                <svg class="foco-action-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- Stats histórico acumulado -->
+            <div class="foco-stats-block" data-mh-help="Seus Números: Acompanhe quantas horas você já suou e quantas sessões de treino já acumulou na sua jornada.">
+              <div class="foco-stats-grid">
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">horas totais</div>
+                  <div class="foco-stat-val" id="focoStatHorasPop">0.0</div>
+                </div>
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">sessões totais</div>
+                  <div class="foco-stat-val" id="focoStatSessoesPop">0</div>
+                </div>
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">total de dias</div>
+                  <div class="foco-stat-val" id="focoStatDiasPop">0</div>
+                </div>
+                <div class="foco-stat-cell">
+                  <div class="foco-stat-name">melhor dia</div>
+                  <div class="foco-stat-val" id="focoStatMelhorPop">—</div>
+                </div>
+                <div class="foco-stat-cell"
+                  style="grid-column: 1 / -1; border-top: 1px solid rgba(255,255,255,.06); border-bottom: none; border-right: none;">
+                  <div class="foco-stat-name">streak de semanas</div>
+                  <div class="foco-stat-val" id="focoStatStreakPop">0</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div><!-- /.content -->
+
+      <!-- ═══ MODAL NOVA ROTINA (FOCO) ═══ -->
+      <div class="modal-bg" id="focoRoutineModal" onclick="if(event.target===this)closeFocoRoutineModal()">
+        <div class="modal"
+          style="width:520px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;border-radius:4px;border-color:rgba(255,255,255,.08)">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-shrink:0">
+            <div>
+              <div class="m-t" style="font-size:14px;letter-spacing:-.3px">Nova rotina</div>
+              <div class="m-s" style="margin-bottom:0;font-size:11px">defina um nome e adicione os exercícios</div>
+            </div>
+            <button onclick="closeFocoRoutineModal()"
+              style="background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:18px;line-height:1;padding:4px 6px;transition:color .15s"
+              onmouseover="this.style.color='rgba(255,255,255,.7)'"
+              onmouseout="this.style.color='rgba(255,255,255,.25)'">✕</button>
+          </div>
+
+          <div class="fr" style="flex-shrink:0">
+            <label>NOME DA ROTINA</label>
+            <input type="text" id="focoRoutineName" placeholder="ex: Upper A, Full Body, Pernas…" autocomplete="off"
+              maxlength="46" onkeydown="if(event.key==='Enter')focusAddExercise()">
+          </div>
+
+          <div style="flex:1;overflow-y:auto;min-height:0;margin-bottom:14px">
+            <div id="focoExerciseList"
+              style="display:flex;flex-direction:column;gap:0;border:1px solid rgba(255,255,255,.06)"></div>
+            <div id="focoExerciseEmpty"
+              style="padding:20px;text-align:center;font-size:11px;color:rgba(255,255,255,.18);font-family:var(--mono);letter-spacing:.5px">
+              nenhum exercício adicionado</div>
+          </div>
+
+          <div style="flex-shrink:0;border:1px solid rgba(255,255,255,.06);padding:12px;margin-bottom:16px">
+            <div
+              style="font-family:var(--mono);font-size:8px;color:rgba(255,255,255,.22);letter-spacing:1.4px;text-transform:uppercase;margin-bottom:10px">
+              adicionar exercício</div>
+            <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:end">
+              <div class="fr" style="margin-bottom:0">
+                <label>EXERCÍCIO</label>
+                <input type="text" id="focoExName" placeholder="nome do exercício" autocomplete="off" maxlength="50"
+                  onkeydown="if(event.key==='Enter')focoAddExercise()">
+              </div>
+              <div class="fr" style="margin-bottom:0;width:100px">
+                <label>REPS</label>
+                <input type="text" id="focoExReps" placeholder="ex: 12 ou 8-12" autocomplete="off" maxlength="5"
+                  oninput="focoRepsInput(this)" onkeydown="if(event.key==='Enter')focoAddExercise()">
+              </div>
+              <div class="fr" style="margin-bottom:0;width:110px">
+                <label>DESCANSO</label>
+                <select id="focoExRest" onkeydown="if(event.key==='Enter')focoAddExercise()"
+                  style="width:100%;background:var(--s3);border:1px solid var(--b2);border-radius:var(--r8);color:var(--t2);font-family:var(--fm);font-size:12px;padding:9px 11px;outline:none;transition:border-color .2s;cursor:pointer">
+                  <option value="1min30s">1min 30s</option>
+                  <option value="2min" selected>2min</option>
+                  <option value="2min30s">2min 30s</option>
+                  <option value="3min">3min</option>
+                  <option value="3min30s">3min 30s</option>
+                  <option value="4min">4min</option>
+                  <option value="4min30s">4min 30s</option>
+                  <option value="5min">5min</option>
+                  <option value="5min30s">5min 30s</option>
+                  <option value="6min">6min</option>
+                  <option value="7min">7min</option>
+                  <option value="8min">8min</option>
+                  <option value="9min">9min</option>
+                  <option value="10min">10min</option>
+                </select>
+              </div>
+              <button onclick="focoAddExercise()"
+                style="height:34px;padding:0 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.7);font-size:11px;font-family:var(--mono);cursor:pointer;letter-spacing:.5px;transition:background .12s;white-space:nowrap;flex-shrink:0"
+                onmouseover="this.style.background='rgba(255,255,255,.1)'"
+                onmouseout="this.style.background='rgba(255,255,255,.06)'">+ add</button>
+            </div>
+            <div id="focoExErr"
+              style="font-size:10px;color:#e06060;font-family:var(--mono);margin-top:6px;display:none"></div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-shrink:0">
+            <button onclick="closeFocoRoutineModal()" class="btn btn-g" style="flex:1">Cancelar</button>
+            <button type="button" onclick="saveFocoRoutine()" class="btn btn-p" style="flex:2"
+              id="focoRoutineSaveBtn">Salvar rotina</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ═══ MODAL NOVA PASTA (FOCO) ═══ -->
+      <div class="modal-bg" id="focoFolderModal" onclick="if(event.target===this)closeFocoFolderModal()">
+        <div class="modal" style="width:380px;max-width:95vw;border-radius:4px;border-color:rgba(255,255,255,.08)">
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+            <div>
+              <div class="m-t" style="font-size:14px;letter-spacing:-.3px">Nova pasta</div>
+              <div class="m-s" style="margin-bottom:0;font-size:11px">agrupe suas rotinas em pastas</div>
+            </div>
+            <button onclick="closeFocoFolderModal()"
+              style="background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:18px;line-height:1;padding:4px 6px;transition:color .15s"
+              onmouseover="this.style.color='rgba(255,255,255,.7)'"
+              onmouseout="this.style.color='rgba(255,255,255,.25)'">✕</button>
+          </div>
+
+          <div class="fr">
+            <label>NOME DA PASTA</label>
+            <input type="text" id="focoFolderName" placeholder="ex: Push Pull Legs, Semana A…" autocomplete="off"
+              maxlength="48" oninput="focoFolderNameInput(this)"
+              onkeydown="if(event.key==='Enter')saveFocoFolder();if(event.key==='Escape')closeFocoFolderModal()">
+            <div id="focoFolderNameCount"
+              style="font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.2);text-align:right;margin-top:4px">
+              0/65</div>
+            <div id="focoFolderErr"
+              style="font-size:10px;color:#e06060;font-family:var(--mono);margin-top:4px;display:none"></div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button onclick="closeFocoFolderModal()" class="btn btn-g" style="flex:1">Cancelar</button>
+            <button onclick="saveFocoFolder()" class="btn btn-p" style="flex:2">Criar pasta</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ═══ CONFIRM MODAL ═══ -->
+      <div class="foco-confirm-bg" id="focoConfirmBg">
+        <div class="foco-confirm-box">
+          <div class="foco-confirm-title" id="focoConfirmTitle">Tem certeza?</div>
+          <div class="foco-confirm-desc" id="focoConfirmDesc"></div>
+          <div class="foco-confirm-actions">
+            <button class="foco-confirm-cancel" id="focoConfirmCancel">Cancelar</button>
+            <button class="foco-confirm-delete" id="focoConfirmDelete">Apagar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ MODAL DETALHE ROTINA ═══ -->
+      <div class="modal-bg" id="focoRoutineDetailModal" onclick="if(event.target===this)closeFocoRoutineDetailModal()">
+        <div class="foco-detail-modal">
+
+          <div class="foco-detail-left">
+            <div style="flex: 1; overflow-y: auto;" id="focoDetailExList">
+              <!-- preenchido dinamicamente pelo JS -->
+            </div>
+          </div>
+
+          <div class="foco-detail-right">
+            <div class="foco-detail-created">
+              <div>
+                <div class="foco-detail-created-label">criado por</div>
+                <div class="foco-detail-created-name" id="focoDetailCreatedName">(nome do user)</div>
+              </div>
+              <div class="foco-circle-icon sm" id="focoDetailCreatedAvatar"
+                style="overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--s3);color:var(--t2);font-size:24px;font-weight:600">
+              </div>
+            </div>
+
+            <div class="foco-detail-actions">
+              <button class="foco-detail-btn" id="btnCopyRoutineDetail">copiar</button>
+              <button class="foco-detail-btn" onclick="toast('Desabilitado na versão Beta')">editar</button>
+            </div>
+            <button class="foco-detail-btn foco-detail-share"
+              onclick="toast('Desabilitado na versão Beta')">compartilhar rotina</button>
+
+            <div class="foco-detail-summary">
+              <div class="foco-detail-summary-title">resumo</div>
+              <div class="foco-detail-stats">
+                <div class="foco-detail-stat">
+                  <div class="foco-detail-stat-label">Exercícios</div>
+                  <div class="foco-detail-stat-val" id="focoDetailExCount">0</div>
+                </div>
+                <div class="foco-detail-stat">
+                  <div class="foco-detail-stat-label">Séries</div>
+                  <div class="foco-detail-stat-val" id="focoDetailTotalSets">0</div>
+                </div>
+                <div class="foco-detail-stat">
+                  <div class="foco-detail-stat-label">Duração</div>
+                  <div class="foco-detail-stat-val" id="focoDetailDuration">0 min</div>
+                </div>
+              </div>
+              <div class="foco-detail-musclehead">
+                <span>musculo</span><span>series</span>
+              </div>
+              <div id="focoDetailMuscleList">
+                <!-- <div class="foco-detail-muscle-row">
+                  <span>triceps</span>
+                  <span class="foco-detail-muscle-val">2</span>
+                </div> -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ════ CUSTOMIZATION OVERLAY ════ -->
+
+      <!-- ═══ CALENDÁRIO FLUTUANTE — canto inferior direito, separado do resto ═══
+           Por enquanto é apenas visual. Feature futura de treino chama:
+           window.focoMarkWorkoutDay('YYYY-MM-DD') / window.focoUnmarkWorkoutDay('YYYY-MM-DD') -->
+      <div class="foco-cal-float" id="focoCalFloat" data-glass-label="Calendário" data-mh-help="Calendário de Foco: Cada dia que você treina, o Minsq carimba o seu calendário automaticamente. Construa uma parede de vitórias e não quebre a corrente!">
+        <div class="foco-cal-header">
+          <button class="foco-cal-nav" data-no-guard onclick="focoCalChangeMonth(-1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <div class="foco-cal-title" id="focoCalTitle">—</div>
+          <button class="foco-cal-nav" id="focoCalNextBtn" data-no-guard onclick="focoCalChangeMonth(1)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+        <div class="foco-cal-weekdays">
+          <span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span>
+        </div>
+        <div class="foco-cal-grid" id="focoCalGrid"></div>
+      </div>
+
+    </div><!-- /.page -->
+  </div><!-- /.app -->
+
+  <script src="api-client.js?v=2"></script>
+  <script>
+    /* ══ TOAST ══ */
+    function toast(msg, tipo) {
+      tipo = tipo || 'ok';
+      var el = document.createElement('div');
+      el.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;padding:10px 16px;border-radius:8px;font-size:12px;font-family:"Exo 2", sans-serif;border:1px solid;animation:fadeUp .3s ease;background:' + (tipo === 'ok' ? 'var(--s4)' : 'var(--s3)') + ';color:' + (tipo === 'ok' ? 'var(--t1)' : 'var(--warn)') + ';border-color:' + (tipo === 'ok' ? 'var(--b3)' : 'var(--b2)') + ';';
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(function () { el.remove(); }, 3000);
+    }
+
+    /* ══ STATE & SYNC ══ */
+    const S = {
+      focoRotinas: [],
+      focoFolders: [],
+      profile: null
+    };
+
+    function _safeLoad(key) {
+      if (key === 'focoRotinas') return S.focoRotinas;
+      if (key === 'focoFolders') return S.focoFolders;
+      return [];
+    }
+    function _safeSave(key, val) {
+      // No-op. Persistence is handled asynchronously via core API.
+    }
+
+    async function initFocoModule() {
+      try {
+        var [folders, routines, profile] = await Promise.all([
+          window.api.getFocoFolders(),
+          window.api.getFocoRoutines(),
+          window.api.getProfile().catch(function () { return null; })
+        ]);
+        if (typeof routines === 'string') {
+          try { routines = JSON.parse(routines); } catch (e) { routines = []; }
+        }
+        if (typeof folders === 'string') {
+          try { folders = JSON.parse(folders); } catch (e) { folders = []; }
+        }
+        S.focoFolders = folders || [];
+        S.profile = profile || null;
+        S.focoRotinas = (routines || []).map(function (r) {
+          let ex = r.exercises;
+          if (typeof ex === 'string') {
+            try { ex = JSON.parse(ex); } catch (e) { ex = []; }
+          }
+          return {
+            id: r.id,
+            name: r.name,
+            exercises: ex,
+            durationMin: r.duration_min,
+            folderId: r.folder_id,
+            createdAt: r.criado_em
+          };
+        });
+
+        // Atualiza guia (title) e favicon com dados do banco
+        if (S.profile) {
+          var _pNome = S.profile.nome || S.profile.name || '';
+          if (_pNome) {
+            document.title = _pNome.trim().split(' ')[0] + ' | Minsq';
+          }
+          var _pAvSrc = '';
+          if (S.profile.avatar_type === 'photo' && S.profile.avatar && S.profile.avatar.startsWith('http')) {
+            _pAvSrc = S.profile.avatar;
+          } else if (S.profile.avatar_url && S.profile.avatar_url.startsWith('http')) {
+            _pAvSrc = S.profile.avatar_url;
+          }
+          if (_pAvSrc) {
+            var _favicon = document.querySelector('link[rel~="icon"]');
+            if (!_favicon) { _favicon = document.createElement('link'); _favicon.rel = 'icon'; document.head.appendChild(_favicon); }
+            _favicon.href = _pAvSrc;
+          }
+        }
+
+        renderFocoPage();
+      } catch (e) {
+        console.error('Erro ao carregar módulo de foco:', e);
+        toast('⚠️ Erro ao sincronizar dados com o servidor.', 'warn');
+        try {
+          renderFocoPage();
+        } catch (err) {
+          console.error('Erro no catch de initFocoModule:', err);
+        }
+        // Fallback: se depois de tudo isso o conteúdo continuar sem nada visível
+        // (nem estado vazio nem lista), mostra o erro real na tela em vez de ficar preto.
+        try {
+          var emptyEl = document.getElementById('focoEmptyState');
+          var popEl = document.getElementById('focoPopulatedState');
+          var emptyVisible = emptyEl && emptyEl.style.display !== 'none';
+          var popVisible = popEl && popEl.style.display !== 'none';
+          if (!emptyVisible && !popVisible) {
+            var content = document.querySelector('.content');
+            if (content) {
+              var box = document.createElement('div');
+              box.style.cssText = 'padding:40px;text-align:center;color:var(--warn,#e5484d);font-family:var(--mono,monospace);font-size:13px;';
+              box.textContent = 'Falha ao carregar Foco: ' + (e && e.message ? e.message : 'erro desconhecido') + '. Veja o Console (F12) para detalhes.';
+              content.appendChild(box);
+            }
+          }
+        } catch (fallbackErr) {
+          console.error('Erro no fallback visual:', fallbackErr);
+        }
+      } finally {
+        document.body.style.opacity = "1";
+        // Descarta o loader global injetado pelo shared.js (se ainda estiver visível)
+        if (typeof window.hideMhLoader === 'function') window.hideMhLoader(true);
+      }
+    }
+
+    /* ══ FOCO: ROTINAS ══ */
+    (function () {
+      var _focoExercises = [];
+
+      window.focoRepsInput = function (el) {
+        var raw = el.value;
+        var pos = el.selectionStart;
+        var clean = raw.replace(/[^0-9-]/g, '');
+        var dashIdx = clean.indexOf('-');
+        var part1, part2, hasDash;
+        if (dashIdx === -1) { part1 = clean; part2 = ''; hasDash = false; }
+        else { part1 = clean.slice(0, dashIdx); part2 = clean.slice(dashIdx + 1).replace(/-/g, ''); hasDash = true; }
+        part1 = part1.slice(0, 2); part2 = part2.slice(0, 2);
+        if (part1 !== '') {
+          var n1 = parseInt(part1, 10);
+          if (!hasDash) { if (n1 > 99) part1 = '99'; }
+          else { if (n1 > 40) part1 = '40'; }
+        }
+        if (hasDash && part2 !== '') { var n2 = parseInt(part2, 10); if (n2 > 40) part2 = '40'; }
+        if (hasDash && part1 === '') { hasDash = false; part2 = ''; }
+        var result = part1;
+        if (hasDash) result += '-' + part2;
+        el.value = result;
+        try { var newPos = Math.min(pos, result.length); el.setSelectionRange(newPos, newPos); } catch (e) { }
+      };
+
+      window.openFocoRoutineModal = function () {
+        _focoExercises = [];
+        document.getElementById('focoRoutineName').value = '';
+        document.getElementById('focoExName').value = '';
+        document.getElementById('focoExReps').value = '';
+        var restEl = document.getElementById('focoExRest'); if (restEl) restEl.value = '2min';
+        document.getElementById('focoExErr').style.display = 'none';
+        renderFocoExercises();
+        document.getElementById('focoRoutineModal').classList.add('on');
+        setTimeout(function () { document.getElementById('focoRoutineName').focus(); }, 120);
+      };
+
+      window.closeFocoRoutineModal = function () {
+        document.getElementById('focoRoutineModal').classList.remove('on');
+      };
+
+      window.focusAddExercise = function () {
+        document.getElementById('focoExName').focus();
+      };
+
+      window.focoAddExercise = function () {
+        var name = (document.getElementById('focoExName').value || '').trim();
+        var reps = (document.getElementById('focoExReps').value || '').trim();
+        var rest = (document.getElementById('focoExRest').value || '').trim();
+        var err = document.getElementById('focoExErr');
+        if (!name) {
+          err.textContent = 'informe o nome do exercício';
+          err.style.display = 'block';
+          document.getElementById('focoExName').focus();
+          return;
+        }
+
+        if (_focoExercises.length >= 12) {
+          err.textContent = 'limite de 12 exercícios atingido';
+          err.style.display = 'block';
+          return;
+        }
+
+        err.style.display = 'none';
+        _focoExercises.push({ name: name, reps: reps || '—', rest: rest || '—' });
+        document.getElementById('focoExName').value = '';
+        document.getElementById('focoExReps').value = '';
+        var restEl2 = document.getElementById('focoExRest'); if (restEl2) restEl2.value = '2min';
+        renderFocoExercises();
+        document.getElementById('focoExName').focus();
+      };
+
+      function renderFocoExercises() {
+        var list = document.getElementById('focoExerciseList');
+        var empty = document.getElementById('focoExerciseEmpty');
+        if (_focoExercises.length === 0) {
+          list.innerHTML = '';
+          list.style.display = 'none';
+          empty.style.display = 'block';
+          return;
+        }
+        empty.style.display = 'none';
+        list.style.display = 'flex';
+        list.innerHTML =
+          '<div style="font-family:var(--mono);font-size:7px;color:rgba(255,255,255,.22);letter-spacing:1.2px;text-transform:uppercase;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.06)">exercício <span id="focoExCount" style="color:rgba(255,255,255,.22)">0</span></div>'
+          + _focoExercises.map(function (ex, i) {
+            return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;color:rgba(255,255,255,.6)">'
+              + '<span style="flex:1">' + ex.name + '</span>'
+              + '<span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.3)">' + ex.reps + '</span>'
+              + '<span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.2)">' + ex.rest + '</span>'
+              + '<button onclick="focoRemoveExercise(' + i + ')" style="background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:13px;padding:0;transition:color .12s;line-height:1" onmouseover="this.style.color=\'rgba(255,100,100,.7)\'" onmouseout="this.style.color=\'rgba(255,255,255,.2)\'">✕</button>'
+              + '</div>';
+          }).join('');
+        var countEl = document.getElementById('focoExCount');
+        if (countEl) {
+          countEl.textContent = _focoExercises.length;
+          countEl.style.color = 'rgba(255,255,255,.22)';
+        }
+      }
+
+      window.focoRemoveExercise = function (i) {
+        _focoExercises.splice(i, 1);
+        renderFocoExercises();
+      };
+
+      var _focoSaving = false;
+      window.saveFocoRoutine = function () {
+        if (_focoSaving) return;
+        _focoSaving = true;
+
+        var name = (document.getElementById('focoRoutineName').value || '').trim();
+        if (!name) {
+          document.getElementById('focoRoutineName').focus();
+          document.getElementById('focoRoutineName').style.borderColor = '#e06060';
+          setTimeout(function () { document.getElementById('focoRoutineName').style.borderColor = ''; }, 1200);
+          _focoSaving = false;
+          return;
+        }
+        if (_focoExercises.length === 0) {
+          var err = document.getElementById('focoExErr');
+          err.textContent = 'adicione pelo menos um exercício';
+          err.style.display = 'block';
+          _focoSaving = false;
+          return;
+        }
+
+        var rotinas = _safeLoad('focoRotinas');
+
+        var totalMin = _focoExercises.reduce(function (acc, ex) {
+          var mins = parseFloat(ex.rest) || 2;
+          return acc + 3 + mins;
+        }, 0);
+
+        window.api.createFocoRoutine({
+          name: name,
+          durationMin: Math.round(totalMin),
+          folderId: null,
+          exercises: _focoExercises
+        }).then(function (res) {
+          var saved = res.routine;
+          var parsedEx = saved.exercises;
+          if (typeof parsedEx === 'string') {
+            try { parsedEx = JSON.parse(parsedEx); } catch (e) { parsedEx = []; }
+          }
+          S.focoRotinas.push({
+            id: saved.id,
+            name: saved.name,
+            exercises: parsedEx,
+            durationMin: saved.duration_min,
+            folderId: saved.folder_id,
+            createdAt: saved.criado_em
+          });
+          closeFocoRoutineModal();
+          renderFocoPage();
+          toast('✓ Rotina "' + name + '" criada');
+        }).catch(function (e) {
+          toast('⚠️ Erro ao salvar rotina: ' + (e.message || ''), 'warn');
+        }).finally(function () {
+          _focoSaving = false;
+        });
+      };
+
+      window.renderFocoPage = function () {
+        var rotinas = _safeLoad('focoRotinas');
+        var folders = _safeLoad('focoFolders');
+        var emptyEl = document.getElementById('focoEmptyState');
+        var popEl = document.getElementById('focoPopulatedState');
+
+        if (!emptyEl || !popEl) {
+          console.error('renderFocoPage: elementos focoEmptyState/focoPopulatedState não encontrados no DOM.');
+          var content = document.querySelector('.content');
+          if (content) {
+            content.insertAdjacentHTML('beforeend', '<div style="padding:40px;text-align:center;color:var(--warn,#e5484d);font-family:var(--mono,monospace);font-size:13px;">Erro interno: layout da página não carregou corretamente.</div>');
+          }
+          return;
+        }
+
+        if (rotinas.length === 0 && folders.length === 0) {
+          emptyEl.style.display = '';
+          popEl.style.display = 'none';
+          return;
+        }
+        emptyEl.style.display = 'none';
+        popEl.style.display = '';
+
+        var col = document.getElementById('focoRoutinesListCol');
+
+        try {
+          // Preserve open/closed state
+          var closedFolders = {};
+          col.querySelectorAll('.foco-separator').forEach(function (sep) {
+            var arrow = sep.querySelector('.foco-separator-arrow');
+            var menuBtn = sep.querySelector('.foco-separator-menu[onclick]');
+            if (menuBtn) {
+              var m = menuBtn.getAttribute('onclick').match(/focoFolderMenu\('([^']+)'/);
+              if (m) closedFolders[m[1]] = !arrow.classList.contains('open');
+            }
+          });
+
+          var html = '';
+          folders.forEach(function (f) {
+            var isClosed = closedFolders[f.id] || false;
+            var fRotinas = rotinas.filter(function (r) { return r.folderId === f.id; });
+            html += '<div class="foco-separator" onclick="focoToggleFolder(this)">'
+              + '<svg class="foco-separator-arrow' + (isClosed ? '' : ' open') + '" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+              + '<span class="foco-separator-name">' + f.name + ' (' + fRotinas.length + ')</span>'
+              + '<button class="foco-routine-menu" onclick="event.stopPropagation();focoFolderMenu(\'' + f.id + '\',this)" title="Apagar pasta">×</button>'
+              + '</div>';
+            fRotinas.forEach(function (r) { html += _buildRoutineCard(r, isClosed); });
+          });
+
+          var loose = rotinas.filter(function (r) { return !r.folderId; });
+          if (loose.length > 0) {
+            var looseIsClosed = false;
+            html += '<div class="foco-separator" onclick="focoToggleFolder(this)">'
+              + '<svg class="foco-separator-arrow' + (looseIsClosed ? '' : ' open') + '" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+              + '<span class="foco-separator-name">As minhas rotinas (' + loose.length + ')</span>'
+              + '<span class="foco-separator-menu" style="visibility:hidden">···</span>'
+              + '</div>';
+            loose.forEach(function (r) { html += _buildRoutineCard(r, looseIsClosed); });
+          }
+
+          col.innerHTML = html;
+        } catch (err) {
+          console.error('Erro ao renderizar rotinas:', err);
+          col.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--warn); font-size: 12px;">Erro ao exibir rotinas.</div>';
+        }
+      };
+
+      function _buildRoutineCard(r, hidden) {
+        var exList = r.exercises || [];
+        if (typeof exList === 'string') {
+          try { exList = JSON.parse(exList); } catch (e) { exList = []; }
+        }
+        if (!Array.isArray(exList)) exList = [];
+
+        var exPreview = exList.slice(0, 3).map(function (e) { return e.name || 'Exercício'; }).join(', ');
+        if (exList.length > 3) exPreview += '…';
+        var dur = r.durationMin ? ' (' + r.durationMin + 'min)' : '';
+        return '<div class="foco-routine-card"' + (hidden ? ' style="display:none"' : '') + ' onclick="openFocoRoutineDetailModal(\'' + r.id + '\')">'
+          + '<div class="foco-routine-header">'
+          + '<div class="foco-routine-title">' + r.name + dur + '</div>'
+          + '<button class="foco-routine-menu" onclick="event.stopPropagation();focoRoutineMenu(\'' + r.id + '\',this)" title="Apagar rotina">×</button>'
+          + '</div>'
+          + '<div class="foco-routine-exercises">' + (exPreview || 'sem exercícios') + '</div>'
+          + '</div>';
+      }
+
+      window.focoToggleFolder = function (el) {
+        var arrow = el.querySelector('.foco-separator-arrow');
+        arrow.classList.toggle('open');
+        var next = el.nextElementSibling;
+        while (next && !next.classList.contains('foco-separator')) {
+          next.style.display = arrow.classList.contains('open') ? '' : 'none';
+          next = next.nextElementSibling;
+        }
+      };
+
+      /* ── Confirm modal helper ── */
+      function _focoConfirm(title, desc, onConfirm) {
+        var bg = document.getElementById('focoConfirmBg');
+        if (!bg) return;
+        document.getElementById('focoConfirmTitle').textContent = title;
+        document.getElementById('focoConfirmDesc').textContent = desc;
+        bg.classList.add('on');
+        bg.dataset.active = '1';
+
+        function _close() {
+          bg.classList.remove('on');
+          bg.dataset.active = '';
+          document.removeEventListener('keydown', _key);
+        }
+        function _key(e) {
+          if (e.key === 'Escape') { e.preventDefault(); _close(); }
+          if (e.key === 'Enter') { e.preventDefault(); _close(); onConfirm(); }
+        }
+        document.addEventListener('keydown', _key);
+
+        document.getElementById('focoConfirmCancel').onclick = _close;
+        document.getElementById('focoConfirmDelete').onclick = function () { _close(); onConfirm(); };
+        bg.onclick = function (e) { if (e.target === bg) _close(); };
+      }
+
+      window.focoFolderMenu = function (id, btn) {
+        _focoConfirm(
+          'Apagar pasta?',
+          'As rotinas dentro dela não serão apagadas.',
+          function () {
+            window.api.deleteFocoFolder(id).then(function () {
+              S.focoFolders = S.focoFolders.filter(function (f) { return f.id !== id; });
+              S.focoRotinas = S.focoRotinas.map(function (r) {
+                if (r.folderId === id) { delete r.folderId; }
+                return r;
+              });
+              renderFocoPage();
+              toast('Pasta removida');
+            }).catch(function () { toast('⚠️ Erro ao apagar pasta.', 'warn'); });
+          }
+        );
+      };
+
+      window.focoRoutineMenu = function (id, btn) {
+        _focoConfirm(
+          'Apagar rotina?',
+          'Esta ação não pode ser desfeita.',
+          function () {
+            window.api.deleteFocoRoutine(id).then(function () {
+              S.focoRotinas = S.focoRotinas.filter(function (r) { return r.id !== id; });
+              renderFocoPage();
+              toast('Rotina removida');
+            }).catch(function () { toast('⚠️ Erro ao apagar rotina.', 'warn'); });
+          }
+        );
+      };
+
+      window.openFocoRoutineDetailModal = function (id) {
+        var rotina = S.focoRotinas.find(function (r) { return r.id === id; });
+        if (!rotina) return;
+
+        var exList = rotina.exercises || [];
+        if (typeof exList === 'string') {
+          try { exList = JSON.parse(exList); } catch (e) { exList = []; }
+        }
+        if (!Array.isArray(exList)) exList = [];
+
+        var totalSets = 0;
+        var muscleCount = {};
+        exList.forEach(function (e) {
+          var sets = Array.isArray(e.sets) ? e.sets.length : (parseInt(e.sets) || 0);
+          totalSets += sets;
+          if (e.target) {
+            muscleCount[e.target] = (muscleCount[e.target] || 0) + sets;
+          }
+        });
+
+        // Usa dados do perfil vindos do banco (S.profile carregado no initFocoModule)
+        var _p = S.profile || {};
+        var currentUser = _p.nome || _p.name || 'Usuário';
+        var avSrc = '';
+        if (_p.avatar_type === 'photo' && _p.avatar && _p.avatar.startsWith('http')) {
+          avSrc = _p.avatar;
+        } else if (_p.avatar_url && _p.avatar_url.startsWith('http')) {
+          avSrc = _p.avatar_url;
+        }
+        var avLetter = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:60%;height:60%;opacity:0.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+        var avHtml = avSrc
+          ? '<img src="' + avSrc + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+          : avLetter;
+
+        document.getElementById('focoDetailCreatedName').textContent = currentUser;
+
+        var av2 = document.getElementById('focoDetailCreatedAvatar');
+        if (av2) av2.innerHTML = avHtml;
+
+        // ── Lista de exercícios (painel esquerdo) usando o design original ──
+        if (!window.EXERCISE_THUMBS) {
+          window.EXERCISE_THUMBS = {
+            "Agachamento Zercher": "../assets/exercises/1.webp",
+            "Encolhimento com Salto (Barra)": "../assets/exercises/91.webp",
+            "Sissy Squat Unilateral com Assistência": "../assets/exercises/3.webp",
+            "Hiperextensão Lombar": "../assets/exercises/4.webp",
+            "Extensão Lombar (Máquina)": "../assets/exercises/5.webp",
+            "Hiperextensão Lombar com Peso": "../assets/exercises/6.webp",
+            "Band Pullaparts": "../assets/exercises/7.webp",
+            "Flexão de Punho Invertida (Barra)": "../assets/exercises/8.webp",
+            "Behind the Back Curl (Cable)": "../assets/exercises/9.webp",
+            "Belt Squat (Machine)": "../assets/exercises/10.webp",
+            "Bench": "../assets/exercises/11.webp",
+            "Supino Reto (Polia)": "../assets/exercises/12.webp",
+            "Supino Reto (Halter)": "../assets/exercises/13.webp",
+            "Supino Reto Smith": "../assets/exercises/14.webp",
+            "Supino com Pegada Junta": "../assets/exercises/15.webp",
+            "Supino - Pegada Aberta (Barra)": "../assets/exercises/16.webp",
+            "Pendlay Row": "../assets/exercises/111.webp",
+            "Aberturas Invertidas (Halter)": "../assets/exercises/35.webp",
+            "Rosca Direta Barra W (Barra)": "../assets/exercises/19.webp",
+            "Rosca Direta na Polia": "../assets/exercises/20.webp",
+            "Rosca Direta (Halter)": "../assets/exercises/21.webp",
+            "Rosca Direta (Máquina)": "../assets/exercises/22.webp",
+            "Agachamento com Banco (Barra)": "../assets/exercises/23.webp",
+            "Boxe (Cardio)": "../assets/exercises/24.webp",
+            "Agachamento Búlgaro (Halter)": "../assets/exercises/25.webp",
+            "Abdominal (Corda)": "../assets/exercises/26.webp",
+            "Crucifixo na Polia Alta (Máquina)": "../assets/exercises/27.webp",
+            "Good Morning (Cable)": "../assets/exercises/28.webp",
+            "Extensão de Panturrilha (Máquina)": "../assets/exercises/29.webp",
+            "Panturrilha no Leg Press 45º": "../assets/exercises/30.webp",
+            "Crucifixo no Voador (Máquina)": "../assets/exercises/31.webp",
+            "Aberturas no TRX": "../assets/exercises/32.webp",
+            "Supino Sentado (Máquina)": "../assets/exercises/33.webp",
+            "Face Pull": "../assets/exercises/58.webp",
+            "Remadas de Cavalinho (Barra)": "../assets/exercises/105.webp",
+            "Aberturas Invertidas de Ombro Posterior (na Máquina)": "../assets/exercises/121.webp",
+            "Chin Up": "../assets/exercises/38.webp",
+            "Elevação Lateral Unilateral (Cabo)": "../assets/exercises/95.webp",
+            "Elevação Lateral (Halter)": "../assets/exercises/96.webp",
+            "Rosca Martelo Alternada": "../assets/exercises/41.webp",
+            "Abdominal na Máquina": "../assets/exercises/42.webp",
+            "Abdominal (Com Peso)": "../assets/exercises/43.webp",
+            "Pendurado na Barra com Peso": "../assets/exercises/44.webp",
+            "Elevação Lateral (Máquina)": "../assets/exercises/97.webp",
+            "Levantamento Terra (Halter)": "../assets/exercises/46.webp",
+            "Levantamento Terra no Smith (Máquina)": "../assets/exercises/47.webp",
+            "Extensão de Pescoço Deitado (Com Peso)": "../assets/exercises/104.webp",
+            "Supino Declinado (Halter)": "../assets/exercises/49.webp",
+            "Supino Declinado (Máquina)": "../assets/exercises/50.webp",
+            "Supino Declinado no Smith (Máquina)": "../assets/exercises/51.webp",
+            "Abdominal Declinado (Com Peso)": "../assets/exercises/52.webp",
+            "Remada (Halter)": "../assets/exercises/53.webp",
+            "Rack Pull": "../assets/exercises/120.webp",
+            "Step Up (Halter)": "../assets/exercises/55.webp",
+            "Cheat Curl": "../assets/exercises/56.webp",
+            "Curl Wall": "../assets/exercises/57.webp",
+            "Aberturas Invertidas com Um Braço (Corda)": "../assets/exercises/126.webp",
+            "JM Press (Barra)": "../assets/exercises/89.webp",
+            "Supino no Chão (Barra)": "../assets/exercises/60.webp",
+            "Supino Inclinado (Halter)": "../assets/exercises/82.webp",
+            "Supino Inclinado no Smith (Máquina)": "../assets/exercises/83.webp",
+            "Front Squat": "../assets/exercises/63.webp",
+            "Squat": "../assets/exercises/64.webp",
+            "Glúteo Coice (Máquina)": "../assets/exercises/65.webp",
+            "Agachamento Goblet": "../assets/exercises/66.webp",
+            "Agachamento Hack (Máquina)": "../assets/exercises/67.webp",
+            "Good Morning (Barra)": "../assets/exercises/68.webp",
+            "Rosca Martelo com Corda na Polia": "../assets/exercises/69.webp",
+            "Rosca Martelo (Halter)": "../assets/exercises/70.webp",
+            "Remada Alta (Barra)": "../assets/exercises/178.webp",
+            "Remada Alta (Halter)": "../assets/exercises/179.webp",
+            "Arnold Press (Halteres)": "../assets/exercises/2.webp",
+            "Elevação de Pernas na Barra Fixa (Com Peso)": "../assets/exercises/74.webp",
+            "Cadeira Abdutora (Máquina)": "../assets/exercises/75.webp",
+            "Cadeira Adutora (Máquina)": "../assets/exercises/76.webp",
+            "Elevação Pélvica (Barra)": "../assets/exercises/77.webp",
+            "Elevação de Quadril (Máquina)": "../assets/exercises/78.webp",
+            "Elevação Pélvica no Smith (Máquina)": "../assets/exercises/79.webp",
+            "Hiperextensão Lombar Zercher": "../assets/exercises/80.webp",
+            "Supino Inclinado (Barra)": "../assets/exercises/81.webp",
+            "Supino Inclinado na Máquina": "../assets/exercises/84.webp",
+            "Elevação Frontal (Barra)": "../assets/exercises/61.webp",
+            "Elevação Frontal (Halter)": "../assets/exercises/62.webp",
+            "Press de Peito Iso-Lateral (Máquina)": "../assets/exercises/85.webp",
+            "Remada Barra (cable)": "../assets/exercises/134.webp",
+            "Remada Barra Pegada Afastado (cable)": "../assets/exercises/135.webp",
+            "Remadas Iso-Lateral (Máquina)": "../assets/exercises/88.webp",
+            "Tríceps Testa (Barra)": "../assets/exercises/159.webp",
+            "Bicicleta (Cardio)": "../assets/exercises/162.webp",
+            "Clean": "../assets/exercises/39.webp",
+            "Puxada Alta na Polia (Máquina)": "../assets/exercises/92.webp",
+            "Puxada Alta (Máquina)": "../assets/exercises/93.webp",
+            "Puxada Alta - Pegada Triângulo": "../assets/exercises/94.webp",
+            "Clean Pull": "../assets/exercises/40.webp",
+            "Deadlift": "../assets/exercises/45.webp",
+            "Levantamento Terra com Puxada Alta (Barra)": "../assets/exercises/48.webp",
+            "Cadeira Extensora (Máquina)": "../assets/exercises/98.webp",
+            "Leg Press 45º (Máquina)": "../assets/exercises/99.webp",
+            "Leg Press Horizontal (Máquina)": "../assets/exercises/100.webp",
+            "Afundo (Barra)": "../assets/exercises/101.webp",
+            "Mesa Flexora (Máquina)": "../assets/exercises/102.webp",
+            "Flexão de Pescoço Deitado (Com Peso)": "../assets/exercises/103.webp",
+            "Snatch (Halter)": "../assets/exercises/54.webp",
+            "Remada (Máquina)": "../assets/exercises/145.webp",
+            "Muscle Up": "../assets/exercises/106.webp",
+            "Dips com Peso": "../assets/exercises/175.webp",
+            "Hang Clean": "../assets/exercises/72.webp",
+            "Snatch Pendurado": "../assets/exercises/73.webp",
+            "Agachamento com Pausa (Barra)": "../assets/exercises/110.webp",
+            "Elevação em Y com Apoio no Peito (Halter)": "../assets/exercises/36.webp",
+            "Agachamento Pêndulo (Máquina)": "../assets/exercises/112.webp",
+            "Prancha Abdominal": "../assets/exercises/113.webp",
+            "Desenvolvimento (Barra)": "../assets/exercises/107.webp",
+            "Remada Dobrada (Barra)": "../assets/exercises/17.webp",
+            "Remadas Dobradas (Halter)": "../assets/exercises/18.webp",
+            "Rosca Scott (Barra)": "../assets/exercises/115.webp",
+            "Barra Fixa (Com Peso)": "../assets/exercises/118.webp",
+            "Pullover (Máquina)": "../assets/exercises/119.webp",
+            "Desenvolvimento (Halter)": "../assets/exercises/108.webp",
+            "Rosca Scott (Halter)": "../assets/exercises/116.webp",
+            "Rear Kick (Machine)": "../assets/exercises/122.webp",
+            "Rosca Invertida (Barra)": "../assets/exercises/123.webp",
+            "Rosca Invertida (Cabo)": "../assets/exercises/124.webp",
+            "Rosca Invertida (Halter)": "../assets/exercises/125.webp",
+            "Rosca Scott (Máquina)": "../assets/exercises/117.webp",
+            "Rosca Spider (Barra)": "../assets/exercises/160.webp",
+            "Larsen Press": "../assets/exercises/59.webp",
+            "Ring Pull Up": "../assets/exercises/129.webp",
+            "Levantamento Terra Romeno": "../assets/exercises/130.webp",
+            "Levantamento Terra Romeno (Halter)": "../assets/exercises/131.webp",
+            "Rosca com Corda (Máquina)": "../assets/exercises/132.webp",
+            "Puxada com Braços Esticados (Corda)": "../assets/exercises/133.webp",
+            "Remada Inclinada Apoiada no Peito (Halter)": "../assets/exercises/34.webp",
+            "Remadas Altas Iso-Lateral (Máquina)": "../assets/exercises/86.webp",
+            "Remada Baixa Iso-Lateral": "../assets/exercises/87.webp",
+            "Elevação de Panturrilha Sentado (Máquina)": "../assets/exercises/137.webp",
+            "Crucifixo Sentado (Cabo)": "../assets/exercises/138.webp",
+            "Rosca Inclinada (Halter)": "../assets/exercises/139.webp",
+            "Desenvolvimento no Smith (Máquina)": "../assets/exercises/109.webp",
+            "Cadeira Flexora (Máquina)": "../assets/exercises/141.webp",
+            "Clean and Jerk": "../assets/exercises/114.webp",
+            "Levantamento Lateral de Pesos Sentado (Halter)": "../assets/exercises/140.webp",
+            "Rosca de Punho (Halter)": "../assets/exercises/144.webp",
+            "Remada Sentada com Pegada em V (Cabo)": "../assets/exercises/136.webp",
+            "Desenvolvimento Sentado (Máquina)": "../assets/exercises/146.webp",
+            "Extensão de Punho (Barra)": "../assets/exercises/147.webp",
+            "Desenvolvimento Sentado (Barra)": "../assets/exercises/142.webp",
+            "Desenvolvimento de Ombros (Máquina de Placas)": "../assets/exercises/149.webp",
+            "Remada Unilateral na Polia": "../assets/exercises/150.webp",
+            "Rosca Unilateral (Cabo)": "../assets/exercises/151.webp",
+            "Puxada Unilateral": "../assets/exercises/152.webp",
+            "Extensão de Tríceps Unilateral (Cabo)": "../assets/exercises/154.webp",
+            "Extensão de Tríceps Unilateral (Halter)": "../assets/exercises/153.webp",
+            "Extensão de Perna Unilateral (Máquina)": "../assets/exercises/155.webp",
+            "Peso Morto Romano Unilateral (Halter)": "../assets/exercises/156.webp",
+            "Elevação Unilateral de Panturrilha em Pé (Máquina)": "../assets/exercises/157.webp",
+            "Agachamento Sissy (Com Peso)": "../assets/exercises/158.webp",
+            "Flexão na Handstand": "../assets/exercises/71.webp",
+            "Rosca Spider (Halter)": "../assets/exercises/161.webp",
+            "Puxada com Pega Inversa": "../assets/exercises/127.webp",
+            "Simulador de Escadas (Cardio)": "../assets/exercises/165.webp",
+            "Agachamento (Máquina)": "../assets/exercises/163.webp",
+            "Agachamento no Smith (Máquina)": "../assets/exercises/164.webp",
+            "Esteira (Cardio)": "../assets/exercises/174.webp",
+            "Glúteo na Polia": "../assets/exercises/166.webp",
+            "Elevação de Panturrilha em Pé (Barra)": "../assets/exercises/167.webp",
+            "Elevação de Panturrilha em Pé (Halter)": "../assets/exercises/168.webp",
+            "Elevação de Panturrilha em Pé (Máquina)": "../assets/exercises/169.webp",
+            "Flexão de Joelho em Pé (Máquina)": "../assets/exercises/170.webp",
+            "Stiff": "../assets/exercises/171.webp",
+            "Deadlift Sumo": "../assets/exercises/172.webp",
+            "Agachamento em Sumo (Barra)": "../assets/exercises/173.webp",
+            "Pular Corda": "../assets/exercises/90.webp",
+            "Fundos nas Argolas": "../assets/exercises/128.webp",
+            "Tríceps na Polia": "../assets/exercises/176.webp",
+            "Tríceps na Polia com Corda": "../assets/exercises/177.webp",
+            "Desenvolvimento Sentado Sem Apoio (Halter)": "../assets/exercises/143.webp",
+            "Desenvolvimento Sentado (Halter)": "../assets/exercises/148.webp",
+            "Agachamento Sumô (Halter)": "../assets/exercises/180.webp"
+          };
+        }
+        var exHtml = '';
+
+        exList.forEach(function (ex) {
+          var exName = ex.name || 'Exercício';
+          var sets = Array.isArray(ex.sets) ? ex.sets : [];
+          var setsStr = sets.length + (sets.length === 1 ? ' série' : ' séries');
+
+          // Thumbnail
+          var thumbSrc = ex.thumb || ex.image_url || '';
+          if (!thumbSrc && window.EXERCISE_THUMBS) {
+            thumbSrc = window.EXERCISE_THUMBS[exName] || '';
+          }
+          if (!thumbSrc) {
+            try {
+              var libEl = document.querySelector('.exercise-item[data-name="' + CSS.escape(exName) + '"] .ex-thumb');
+              if (libEl) thumbSrc = libEl.getAttribute('src') || '';
+            } catch (e) { }
+          }
+
+          var thumbHtml = thumbSrc
+            ? '<img src="' + thumbSrc + '" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">'
+            : '<span style="font-size:24px;font-weight:600;color:var(--t2)">' + exName[0].toUpperCase() + '</span>';
+
+          var noteStr = ex.note ? ex.note : 'Sem anotação';
+
+          exHtml += '<div class="foco-detail-head">'
+            + '<div class="foco-circle-icon" style="overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--s3);color:var(--t2);font-size:24px;font-weight:600">' + thumbHtml + '</div>'
+            + '<div>'
+            + '<div class="foco-detail-title">' + exName + '</div>'
+            + '<div class="foco-detail-sets">' + setsStr + '</div>'
+            + '<div class="foco-detail-author-inline">' + noteStr + '</div>'
+            + '</div>'
+            + '</div>';
+        });
+
+        if (!exHtml) {
+          exHtml = '<div style="font-size:12px;color:rgba(255,255,255,.25);padding:8px 0;">Nenhum exercício registado</div>';
+        }
+
+        var btnCopy = document.getElementById('btnCopyRoutineDetail');
+        if (btnCopy) {
+          btnCopy.onclick = function () {
+            var lines = [];
+            exList.forEach(function (ex) {
+              var sets = Array.isArray(ex.sets) ? ex.sets : [];
+              var setsStr = sets.length + (sets.length === 1 ? ' série' : ' séries');
+              lines.push((ex.name || 'Exercício') + ' (' + setsStr + ')');
+            });
+            if (lines.length === 0) return toast('Rotina vazia', 'warn');
+            var text = lines.join('\n');
+            navigator.clipboard.writeText(text).then(function () {
+              toast('Rotina copiada!');
+            }).catch(function () {
+              toast('Erro ao copiar', 'warn');
+            });
+          };
+        }
+
+        var exListEl = document.getElementById('focoDetailExList');
+        if (exListEl) exListEl.innerHTML = exHtml;
+
+        document.getElementById('focoDetailExCount').textContent = exList.length;
+        document.getElementById('focoDetailTotalSets').textContent = totalSets;
+        document.getElementById('focoDetailDuration').textContent = rotina.durationMin ? rotina.durationMin + ' min' : '---';
+
+        var muscleHtml = '';
+        for (var m in muscleCount) {
+          muscleHtml += '<div class="foco-detail-muscle-row">'
+            + '<span>' + m + '</span>'
+            + '<span class="foco-detail-muscle-val">' + muscleCount[m] + '</span>'
+            + '</div>';
+        }
+        if (!muscleHtml) {
+          muscleHtml = '<div style="font-size:12px;color:rgba(255,255,255,.3);padding-top:8px">Nenhum dado muscular</div>';
+        }
+        document.getElementById('focoDetailMuscleList').innerHTML = muscleHtml;
+
+        document.getElementById('focoRoutineDetailModal').classList.add('on');
+      };
+
+      window.closeFocoRoutineDetailModal = function () {
+        document.getElementById('focoRoutineDetailModal').classList.remove('on');
+      };
+
+    })();
+
+    /* ══ FOCO: PASTAS ══ */
+    (function () {
+      window.openFocoFolderModal = function () {
+        var folders = _safeLoad('focoFolders') || [];
+        if (folders.length >= 6) {
+          if (typeof toast === 'function') toast('Limite de 6 pastas atingido.');
+          return;
+        }
+        document.getElementById('focoFolderName').value = '';
+        document.getElementById('focoFolderNameCount').textContent = '0/48';
+        document.getElementById('focoFolderErr').style.display = 'none';
+        document.getElementById('focoFolderModal').classList.add('on');
+        setTimeout(function () { document.getElementById('focoFolderName').focus(); }, 120);
+      };
+
+      window.closeFocoFolderModal = function () {
+        document.getElementById('focoFolderModal').classList.remove('on');
+      };
+
+      window.focoFolderNameInput = function (el) {
+        var len = el.value.length;
+        var countEl = document.getElementById('focoFolderNameCount');
+        countEl.textContent = len + '/48';
+        countEl.style.color = len >= 45 ? 'rgba(200,160,96,.7)' : 'rgba(255,255,255,.2)';
+      };
+
+      var _focoFolderSaving = false;
+      window.saveFocoFolder = function () {
+        if (_focoFolderSaving) return;
+        _focoFolderSaving = true;
+
+        var name = (document.getElementById('focoFolderName').value || '').trim();
+        var err = document.getElementById('focoFolderErr');
+
+        if (name.length < 3) {
+          err.textContent = 'mínimo 3 caracteres'; err.style.display = 'block';
+          document.getElementById('focoFolderName').focus();
+          _focoFolderSaving = false; return;
+        }
+        if (name.length > 48) {
+          err.textContent = 'máximo 48 caracteres'; err.style.display = 'block';
+          _focoFolderSaving = false; return;
+        }
+
+        var folders = _safeLoad('focoFolders');
+
+        var dup = folders.find(function (f) { return f.name.toLowerCase() === name.toLowerCase(); });
+        if (dup) {
+          err.textContent = 'já existe uma pasta com esse nome'; err.style.display = 'block';
+          document.getElementById('focoFolderName').focus();
+          _focoFolderSaving = false; return;
+        }
+
+        window.api.createFocoFolder(name).then(function (res) {
+          S.focoFolders.push(res.folder);
+          closeFocoFolderModal();
+          renderFocoPage();
+          toast('✓ Pasta "' + name + '" criada');
+        }).catch(function (e) {
+          err.textContent = e.message || 'Erro ao criar pasta.';
+          err.style.display = 'block';
+        }).finally(function () {
+          _focoFolderSaving = false;
+        });
+      };
+    })();
+
+    /* ══ FOCO: CALENDÁRIO DE TREINOS ══
+       Por enquanto é apenas visual (navegação entre meses funciona,
+       mas nenhum dia é marcado automaticamente ainda).
+       Quando a feature de treino existir, basta chamar:
+         window.focoMarkWorkoutDay('YYYY-MM-DD')   -> marca um dia como treinado
+         window.focoUnmarkWorkoutDay('YYYY-MM-DD') -> remove a marcação
+       Os dias marcados ficam salvos em localStorage('focoWorkoutDays') como
+       um array de strings 'YYYY-MM-DD', e o calendário já lê essa lista
+       sozinho sempre que renderiza. */
+    (function () {
+      var MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+        'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+
+      var _today = new Date();
+      var _calYear = _today.getFullYear();
+      var _calMonth = _today.getMonth(); // 0-11
+
+      function _loadWorkoutDays() {
+        try {
+          var raw = JSON.parse(localStorage.getItem('focoWorkoutDays') || '[]');
+          return Array.isArray(raw) ? raw : [];
+        } catch (e) { return []; }
+      }
+
+      function _saveWorkoutDays(arr) {
+        localStorage.setItem('focoWorkoutDays', JSON.stringify(arr));
+      }
+
+      function _fmtDateKey(y, m, d) {
+        return y + '-' + String(m + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+      }
+
+      function _renderInto(titleId, gridId) {
+        var titleEl = document.getElementById(titleId);
+        var gridEl = document.getElementById(gridId);
+        if (!titleEl || !gridEl) return;
+
+        titleEl.textContent = MESES[_calMonth] + ' de ' + _calYear;
+
+        var workoutDays = _loadWorkoutDays();
+        var firstOfMonth = new Date(_calYear, _calMonth, 1);
+        // getDay(): 0=domingo..6=sábado → converte para semana começando na segunda
+        var startOffset = (firstOfMonth.getDay() + 6) % 7;
+        var daysInMonth = new Date(_calYear, _calMonth + 1, 0).getDate();
+        var daysInPrevMonth = new Date(_calYear, _calMonth, 0).getDate();
+
+        var prevY = _calMonth === 0 ? _calYear - 1 : _calYear;
+        var prevM = _calMonth === 0 ? 11 : _calMonth - 1;
+        var nextY = _calMonth === 11 ? _calYear + 1 : _calYear;
+        var nextM = _calMonth === 11 ? 0 : _calMonth + 1;
+
+        // Sempre 6 semanas (42 células) pra altura do card nunca mudar de mês pra mês
+        var totalCells = 42;
+        var html = '';
+
+        for (var i = 0; i < totalCells; i++) {
+          var dayNum, y, m, isOut;
+          if (i < startOffset) {
+            dayNum = daysInPrevMonth - startOffset + i + 1;
+            y = prevY; m = prevM; isOut = true;
+          } else if (i < startOffset + daysInMonth) {
+            dayNum = i - startOffset + 1;
+            y = _calYear; m = _calMonth; isOut = false;
+          } else {
+            dayNum = i - startOffset - daysInMonth + 1;
+            y = nextY; m = nextM; isOut = true;
+          }
+
+          var key = _fmtDateKey(y, m, dayNum);
+          var isToday = !isOut && y === _today.getFullYear() && m === _today.getMonth() && dayNum === _today.getDate();
+          var isDone = workoutDays.indexOf(key) !== -1;
+
+          var cls = 'foco-cal-cell';
+          if (isOut) cls += ' out';
+          if (isToday) cls += ' today';
+          if (isDone) cls += ' done';
+
+          html += '<div class="' + cls + '" data-date="' + key + '"><div class="foco-cal-num">' + dayNum + '</div></div>';
+        }
+
+        gridEl.innerHTML = html;
+
+        // Trava navegação pro futuro: não deixa passar do mês atual
+        var nextBtn = document.getElementById('focoCalNextBtn');
+        if (nextBtn) {
+          var isCurrentMonth = _calYear === _today.getFullYear() && _calMonth === _today.getMonth();
+          nextBtn.classList.toggle('disabled', isCurrentMonth);
+        }
+      }
+
+      window.focoCalRender = function () {
+        _renderInto('focoCalTitle', 'focoCalGrid');
+      };
+
+      window.focoCalChangeMonth = function (delta) {
+        var limitIndex = _today.getFullYear() * 12 + _today.getMonth();
+        var newIndex = (_calYear * 12 + _calMonth) + delta;
+        if (newIndex > limitIndex) newIndex = limitIndex; // trava no mês atual, sem travar o clique
+
+        _calYear = Math.floor(newIndex / 12);
+        _calMonth = ((newIndex % 12) + 12) % 12;
+        window.focoCalRender();
+      };
+
+      // ── Hooks para a futura feature de treino ──
+      window.focoMarkWorkoutDay = function (dateStr) {
+        var days = _loadWorkoutDays();
+        if (days.indexOf(dateStr) === -1) {
+          days.push(dateStr);
+          _saveWorkoutDays(days);
+        }
+        window.focoCalRender();
+      };
+
+      window.focoUnmarkWorkoutDay = function (dateStr) {
+        var days = _loadWorkoutDays().filter(function (d) { return d !== dateStr; });
+        _saveWorkoutDays(days);
+        window.focoCalRender();
+      };
+
+      // ── Seed de demonstração ──
+      // Marca um dia recente como "treinado" só pra visualizar o design do
+      // círculo branco. Remove este bloco quando a feature de treino real
+      // existir e passar a chamar focoMarkWorkoutDay() sozinha.
+      (function _seedDemoDay() {
+        if (_loadWorkoutDays().length === 0) {
+          var demo = new Date(_today);
+          demo.setDate(demo.getDate() - 3);
+          var demoKey = _fmtDateKey(demo.getFullYear(), demo.getMonth(), demo.getDate());
+          _saveWorkoutDays([demoKey]);
+        }
+      })();
+
+      document.addEventListener('DOMContentLoaded', function () {
+        window.focoCalRender();
+      });
+      if (document.readyState !== 'loading') {
+        window.focoCalRender();
+      }
+    })();
+
+    /* ══ INIT ══ */
+    // Safety net: garante que opacity sempre volta a 1, mesmo em falha catastrófica
+    var _focoOpacityTimer = setTimeout(function () {
+      document.body.style.opacity = '1';
+      if (typeof window.hideMhLoader === 'function') window.hideMhLoader(true);
+    }, 5000);
+
+    function _waitForApiAndInit() {
+      // Se window.api já está disponível, inicializa direto
+      if (window.api && typeof window.api.getFocoRoutines === 'function') {
+        clearTimeout(_focoOpacityTimer);
+        initFocoModule();
+        return;
+      }
+      // Polling com limite de tentativas para evitar loop infinito
+      var _attempts = 0;
+      var _apiPoll = setInterval(function () {
+        _attempts++;
+        if (window.api && typeof window.api.getFocoRoutines === 'function') {
+          clearInterval(_apiPoll);
+          clearTimeout(_focoOpacityTimer);
+          initFocoModule();
+        } else if (_attempts >= 40) {
+          // 40 * 100ms = 4s sem API — renderiza estado vazio com erro
+          clearInterval(_apiPoll);
+          document.body.style.opacity = '1';
+          if (typeof window.hideMhLoader === 'function') window.hideMhLoader(true);
+          try {
+            var content = document.querySelector('.content');
+            if (content) {
+              var box = document.createElement('div');
+              box.style.cssText = 'padding:40px;text-align:center;color:rgba(200,160,96,.8);font-family:var(--mono,monospace);font-size:13px;';
+              box.textContent = 'Falha ao conectar ao servidor. Recarregue a página.';
+              content.appendChild(box);
+            }
+          } catch (e) { }
+        }
+      }, 100);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _waitForApiAndInit);
+    } else {
+      _waitForApiAndInit();
+    }
+  </script>
+
+  <script>
+    /* ============================================
+       CUSTOMIZATION — BG + GLASS + SIDEBAR
+    ============================================ */
+    (function () {
+
+      document.addEventListener('DOMContentLoaded', function () {
+        focoBgRender();
+        focoGlassLoad();
+        focoSbInit();
+      });
+
+      // ── Background Layer ──────────────────────
+      function focoBgRender() {
+        var src = localStorage.getItem('focoBgImage') || '';
+        window.globalApplyBg(src);
+      }
+
+      window.focoBgLoad = async function (inp) {
+        var file = inp.files && inp.files[0];
+        if (!file) return;
+        if (typeof toast === 'function') toast('Enviando imagem de fundo...');
+        try {
+          const res = await window.api.uploadFile(file, 'backgrounds');
+          window.globalSaveSetting('bgImage', res.url);
+          window.globalApplyBg(res.url);
+          _focoBgPanelSync();
+          if (typeof toast === 'function') toast('✓ Imagem de fundo aplicada');
+        } catch (err) {
+          console.error(err);
+          if (typeof toast === 'function') toast(err.message || '⚠️ Erro ao enviar imagem.', 'err');
+        }
+        inp.value = '';
+      };
+
+      window.focoBgRemove = function () {
+        window.globalSaveSetting('bgImage', '');
+        window.globalApplyBg('');
+        _focoBgPanelSync();
+        if (typeof toast === 'function') toast('✓ Fundo removido');
+      };
+
+      window.focoBgUpdateOpacity = function (val) {
+        var opacity = val / 100;
+        window.globalSaveSetting('bgOpacity', opacity);
+        var label = document.getElementById('focoBgOpacityLabel');
+        if (label) label.textContent = val + '%';
+        var layer = window.globalGetOrCreateBgLayer();
+        if (layer && localStorage.getItem('focoBgImage')) {
+          layer.style.opacity = opacity;
+        }
+      };
+
+      function _focoBgPanelSync() {
+        var src = localStorage.getItem('focoBgImage') || '';
+        var opVal = Math.round(parseFloat(localStorage.getItem('focoBgOpacity') || '0.55') * 100);
+        var cardImg = document.getElementById('focoBgCardImg');
+        var empty = document.getElementById('focoBgEmpty');
+        var rmBtn = document.getElementById('focoBgRemoveBtn');
+        var range = document.getElementById('focoBgOpacity');
+        var label = document.getElementById('focoBgOpacityLabel');
+        if (range) range.value = opVal;
+        if (label) label.textContent = opVal + '%';
+        if (src) {
+          if (cardImg) { cardImg.style.backgroundImage = 'url(' + src + ')'; cardImg.style.display = 'block'; }
+          if (empty) empty.style.display = 'none';
+          if (rmBtn) rmBtn.style.display = 'flex';
+        } else {
+          if (cardImg) { cardImg.style.backgroundImage = ''; cardImg.style.display = 'none'; }
+          if (empty) empty.style.display = 'flex';
+          if (rmBtn) rmBtn.style.display = 'none';
+        }
+      }
+
+      // ── Glass morphism ────────────────────────
+      // 'layout' afeta o estado vazio ou populado, o que estiver visível
+      var FOCO_CARD_MAP = {};
+      var FOCO_LAYOUT_IDS = ['focoEmptyState', 'focoPopulatedState'];
+
+      function focoApplyGlass(key, active) {
+        if (key === 'layout') {
+          FOCO_LAYOUT_IDS.forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) { if (active) el.classList.add('glass-card'); else el.classList.remove('glass-card'); }
+          });
+        } else {
+          var el = document.getElementById(FOCO_CARD_MAP[key]);
+          if (el) { if (active) el.classList.add('glass-card'); else el.classList.remove('glass-card'); }
+        }
+      }
+
+      function focoGlassLoad() {
+        var saved = {};
+        try { saved = JSON.parse(localStorage.getItem('focoGlassState') || '{}'); } catch (_) { }
+        focoApplyGlass('layout', saved['layout']);
+        var r1 = document.getElementById('gtrow-layout');
+        if (r1) r1.classList.toggle('active', !!saved['layout']);
+
+        Object.keys(FOCO_CARD_MAP).forEach(function (key) {
+          focoApplyGlass(key, saved[key]);
+          var row = document.getElementById('gtrow-' + key);
+          if (row) row.classList.toggle('active', !!saved[key]);
+        });
+      }
+
+      window.focoGlassToggle = function (key, row) {
+        var active = row.classList.toggle('active');
+        focoApplyGlass(key, active);
+        var saved = {};
+        try { saved = JSON.parse(localStorage.getItem('focoGlassState') || '{}'); } catch (_) { }
+        saved[key] = active;
+        localStorage.setItem('focoGlassState', JSON.stringify(saved));
+      };
+
+      window.focoGlassAll = function (enable) {
+        var saved = {};
+        focoApplyGlass('layout', enable);
+        var r1 = document.getElementById('gtrow-layout');
+        if (r1) r1.classList.toggle('active', enable);
+        saved['layout'] = enable;
+
+        Object.keys(FOCO_CARD_MAP).forEach(function (key) {
+          focoApplyGlass(key, enable);
+          var row = document.getElementById('gtrow-' + key);
+          if (row) row.classList.toggle('active', enable);
+          saved[key] = enable;
+        });
+        localStorage.setItem('focoGlassState', JSON.stringify(saved));
+      };
+
+      // ── Sidebar style picker ───────────────────
+      function focoLoadSbPref() {
+        return localStorage.getItem('foco_sb_pref') || 'default';
+      }
+
+      function focoApplySidebar(pref) {
+        document.body.classList.remove('sb-branco', 'sb-blackout');
+        if (pref === 'branco') document.body.classList.add('sb-branco');
+        if (pref === 'blackout') document.body.classList.add('sb-blackout');
+      }
+
+      window.focoSelectSidebar = function (card) {
+        var pref = card.dataset.val;
+        document.querySelectorAll('#focoSbGrid .dc-sb-card').forEach(function (c) { c.classList.remove('sel'); });
+        card.classList.add('sel');
+        localStorage.setItem('foco_sb_pref', pref);
+        focoApplySidebar(pref);
+        if (typeof toast === 'function') toast('✓ Sidebar atualizada');
+      };
+
+      function focoSbPanelSync() {
+        var pref = focoLoadSbPref();
+        document.querySelectorAll('#focoSbGrid .dc-sb-card').forEach(function (c) {
+          c.classList.toggle('sel', c.dataset.val === pref);
+        });
+      }
+
+      function focoSbInit() {
+        focoApplySidebar(focoLoadSbPref());
+      }
+
+      // ── Panel open / close ────────────────────
+
+    })();
+  </script>
+  <script src="shared.js?v=1788736543501"></script>
+</body>
+
+</html>

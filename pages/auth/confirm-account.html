@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Confirmar Conta</title>
+<style>html,body{background:#0a0a0a !important}</style>
+<link rel="icon" type="image/svg+xml" href="../../assets/logo/favcon.svg" id="mh-favicon-root">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Exo+2:wght@300;400;500;600;700;800&family=Quicksand:wght@500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Exo+2:wght@300;400;500;600;700;800&family=Quicksand:wght@500;600&display=swap"></noscript>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    background: #0a0a0a !important;
+  }
+  .hero-bg {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    background: #0a0a0a;
+  }
+  .hero-dots {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%);
+  }
+  .hero-dots.show {
+    opacity: 1;
+  }
+
+  /* ===== Redefinir senha ===== */
+  .onboarding {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .onboarding-card {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+  }
+  @keyframes fadeInUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .onboarding-title {
+    font-family: 'Exo', sans-serif;
+    font-weight: 500;
+    font-size: 19px;
+    letter-spacing: -0.015em;
+    color: #fafafa;
+    margin-bottom: 7px;
+  }
+  .onboarding-subtitle {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    color: #7a7a7a;
+    margin-bottom: 26px;
+    line-height: 1.55;
+    letter-spacing: 0.005em;
+  }
+  .reset-hint {
+    margin-top: 12px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 10.5px;
+    color: #5a5a5a;
+    min-height: 13px;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .reset-hint.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reset-hint.error {
+    color: #c98484;
+  }
+  .reset-hint.ok {
+    color: #7ecca6;
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 22px;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 10.5px;
+    letter-spacing: 0.01em;
+    color: #565656;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.25s ease;
+  }
+  .back-link:hover {
+    color: #fafafa;
+  }
+
+  /* ===== Etapa: código de verificação ===== */
+  .code-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  .code-boxes input {
+    width: 34px;
+    height: 40px;
+    text-align: center;
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 10px;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #fafafa;
+    outline: none;
+    transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  }
+  .code-boxes input:focus {
+    border-color: rgba(255,255,255,0.22);
+    background: rgba(255,255,255,0.045);
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.035);
+  }
+  .code-boxes input.filled {
+    border-color: rgba(255,255,255,0.16);
+  }
+  #sentEmail {
+    color: #c4c4c4;
+    font-weight: 600;
+  }
+
+  /* ===== Aviso (hint) ===== */
+  .reset-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .reset-hint::before {
+    content: '';
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .reset-hint.show::before {
+    opacity: 0.7;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <section class="hero-bg">
+    <div class="hero-dots show" id="heroDots"></div>
+
+    <div class="onboarding">
+      <div class="onboarding-card">
+
+        <div class="onboarding-step" id="stepCode">
+          <div class="onboarding-title">Digite o código</div>
+          <div class="onboarding-subtitle">Enviamos um código de 6 dígitos para <span id="sentEmail">x@gmail.com</span>.</div>
+
+          <div class="code-boxes" id="codeBoxes">
+            <input type="text" class="code-digit" maxlength="1" autocomplete="off" spellcheck="false">
+            <input type="text" class="code-digit" maxlength="1" autocomplete="off" spellcheck="false">
+            <input type="text" class="code-digit" maxlength="1" autocomplete="off" spellcheck="false">
+            <input type="text" class="code-digit" maxlength="1" autocomplete="off" spellcheck="false">
+            <input type="text" class="code-digit" maxlength="1" autocomplete="off" spellcheck="false">
+            <input type="text" class="code-digit" maxlength="1" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="reset-hint" id="codeHint" style="margin-top: 16px;"></div>
+
+          <!-- Container do Turnstile -->
+          <div id="turnstile-container" style="display:none; align-items:center; justify-content:center; margin-top:16px;"></div>
+
+          <a class="back-link" id="resendLink">Reenviar código</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+<script>
+    class ScatterPointGenerator {
+      constructor(width, height, minDistance, maxAttempts) {
+        this.width = width;
+        this.height = height;
+        this.minDistance = minDistance;
+        this.maxAttempts = maxAttempts;
+        this.cellSize = minDistance * Math.SQRT1_2;
+        this.cellMap = new Map();
+      }
+
+      _cellKey(x, y) {
+        const cx = Math.floor(x / this.cellSize);
+        const cy = Math.floor(y / this.cellSize);
+        return `${cx}:${cy}`;
+      }
+
+      _neighborsOf(x, y) {
+        const cx = Math.floor(x / this.cellSize);
+        const cy = Math.floor(y / this.cellSize);
+        const found = [];
+        for (let ox = -2; ox <= 2; ox++) {
+          for (let oy = -2; oy <= 2; oy++) {
+            const key = `${cx + ox}:${cy + oy}`;
+            const entry = this.cellMap.get(key);
+            if (entry) found.push(entry);
+          }
+        }
+        return found;
+      }
+
+      _fitsHere(x, y) {
+        if (x < 0 || x >= this.width || y < 0 || y >= this.height) return false;
+        return this._neighborsOf(x, y).every(([nx, ny]) => {
+          const dx = nx - x;
+          const dy = ny - y;
+          return (dx * dx + dy * dy) >= this.minDistance * this.minDistance;
+        });
+      }
+
+      _place(x, y) {
+        const point = [x, y];
+        this.cellMap.set(this._cellKey(x, y), point);
+        return point;
+      }
+
+      run() {
+        const accepted = [];
+        const frontier = [];
+
+        const seed = this._place(Math.random() * this.width, Math.random() * this.height);
+        accepted.push(seed);
+        frontier.push(seed);
+
+        while (frontier.length) {
+          const pick = Math.floor(Math.random() * frontier.length);
+          const [ox, oy] = frontier[pick];
+          let placed = false;
+
+          for (let attempt = 0; attempt < this.maxAttempts; attempt++) {
+            const theta = Math.random() * Math.PI * 2;
+            const radius = this.minDistance * (1 + Math.random());
+            const px = ox + Math.cos(theta) * radius;
+            const py = oy + Math.sin(theta) * radius;
+
+            if (this._fitsHere(px, py)) {
+              const point = this._place(px, py);
+              accepted.push(point);
+              frontier.push(point);
+              placed = true;
+              break;
+            }
+          }
+
+          if (!placed) frontier.splice(pick, 1);
+        }
+
+        return accepted;
+      }
+    }
+
+    // Reescala 'value' de [oldMin, oldMax] para [newMin, newMax].
+    function remapValue(value, oldMin, oldMax, newMin, newMax) {
+      const t = (value - oldMin) / (oldMax - oldMin);
+      return newMin + t * (newMax - newMin);
+    }
+
+    /*
+     * Função de ruído 3D usada para variar a posição, a forma e a cor das
+     * partículas ao longo do tempo, criando o movimento orgânico do efeito.
+     */
+    const GLSL_NOISE = `
+    float hashNoiseSeed(vec3 p) {
+      p = fract(p * vec3(0.1031, 0.1030, 0.0973));
+      p += dot(p, p.yzx + 33.33);
+      return fract((p.x + p.y) * p.z);
+    }
+
+    float valueNoise3D(vec3 p) {
+      vec3 cellId = floor(p);
+      vec3 localPos = fract(p);
+      vec3 curve = localPos * localPos * (3.0 - 2.0 * localPos);
+
+      float corner000 = hashNoiseSeed(cellId + vec3(0.0, 0.0, 0.0));
+      float corner100 = hashNoiseSeed(cellId + vec3(1.0, 0.0, 0.0));
+      float corner010 = hashNoiseSeed(cellId + vec3(0.0, 1.0, 0.0));
+      float corner110 = hashNoiseSeed(cellId + vec3(1.0, 1.0, 0.0));
+      float corner001 = hashNoiseSeed(cellId + vec3(0.0, 0.0, 1.0));
+      float corner101 = hashNoiseSeed(cellId + vec3(1.0, 0.0, 1.0));
+      float corner011 = hashNoiseSeed(cellId + vec3(0.0, 1.0, 1.0));
+      float corner111 = hashNoiseSeed(cellId + vec3(1.0, 1.0, 1.0));
+
+      float edgeX00 = mix(corner000, corner100, curve.x);
+      float edgeX10 = mix(corner010, corner110, curve.x);
+      float edgeX01 = mix(corner001, corner101, curve.x);
+      float edgeX11 = mix(corner011, corner111, curve.x);
+
+      float faceY0 = mix(edgeX00, edgeX10, curve.y);
+      float faceY1 = mix(edgeX01, edgeX11, curve.y);
+
+      float sample3D = mix(faceY0, faceY1, curve.z);
+
+      return sample3D * 2.0 - 1.0;
+    }
+    `;
+
+    // Shader de simulação: roda num quad de tela cheia e escreve a próxima
+    // posição/escala/velocidade de cada partícula numa render target.
+    const SIM_VERTEX = `
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+
+    function createSimulationShader(gridSize) {
+      return `
+        precision highp float;
+        uniform sampler2D uStateMap;
+        uniform sampler2D uOriginMap;
+        uniform vec2 uPulseCenter;
+        uniform float uElapsedTime;
+        uniform float uDeltaTime;
+        uniform float uPulseRadius;
+        uniform float uPulseBandWidth;
+        uniform float uPulseBandWidthInner;
+        uniform float uPulseDisplaceStrength;
+
+        ${GLSL_NOISE}
+
+        vec2 wanderOffset(vec2 originPos, float t) {
+          float driftNoiseX = valueNoise3D(vec3(originPos * 4.0 + vec2(88.494, 32.4397), t * 0.35));
+          float driftNoiseY = valueNoise3D(vec3(originPos * 4.0 + vec2(50.904, 120.947), t * 0.35));
+          float fineNoiseX  = valueNoise3D(vec3(originPos * 20.0 + vec2(18.4924, 72.9744), t * 0.5));
+          float fineNoiseY  = valueNoise3D(vec3(originPos * 20.0 + vec2(50.904, 120.947), t * 0.5));
+
+          vec2 drift = vec2(driftNoiseX, driftNoiseY) * 0.03;
+          drift += vec2(fineNoiseX, fineNoiseY) * 0.005;
+          return drift;
+        }
+
+        float pulseMask(vec2 originPos, float pulseDist, float pulseDistJittered, float bandCore) {
+          float bandOuter = smoothstep(uPulseRadius - (uPulseBandWidth * 2.0), uPulseRadius, pulseDist)
+                           - smoothstep(uPulseRadius, uPulseRadius + uPulseBandWidth, pulseDistJittered);
+          bandOuter = pow(bandOuter, 2.0);
+          return bandOuter;
+        }
+
+        void main() {
+          vec2 texelUV = gl_FragCoord.xy / vec2(${gridSize.toFixed(1)}, ${gridSize.toFixed(1)});
+          vec4 stateSample = texture2D(uStateMap, texelUV);
+
+          float pointScale = stateSample.z;
+          float pointVelocity = stateSample.w;
+          vec2 originPos = texture2D(uOriginMap, texelUV).xy;
+
+          float t = uElapsedTime * 0.5;
+          vec2 offsetPos = stateSample.xy * 0.8;
+
+          float pulseDist = distance(originPos, uPulseCenter);
+          float jitterNoise = valueNoise3D(vec3(originPos * 0.2 + vec2(18.4924, 72.9744), t * 0.5));
+          float pulseDistJittered = distance(originPos + (jitterNoise * 0.005), uPulseCenter);
+
+          float bandInner = smoothstep(uPulseRadius - (uPulseBandWidthInner * 2.0), uPulseRadius, pulseDist)
+                           - smoothstep(uPulseRadius, uPulseRadius + uPulseBandWidthInner, pulseDistJittered);
+          bandInner = pow(bandInner, 3.0);
+
+          float bandCore = smoothstep(uPulseRadius + uPulseBandWidthInner, uPulseRadius, pulseDist);
+
+          float intensity = pulseMask(originPos, pulseDist, pulseDistJittered, bandCore);
+          intensity += bandInner * 3.0;
+          intensity += bandCore * 0.4;
+          intensity += valueNoise3D(vec3(originPos * 30.0 + vec2(11.4924, 12.9744), t * 0.5)) * bandCore * 0.5;
+
+          float radialNoise = valueNoise3D(vec3(originPos * 2.0 + vec2(18.4924, 72.9744), t * 0.5));
+          intensity += pow((radialNoise + 1.5) * 0.5, 2.0) * 0.12;
+
+          vec2 drift = wanderOffset(originPos, t);
+          drift.x += sin((originPos.x * 20.0) + (t * 4.0)) * 0.02 * clamp(pulseDist, 0.0, 1.0);
+          drift.y += cos((originPos.y * 20.0) + (t * 3.0)) * 0.02 * clamp(pulseDist, 0.0, 1.0);
+
+          offsetPos -= (uPulseCenter - (originPos + drift)) * pow(bandInner, 0.75) * uPulseDisplaceStrength;
+
+          pointScale += (intensity - pointScale) * 0.2;
+
+          vec2 nextPos = originPos + drift + (offsetPos * 0.25);
+
+          pointVelocity = pointVelocity * 0.5 + pointScale * 0.25;
+
+          gl_FragColor = vec4(nextPos, pointScale, pointVelocity);
+        }
+      `;
+    }
+
+    // Shader de render: cada partícula vira um quadrado arredondado com
+    // gradiente de cor entre três tons e leve rotação orientada pelo ruído.
+    const RENDER_VERTEX = `
+      precision highp float;
+      attribute vec4 randomSeeds;
+
+      uniform sampler2D uStateMap;
+      uniform float uPointSizeFactor;
+      uniform float uDevicePixelRatio;
+
+      varying vec4 vRandomSeeds;
+      varying float vPointVelocity;
+      varying vec2 vWorldPos;
+      varying vec2 vClipPos;
+      varying float vPointScale;
+
+      void main() {
+        vec4 stateSample = texture2D(uStateMap, uv);
+        vRandomSeeds = randomSeeds;
+        vPointVelocity = stateSample.w;
+        vPointScale = stateSample.z;
+        vWorldPos = stateSample.xy;
+
+        vec4 viewSpace = modelViewMatrix * vec4(vWorldPos, 0.0, 1.0);
+        gl_Position = projectionMatrix * viewSpace;
+        vClipPos = gl_Position.xy;
+
+        gl_PointSize = vPointScale * 7.0 * uDevicePixelRatio * 0.5 * uPointSizeFactor;
+      }
+    `;
+
+    const RENDER_FRAGMENT = `
+      precision highp float;
+
+      varying vec4 vRandomSeeds;
+      varying vec2 vClipPos;
+      varying vec2 vWorldPos;
+      varying float vPointScale;
+      varying float vPointVelocity;
+
+      uniform vec3 uPaletteA;
+      uniform vec3 uPaletteB;
+      uniform vec3 uPaletteC;
+      uniform vec2 uPulseCenter;
+      uniform vec2 uResolution;
+      uniform float uOpacity;
+      uniform float uElapsedTime;
+      uniform int uPaletteMode;
+
+      ${GLSL_NOISE}
+
+      float roundedBoxSDF(in vec2 p, in vec2 halfSize, in vec4 cornerRadius) {
+        cornerRadius.xy = (p.x > 0.0) ? cornerRadius.xy : cornerRadius.zw;
+        cornerRadius.x  = (p.y > 0.0) ? cornerRadius.x  : cornerRadius.y;
+        vec2 q = abs(p) - halfSize + cornerRadius.x;
+        return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - cornerRadius.x;
+      }
+
+      vec2 rotate2D(vec2 v, float angle) {
+        float s = sin(angle);
+        float c = cos(angle);
+        return mat2(c, s, -s, c) * v;
+      }
+
+      vec3 tricolorGradient(float progress) {
+        float split = 0.8;
+        vec3 lowerHalf = mix(uPaletteA, uPaletteB, progress / split);
+        vec3 upperHalf = mix(uPaletteB, uPaletteC, (progress - split) / (1.0 - split));
+        return mix(lowerHalf, upperHalf, step(split, progress));
+      }
+
+      void main() {
+        const float edgeSoftness = 0.2;
+        float aspect = uResolution.x / uResolution.y;
+
+        float spinNoise = valueNoise3D(vec3(vWorldPos * 10.0 + vec2(18.4924, 72.9744), uElapsedTime * 0.85));
+        float tintNoise = valueNoise3D(vec3(vWorldPos * 2.0 + vec2(74.664, 91.556), uElapsedTime * 0.5));
+        tintNoise = tintNoise * 0.5 + 0.5;
+
+        float pulseAngle = atan(vWorldPos.y - uPulseCenter.y, vWorldPos.x - uPulseCenter.x);
+
+        vec2 pointUV = gl_PointCoord.xy - vec2(0.5);
+        pointUV.y = -pointUV.y;
+        pointUV = rotate2D(pointUV, spinNoise * 0.5 - pulseAngle);
+
+        float colorProgress = smoothstep(0.0, 0.75, pow(tintNoise, 2.0));
+        vec3 particleColor = tricolorGradient(colorProgress);
+
+        float edgeDist = length(pointUV);
+        float baseRadius = 0.5;
+        float edgeMask = clamp(smoothstep(baseRadius + edgeSoftness + 0.0001, baseRadius - edgeSoftness, edgeDist), 0.0, 1.0);
+
+        float shapeMask = smoothstep(0.1, 0.0, roundedBoxSDF(pointUV, vec2(0.5, 0.2), vec4(0.25)));
+
+        float pointAlpha = uOpacity * shapeMask * smoothstep(0.1, 0.2, vPointScale);
+        if (pointAlpha < 0.01) discard;
+
+        particleColor = clamp(particleColor, 0.0, 1.0);
+        particleColor = mix(particleColor, particleColor * clamp(vPointVelocity, 0.0, 1.0), float(uPaletteMode));
+
+        gl_FragColor = vec4(particleColor, clamp(pointAlpha, 0.0, 1.0));
+      }
+    `;
+
+    /*
+     * Sistema de partículas: simula a posição, a escala e a velocidade de
+     * milhares de pontos a cada frame e desenha o resultado na tela, dentro
+     * de um container específico (fundo transparente, para sobrepor o dark bg).
+     */
+    class ParticleSystem {
+      static DEFAULTS = {
+        density: 170,
+        pointSizeFactor: 0.75,
+        pulseBandWidth: 0.15,
+        pulseBandWidthInner: 0.05,
+        pulseDisplaceStrength: 0.15,
+        paletteMode: 0, // 0 = mantém as cores cheias (branco/cinza) sobre fundo escuro
+        gridResolution: 220,
+        sampleArea: 460,
+        scatterAttempts: 20,
+        colors: {
+          a: '#e6e6e6', // cinza quase branco
+          b: '#ffffff', // branco
+          c: '#3a3a3a', // cinza escuro
+        },
+      };
+
+      constructor(container, options = {}) {
+        this.container = container;
+        Object.assign(this, ParticleSystem.DEFAULTS, options);
+        this.colors = Object.assign({}, ParticleSystem.DEFAULTS.colors, options.colors || {});
+        this.palette = {
+          a: new THREE.Color(this.colors.a),
+          b: new THREE.Color(this.colors.b),
+          c: new THREE.Color(this.colors.c),
+        };
+
+        this.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        this.frameClock = new THREE.Clock();
+        this.elapsedTime = 0;
+        this.previousElapsedTime = 0;
+        this.pulseCenter = new THREE.Vector2(0, 0);
+        this.pointerTarget = new THREE.Vector2(0, 0);
+        this.pointerNDC = new THREE.Vector2(10, 10); // fora da tela até o usuário mover
+        this.pointerInsideContainer = false;
+        this.pointerActive = false;
+        this.pointerWorldPoint = new THREE.Vector3();
+        this.hasSimulatedOnce = false;
+        this.running = false;
+        this.animationId = null;
+
+        this._buildRenderer();
+        this._buildCamera();
+        this._buildScene();
+        this._buildParticleData();
+        this._buildSimulationPass();
+        this._buildPointsMesh();
+        this._bindEvents();
+
+        this.renderFrame = this.renderFrame.bind(this);
+      }
+
+      _buildRenderer() {
+        this.canvas = document.createElement('canvas');
+        this.container.appendChild(this.canvas);
+        this.renderer = new THREE.WebGLRenderer({
+          canvas: this.canvas,
+          antialias: true,
+          alpha: true,
+          powerPreference: 'high-performance',
+          precision: 'highp',
+        });
+        this.renderer.setClearColor(0x000000, 0);
+        this.handleResize();
+        this.renderer.setPixelRatio(this.devicePixelRatio);
+      }
+
+      _buildCamera() {
+        const aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+        this.camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 1000);
+        this.camera.position.z = 3.1;
+      }
+
+      _buildScene() {
+        this.scene = new THREE.Scene();
+        this.pointerPlane = new THREE.Mesh(
+          new THREE.PlaneGeometry(12.5, 12.5),
+          new THREE.MeshBasicMaterial({ visible: false })
+        );
+        this.scene.add(this.pointerPlane);
+        this.pointerRaycaster = new THREE.Raycaster();
+      }
+
+      _buildParticleData() {
+        const area = this.sampleArea;
+        const minDistance = remapValue(this.density, 0, 300, 10, 2);
+        const cloud = new ScatterPointGenerator(area, area, minDistance, this.scatterAttempts).run();
+
+        this.texelCount = this.gridResolution * this.gridResolution;
+        this.seedPositions = [];
+        const half = area / 2;
+        for (let i = 0; i < cloud.length && i < this.texelCount; i++) {
+          this.seedPositions.push(cloud[i][0] - half, cloud[i][1] - half);
+        }
+        this.particleCount = this.seedPositions.length / 2;
+
+        const originArray = new Float32Array(this.texelCount * 4);
+        for (let i = 0; i < this.particleCount; i++) {
+          const base = i * 4;
+          originArray[base] = this.seedPositions[i * 2] / half;
+          originArray[base + 1] = this.seedPositions[i * 2 + 1] / half;
+          originArray[base + 2] = 0;
+          originArray[base + 3] = 0;
+        }
+
+        this.originTexture = new THREE.DataTexture(
+          originArray, this.gridResolution, this.gridResolution, THREE.RGBAFormat, THREE.FloatType
+        );
+        this.originTexture.needsUpdate = true;
+      }
+
+      _buildSimulationPass() {
+        const bufferOptions = {
+          wrapS: THREE.ClampToEdgeWrapping,
+          wrapT: THREE.ClampToEdgeWrapping,
+          minFilter: THREE.NearestFilter,
+          magFilter: THREE.NearestFilter,
+          format: THREE.RGBAFormat,
+          type: THREE.FloatType,
+          depthBuffer: false,
+          stencilBuffer: false,
+        };
+        this.simBufferA = new THREE.WebGLRenderTarget(this.gridResolution, this.gridResolution, bufferOptions);
+        this.simBufferB = new THREE.WebGLRenderTarget(this.gridResolution, this.gridResolution, bufferOptions);
+
+        this.simPassScene = new THREE.Scene();
+        this.simPassCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        this.simPassMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            uStateMap: { value: this.originTexture },
+            uOriginMap: { value: this.originTexture },
+            uPulseCenter: { value: new THREE.Vector2(0, 0) },
+            uPulseRadius: { value: 0.2 },
+            uDeltaTime: { value: 0 },
+            uPulseBandWidth: { value: this.pulseBandWidth },
+            uPulseBandWidthInner: { value: this.pulseBandWidthInner },
+            uPulseDisplaceStrength: { value: this.pulseDisplaceStrength },
+            uElapsedTime: { value: 0 },
+          },
+          vertexShader: SIM_VERTEX,
+          fragmentShader: createSimulationShader(this.gridResolution),
+        });
+
+        const fullScreenQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.simPassMaterial);
+        this.simPassScene.add(fullScreenQuad);
+      }
+
+      _buildPointsMesh() {
+        const geometry = new THREE.BufferGeometry();
+        const uv = new Float32Array(this.particleCount * 2);
+        const positions = new Float32Array(this.particleCount * 3);
+        const randomSeeds = new Float32Array(this.particleCount * 4);
+
+        for (let i = 0; i < this.particleCount; i++) {
+          const gx = i % this.gridResolution;
+          const gy = Math.floor(i / this.gridResolution);
+          uv[i * 2] = gx / this.gridResolution;
+          uv[i * 2 + 1] = gy / this.gridResolution;
+          randomSeeds[i * 4] = Math.random();
+          randomSeeds[i * 4 + 1] = Math.random();
+          randomSeeds[i * 4 + 2] = Math.random();
+          randomSeeds[i * 4 + 3] = Math.random();
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+        geometry.setAttribute('randomSeeds', new THREE.BufferAttribute(randomSeeds, 4));
+
+        this.pointSizePixels = this._computePointSizePixels();
+
+        this.pointsMaterial = new THREE.ShaderMaterial({
+          uniforms: {
+            uStateMap: { value: this.originTexture },
+            uElapsedTime: { value: 0 },
+            uPaletteA: { value: this.palette.a },
+            uPaletteB: { value: this.palette.b },
+            uPaletteC: { value: this.palette.c },
+            uOpacity: { value: 1 },
+            uPulseCenter: { value: new THREE.Vector2(0, 0) },
+            uResolution: { value: new THREE.Vector2(this.canvas.clientWidth, this.canvas.clientHeight) },
+            uPointSizeFactor: { value: this.pointSizePixels },
+            uDevicePixelRatio: { value: this.devicePixelRatio },
+            uPaletteMode: { value: this.paletteMode },
+          },
+          vertexShader: RENDER_VERTEX,
+          fragmentShader: RENDER_FRAGMENT,
+          transparent: true,
+          depthTest: false,
+          depthWrite: false,
+        });
+
+        this.particlePoints = new THREE.Points(geometry, this.pointsMaterial);
+        this.particlePoints.scale.set(5, 5, 5);
+        this.scene.add(this.particlePoints);
+      }
+
+      _computePointSizePixels() {
+        return (this.canvas.clientWidth / this.devicePixelRatio / 2000) * this.pointSizeFactor;
+      }
+
+      _bindEvents() {
+        let resizeTimer = null;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => this.handleResize(), 150);
+        });
+
+        // Coordenadas do ponteiro relativas a ESTE container (não à janela
+        // inteira), para que cada instância reaja só quando o mouse está
+        // sobre a sua própria seção.
+        const trackPointer = (clientX, clientY) => {
+          const rect = this.container.getBoundingClientRect();
+          this.pointerInsideContainer = (
+            clientX >= rect.left && clientX <= rect.right &&
+            clientY >= rect.top && clientY <= rect.bottom
+          );
+          this.pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+          this.pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+        };
+
+        window.addEventListener('mousemove', (e) => trackPointer(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+          if (e.touches.length > 0) trackPointer(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+      }
+
+      handleResize() {
+        const w = this.container.clientWidth;
+        const h = this.container.clientHeight;
+        if (!w || !h) return;
+        this.canvas.width = w;
+        this.canvas.height = h;
+        this.renderer.setSize(w, h, false);
+
+        if (this.camera) {
+          this.camera.aspect = w / h;
+          this.camera.updateProjectionMatrix();
+        }
+        if (this.pointsMaterial) {
+          this.pointsMaterial.uniforms.uResolution.value.set(w, h);
+        }
+      }
+
+      _updatePointerTarget() {
+        const wanderX = Math.sin(this.elapsedTime * 0.66 + 94.234) * 0.2;
+        const wanderY = Math.cos(this.elapsedTime * 0.75 + 21.028) * 0.1;
+        this.pointerTarget.set(wanderX, wanderY);
+
+        this.pointerRaycaster.setFromCamera(this.pointerNDC, this.camera);
+        const hits = this.pointerRaycaster.intersectObject(this.pointerPlane);
+        this.pointerActive = this.pointerInsideContainer && hits.length > 0;
+
+        if (this.pointerActive) {
+          this.pointerWorldPoint.copy(hits[0].point);
+          this.pointerTarget.set(
+            this.pointerWorldPoint.x * 0.175 + wanderX * 0.5,
+            this.pointerWorldPoint.y * 0.175 + wanderY * 0.5
+          );
+        }
+
+        const easing = this.pointerActive ? 0.02 : 0.01;
+        this.pulseCenter.lerp(this.pointerTarget, easing);
+      }
+
+      stepSimulation(dt) {
+        this._updatePointerTarget();
+        this.pointSizePixels = this._computePointSizePixels();
+
+        const elapsed = this.frameClock.getElapsedTime();
+        const sim = this.simPassMaterial.uniforms;
+        sim.uStateMap.value = this.hasSimulatedOnce ? this.simBufferA.texture : this.originTexture;
+        sim.uElapsedTime.value = elapsed;
+        sim.uDeltaTime.value = dt;
+        sim.uPulseRadius.value = 0.175 + Math.sin(this.elapsedTime) * 0.03 + Math.cos(this.elapsedTime * 3) * 0.02;
+        sim.uPulseCenter.value = this.pulseCenter;
+        sim.uPulseBandWidth.value = this.pulseBandWidth;
+        sim.uPulseBandWidthInner.value = this.pulseBandWidthInner;
+        sim.uPulseDisplaceStrength.value = this.pulseDisplaceStrength;
+
+        this.renderer.setRenderTarget(this.simBufferB);
+        this.renderer.render(this.simPassScene, this.simPassCamera);
+        this.renderer.setRenderTarget(null);
+
+        const pts = this.pointsMaterial.uniforms;
+        pts.uStateMap.value = this.hasSimulatedOnce ? this.simBufferB.texture : this.originTexture;
+        pts.uElapsedTime.value = elapsed;
+        pts.uPulseCenter.value = this.pulseCenter;
+        pts.uPointSizeFactor.value = this.pointSizePixels;
+
+        [this.simBufferA, this.simBufferB] = [this.simBufferB, this.simBufferA];
+        this.hasSimulatedOnce = true;
+      }
+
+      renderFrame() {
+        if (!this.running) return;
+        this.animationId = requestAnimationFrame(this.renderFrame);
+
+        const now = this.frameClock.getElapsedTime();
+        const dt = now - this.previousElapsedTime;
+        this.previousElapsedTime = now;
+        this.elapsedTime += dt;
+
+        this.stepSimulation(dt);
+
+        this.renderer.setRenderTarget(null);
+        this.renderer.autoClear = false;
+        this.renderer.clear();
+        this.renderer.render(this.scene, this.camera);
+      }
+
+      start() {
+        if (this.running) return;
+        this.running = true;
+        this.previousElapsedTime = this.frameClock.getElapsedTime();
+        this.renderFrame();
+      }
+
+      stop() {
+        this.running = false;
+        if (this.animationId) cancelAnimationFrame(this.animationId);
+      }
+    }
+
+    // Cria uma instância do campo de partículas dentro de um container, só
+    // rodando a animação enquanto a seção correspondente está visível.
+    function initOrganicParticles(containerId, sectionSelector, overrides) {
+      const container = document.getElementById(containerId);
+      if (!container || typeof THREE === 'undefined') return null;
+
+      const system = new ParticleSystem(container, overrides || {});
+
+      const section = document.querySelector(sectionSelector);
+      if ('IntersectionObserver' in window && section) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) system.start();
+            else system.stop();
+          });
+        }, { threshold: 0.05 });
+        observer.observe(section);
+      } else {
+        system.start();
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) system.stop();
+        else if (!section || section.getBoundingClientRect().top < window.innerHeight) system.start();
+      });
+
+      return system;
+    }
+
+    initOrganicParticles('heroDots', '.hero-bg', {
+      density: 170,
+      gridResolution: 220,
+      sampleArea: 460,
+    });
+
+    // ===== Etapa: código de verificação =====
+    (function () {
+      const digits = Array.from(document.querySelectorAll('.code-digit'));
+      const hint = document.getElementById('codeHint');
+      const resendLink = document.getElementById('resendLink');
+
+      if (digits[0]) setTimeout(() => digits[0].focus(), 900);
+
+      const savedEmail = sessionStorage.getItem('minsq_verify_email') || localStorage.getItem('min_reg_email') || '';
+      const emailDisplay = document.getElementById('sentEmail');
+      if (emailDisplay && savedEmail) {
+        emailDisplay.textContent = savedEmail;
+      }
+
+      function setHint(message, kind) {
+        hint.textContent = message || '';
+        hint.className = message ? 'reset-hint show ' + kind : 'reset-hint';
+      }
+
+      function getCode() {
+        return digits.map((d) => d.value).join('');
+      }
+
+      async function verifyCode() {
+        const code = getCode();
+        if (code.length !== 6) return;
+        
+        setHint('Verificando código...', 'ok');
+        digits.forEach((d) => (d.disabled = true));
+
+        try {
+          // get user email from sessionStorage
+          const email = sessionStorage.getItem('minsq_verify_email') || localStorage.getItem('min_reg_email');
+          if (!email) throw new Error('E-mail não encontrado. Tente logar novamente.');
+          
+          const data = await window.api.verifyEmail(email, code, window.turnstileToken);
+          
+          if (data.token) {
+            // Limpa cache de personalização da conta anterior (chaves sem prefixo de usuário)
+            const _pageKeys = ['dashboard','today','goals','finance','health','study','foco','notes','analytics','profile'];
+            _pageKeys.forEach(k => { localStorage.removeItem(k+'BgImage'); localStorage.removeItem(k+'BgOpacity'); localStorage.removeItem(k+'Font'); });
+            localStorage.removeItem('dc_sb_pref');
+            localStorage.removeItem('minsq_auth_user');
+            localStorage.setItem('minsq_token', data.token);
+            if (data.user) localStorage.setItem('minsq_auth_user', JSON.stringify(data.user));
+          }
+
+          setHint('Conta verificada com sucesso! Redirecionando...', 'ok');
+          setTimeout(() => {
+            const isNew = sessionStorage.getItem('minsq_is_new_user') === 'true';
+            if (isNew) {
+              sessionStorage.setItem('minsq_force_onboarding', 'true');
+            } else {
+              sessionStorage.removeItem('minsq_force_onboarding');
+            }
+            var nURL = isNew ? '/pages/auth/onboarding.html' : '/pages/dashboard.html';
+            if (window !== window.top) {
+              window.top.postMessage({ type: 'MINSQ_NAVIGATE', url: nURL }, '*');
+            } else {
+              window.location.replace(nURL);
+            }
+          }, 1500);
+        } catch (err) {
+          digits.forEach((d) => { d.disabled = false; d.value = ''; d.classList.remove('filled'); });
+          digits[0].focus();
+          setHint(err.message || 'Código de verificação inválido.', 'error');
+          if (window.turnstile && window.turnstileWidgetId) {
+            turnstile.reset(window.turnstileWidgetId); // Reseta o CAPTCHA se houver erro
+            window.turnstileToken = null;
+          }
+        }
+      }
+
+      digits.forEach((digit, i) => {
+        digit.addEventListener('input', () => {
+          digit.value = digit.value.slice(0, 1); // Remove forced uppercase and alphanumeric restriction
+          digit.classList.toggle('filled', digit.value.length > 0);
+          setHint('', '');
+
+          if (digit.value && i < digits.length - 1) {
+            digits[i + 1].focus();
+          }
+          if (getCode().length === 6) verifyCode();
+        });
+
+        digit.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !digit.value && i > 0) {
+            digits[i - 1].focus();
+          }
+          if (e.key === 'ArrowLeft' && i > 0) digits[i - 1].focus();
+          if (e.key === 'ArrowRight' && i < digits.length - 1) digits[i + 1].focus();
+        });
+
+        digit.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const pasted = (e.clipboardData || window.clipboardData).getData('text').slice(0, 6);
+          pasted.split('').forEach((char, idx) => {
+            if (digits[idx]) {
+              digits[idx].value = char;
+              digits[idx].classList.add('filled');
+            }
+          });
+          const next = digits[Math.min(pasted.length, digits.length - 1)];
+          if (next) next.focus();
+          if (getCode().length === 6) verifyCode();
+        });
+      });
+
+      let resendCooldown = 60;
+      let resendTimer = null;
+
+      function startResendCooldown() {
+        if (resendTimer) clearInterval(resendTimer);
+        resendCooldown = 60;
+        resendLink.style.pointerEvents = 'none';
+        resendLink.style.opacity = '0.5';
+        
+        resendTimer = setInterval(() => {
+          resendCooldown--;
+          resendLink.textContent = `Aguarde ${resendCooldown}s`;
+          
+          if (resendCooldown <= 0) {
+            clearInterval(resendTimer);
+            resendLink.textContent = 'Reenviar código';
+            resendLink.style.pointerEvents = 'auto';
+            resendLink.style.opacity = '1';
+          }
+        }, 1000);
+      }
+
+      // O backend acabou de enviar o código inicial quando o usuário caiu aqui, 
+      // então já iniciamos a contagem para evitar spam imediato.
+      startResendCooldown();
+
+      resendLink.addEventListener('click', async () => {
+        if (resendCooldown > 0) return;
+        
+        const email = sessionStorage.getItem('minsq_verify_email') || localStorage.getItem('min_reg_email');
+        if (!email) {
+          setHint('E-mail não encontrado na sessão.', 'error');
+          return;
+        }
+
+        setHint('Enviando...', '');
+        resendLink.style.pointerEvents = 'none';
+        resendLink.style.opacity = '0.5';
+
+        try {
+          const res = await fetch('/api/auth/request-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+          });
+          const data = await res.json();
+          
+          if (res.ok) {
+            setHint('Novo código enviado.', 'ok');
+            startResendCooldown();
+          } else {
+            setHint(data.error || 'Erro ao reenviar.', 'error');
+            resendLink.style.pointerEvents = 'auto';
+            resendLink.style.opacity = '1';
+          }
+        } catch (err) {
+          setHint('Erro de conexão.', 'error');
+          resendLink.style.pointerEvents = 'auto';
+          resendLink.style.opacity = '1';
+        }
+      });
+
+      // Inicializa o Turnstile de forma dinâmica
+      async function initTurnstile() {
+        try {
+          const res = await fetch('/api/auth/turnstile-key');
+          const data = await res.json();
+          if (data.siteKey) {
+            const script = document.createElement('script');
+            script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+
+            script.onload = () => {
+              const tsContainer = document.getElementById('turnstile-container');
+              if (tsContainer && window.turnstile) {
+                // Deixa o container visível só pra comportar o widget se necessário
+                tsContainer.style.display = 'flex';
+                window.turnstileWidgetId = turnstile.render('#turnstile-container', {
+                  sitekey: data.siteKey,
+                  callback: function(token) {
+                    window.turnstileToken = token;
+                  },
+                  'error-callback': function() {
+                    setHint('Falha na validação de segurança. Recarregue a página.', 'error');
+                  }
+                });
+              }
+            };
+          }
+        } catch(e) {
+          console.warn('[Turnstile] Erro ao carregar Site Key', e);
+        }
+      }
+      initTurnstile();
+
+    })();
+
+</script>
+<script src="/pages/api-client.js"></script>
+<script src="/pages/shared.js"></script>
+</body>
+</html>

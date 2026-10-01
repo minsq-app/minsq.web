@@ -1,0 +1,4934 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Criar rotina / Biblioteca</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600&family=DM+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070707;
+      --s1: #0d0d0d;
+      --s2: #121212;
+      --s3: #181818;
+      --s4: #1e1e1e;
+      --s5: #242424;
+      --b1: rgba(255, 255, 255, .04);
+      --b2: rgba(255, 255, 255, .08);
+      --b3: rgba(255, 255, 255, .14);
+      --b4: rgba(255, 255, 255, .22);
+      --t1: #f0f0f0;
+      --t2: #c0c0c0;
+      --t3: #888;
+      --t4: #444;
+      --t5: #2a2a2a;
+      --r8: 8px;
+      --r12: 12px;
+      --r16: 16px;
+      --r20: 20px;
+      --r24: 24px;
+      --fm: 'Exo 2', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ===== Custom thin scrollbar (global fallback) ===== */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #3a3a3a transparent;
+    }
+
+    *::-webkit-scrollbar {
+      width: 4px !important;
+      height: 4px !important;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-color: #3a3a3a !important;
+      border-radius: 10px !important;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+      background-color: #505050 !important;
+    }
+
+    *::-webkit-scrollbar-corner {
+      background: transparent !important;
+    }
+
+    *::-webkit-scrollbar-button,
+    *::-webkit-scrollbar-button:start,
+    *::-webkit-scrollbar-button:end,
+    *::-webkit-scrollbar-button:start:decrement,
+    *::-webkit-scrollbar-button:start:increment,
+    *::-webkit-scrollbar-button:end:decrement,
+    *::-webkit-scrollbar-button:end:increment,
+    *::-webkit-scrollbar-button:vertical:start,
+    *::-webkit-scrollbar-button:vertical:end,
+    *::-webkit-scrollbar-button:horizontal:start,
+    *::-webkit-scrollbar-button:horizontal:end,
+    *::-webkit-scrollbar-button:single-button,
+    *::-webkit-scrollbar-button:double-button {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    html {
+      height: 100%;
+      overflow: hidden !important;
+    }
+
+    html::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    body {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      font-family: 'Exo 2', sans-serif;
+      color: var(--t2);
+      padding: 0;
+      overflow: hidden !important;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+
+    body::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.75);
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0;
+      display: flex;
+      gap: 24px;
+      width: 100%;
+      margin: -2px 0 0 0;
+      padding: 32px;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .col {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 19px;
+      overflow: hidden;
+    }
+
+    /* A coluna esquerda também tinha overflow:hidden, o que cortava a
+     lista de traços expandida (ela vaza pra fora do painel no hover). */
+    .col-left {
+      overflow: visible;
+    }
+
+    .col-fixed {
+      display: flex;
+      flex-direction: column;
+      gap: 19px;
+      flex-shrink: 0;
+    }
+
+    /* Wrapper estático (não rola) que hospeda a trilha customizada,
+     igual ao .booking-left do site: a trilha fica presa ao painel
+     em vez de se mover junto com o conteúdo. */
+    .col-scroll-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* No painel esquerdo a lista de traços precisa "vazar" pra fora do
+     painel quando expande no hover (senão fica cortada na borda).
+     A rolagem em si continua controlada pelo overflow-y do .col-scroll
+     interno, então liberar o overflow aqui não muda o comportamento
+     do scroll. */
+    .col-scroll-wrap--left {
+      overflow: visible;
+    }
+
+    /* Elemento que realmente rola. A scrollbar nativa é 100% escondida
+     (nos 3 mecanismos: Firefox, IE/Edge legado e WebKit/Blink) e
+     substituída por uma barra desenhada em JS — assim o visual é
+     idêntico em qualquer navegador (Brave, Chrome, Firefox, Safari). */
+    .col-scroll {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 12px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 19px;
+    }
+
+    .col-scroll::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    /* Scrollbar customizada (fina, sem setas, feita do zero).
+     Fica contida dentro do painel (sem provocar scroll/movimento lateral
+     na página) e com um pequeno respiro em relação ao texto dos exercícios. */
+    .col-scroll-track {
+      position: absolute;
+      top: 2px;
+      right: 0px;
+      bottom: 2px;
+      width: 8px;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .col-scroll-thumb {
+      position: absolute;
+      right: 2px;
+      width: 2px;
+      border-radius: 4px;
+      background: #5a5a5a;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: background 0.15s ease, width 0.15s ease, right 0.15s ease;
+    }
+
+    .col-scroll-thumb:hover {
+      background: #7a7a7a;
+      width: 3px;
+      right: 1.5px;
+    }
+
+    /* Painel esquerdo: em vez de barra de scroll, os exercícios selecionados
+     viram um conjunto de traços "-" empilhados bem juntinhos na lateral
+     esquerda. Ao passar o cursor, os próprios traços se transformam na
+     lista completa dos exercícios (sem balão flutuante à parte); clicar
+     num nome rola até o cartão. */
+    .col-scroll-wrap--left .col-scroll {
+      padding-right: 0;
+      padding-left: 24px;
+    }
+
+    .col-scroll-dashnav {
+      position: absolute;
+      top: 2px;
+      left: 6px;
+      bottom: 2px;
+      width: 1px;
+      display: flex;
+      align-items: center;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .dash-stack {
+      position: relative;
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      border-radius: 10px;
+      z-index: 25;
+      /* Colchão invisível só pra aumentar a área de clique/hover. Não
+       cresce pra esquerda/cima (isso empurrava o balão pra fora da
+       página, e o body corta com overflow:hidden) — só pra baixo/direita,
+       que é pra onde o balão de fato se expande. */
+      padding: 16px 20px 16px 4px;
+      margin: -16px -20px -16px -4px;
+      background: transparent;
+      transition: background 0.18s ease, gap 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .dash-stack:hover {
+      background: #202020;
+      gap: 2px;
+      box-shadow: 0 9.5px 29px rgba(0, 0, 0, 0.5);
+      z-index: 70;
+    }
+
+    .col-scroll-dash {
+      height: 2px;
+      width: 12px;
+      border-radius: 6px;
+      background: #5a5a5a;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      transition: height 0.18s ease, width 0.18s ease, background 0.18s ease, padding 0.18s ease;
+    }
+
+    .dash-stack:hover .col-scroll-dash {
+      height: 28px;
+      width: auto;
+      min-width: 150px;
+      padding: 0 12px;
+      background: transparent;
+    }
+
+    .dash-stack:hover .col-scroll-dash:hover {
+      background: #2c2c2c;
+    }
+
+    .dash-label {
+      opacity: 0;
+      font-size: 14px;
+      color: #e0e0e0;
+      white-space: nowrap;
+      transition: opacity 0.12s ease;
+    }
+
+    .dash-stack:hover .dash-label {
+      opacity: 1;
+    }
+
+    .divider {
+      width: 0.5px;
+      background: #333;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14.5px;
+      cursor: pointer;
+    }
+
+    .header-left span {
+      font-size: 21.5px;
+      font-weight: 500;
+    }
+
+    .back-arrow {
+      font-size: 24px;
+      transition: transform 0.15s ease;
+    }
+
+    .header-left:hover .back-arrow {
+      transform: translateX(-3.5px);
+    }
+
+    .save-btn {
+      background: #3a3a3a;
+      color: #8a8a8a;
+      border: none;
+      border-radius: 9.5px;
+      padding: 9.5px 17px;
+      font-size: 15.5px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .save-btn.active {
+      background: #fff;
+      color: #141414;
+      cursor: pointer;
+    }
+
+    .save-btn.active:hover {
+      background: #e0e0e0;
+    }
+
+    .field-label {
+      font-size: 15.5px;
+      color: #b0b0b0;
+      margin-bottom: 9.5px;
+    }
+
+    .field-box {
+      background: #1a1a1a;
+      border-radius: 9.5px;
+      padding: 14.5px 17px;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .field-box:focus-within {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .field-box input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--t2);
+      font-size: 17px;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .field-box input::placeholder {
+      color: #7a7a7a;
+    }
+
+    .empty-state {
+      background: #141414;
+      border-radius: 14.5px;
+      padding: 48px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+    }
+
+    .empty-state .title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--t2);
+      margin: 19px 0 9.5px;
+    }
+
+    .empty-state .desc {
+      font-size: 15.5px;
+      color: #8a8a8a;
+      line-height: 1.5;
+    }
+
+    .selected-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14.5px;
+      flex: 1;
+      overflow-y: visible;
+    }
+
+    .exercise-card {
+      background: #141414;
+      border-radius: 17px;
+      padding: 19px;
+      position: relative;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .exercise-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 19px;
+    }
+
+    .exercise-card-top .left {
+      display: flex;
+      align-items: center;
+      gap: 14.5px;
+    }
+
+    .drag-handle {
+      color: #6a6a6a;
+      font-size: 17px;
+      cursor: grab;
+      letter-spacing: 2.5px;
+      line-height: 1;
+    }
+
+    .exercise-card-top .ex-name {
+      font-size: 19px;
+      font-weight: 500;
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: #8a8a8a;
+      font-size: 21.5px;
+      cursor: pointer;
+      padding: 5px 9.5px;
+      border-radius: 7px;
+      transition: background 0.15s ease, color 0.15s ease;
+      line-height: 1;
+    }
+
+    .menu-btn:hover {
+      background: #2a2a2a;
+      color: #ff5e5e;
+    }
+
+    /* Drag and drop reordering */
+    .selected-list.is-reordering .exercise-card> :not(.exercise-card-top) {
+      display: none !important;
+    }
+
+    .selected-list.is-reordering .exercise-card {
+      padding: 12px 17px;
+    }
+
+    .selected-list.is-reordering .exercise-card-top {
+      margin-bottom: 0 !important;
+    }
+
+    .exercise-card.dragging {
+      opacity: 0.6;
+      transform: scale(0.98);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    .exercise-card.dragging * {
+      pointer-events: none;
+    }
+
+    .drag-handle {
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: grab;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+
+    .card-label {
+      font-size: 15.5px;
+      color: #b0b0b0;
+      margin-bottom: 9.5px;
+    }
+
+    .note-box {
+      width: 100%;
+      background: #1e1e1e;
+      border: none;
+      border-radius: 12px;
+      padding: 14.5px 17px;
+      color: var(--t2);
+      font-size: 15.5px;
+      font-family: inherit;
+      resize: none;
+      min-height: 53px;
+      margin-bottom: 19px;
+      outline: none;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .note-box::placeholder {
+      color: #7a7a7a;
+    }
+
+    .note-box:focus {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Generic custom dropdown */
+    .dropdown-wrap {
+      position: relative;
+      margin-bottom: 19px;
+    }
+
+    .dropdown-trigger {
+      width: 100%;
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 12px 17px;
+      color: #b0b0b0;
+      font-size: 15.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .dropdown-trigger.open {}
+
+    .dropdown-trigger .chev {
+      font-size: 12px;
+      color: #7a7a7a;
+      transition: transform 0.15s ease;
+    }
+
+    .dropdown-trigger.open .chev {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: calc(100% + 7px);
+      left: 0;
+      right: 0;
+      background: #202020;
+      border-radius: 12px;
+      box-shadow: 0 9.5px 29px rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      max-height: 264px;
+      overflow-y: auto;
+      padding: 7px;
+      scrollbar-width: thin;
+      scrollbar-color: #4a4a4a transparent;
+    }
+
+    .exercise-card.timer-active .dropdown-wrap {
+      position: static;
+    }
+
+    .dropdown-panel[data-kind="rest"] {
+      display: block !important;
+      position: absolute;
+      top: 84px;
+      left: 19px;
+      right: 19px;
+      bottom: 19px;
+      max-height: none;
+      background: #1a1a1a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      z-index: 60;
+      transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+    }
+
+    .dropdown-panel[data-kind="rest"].hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-8px);
+      pointer-events: none;
+    }
+
+    .exercise-card>* {
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .exercise-card.timer-active>*:not(.exercise-card-top):not(.dropdown-wrap) {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .exercise-card.timer-active .dropdown-trigger {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .dropdown-panel::-webkit-scrollbar {
+      width: 4px !important;
+    }
+
+    .dropdown-panel.reps-mode-panel {
+      top: 50%;
+      left: 50%;
+      right: auto;
+      width: max-content;
+      min-width: 200px;
+      transform-origin: center;
+      background: #2a2a2a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: block !important;
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+      z-index: 60;
+    }
+
+    .dropdown-panel.reps-mode-panel.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translate(-50%, -50%) scale(0.97);
+      pointer-events: none;
+    }
+
+    .dropdown-item,
+    .type-option {
+      transition: background 0.12s ease, transform 0.1s ease;
+    }
+
+    .dropdown-item:active,
+    .type-option:active {
+      transform: scale(0.97);
+      background: #333;
+    }
+
+    .card-blur-overlay {
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(4px);
+      background: rgba(10, 10, 10, 0.3);
+      z-index: 55;
+      border-radius: 17px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .exercise-card.blur-active .card-blur-overlay {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .exercise-card.blur-active .sets-header:has(.reps-mode-panel:not(.hidden)),
+    .exercise-card.blur-active .set-row:has(.type-popup:not(.hidden)) {
+      z-index: 60;
+    }
+
+    .dropdown-panel::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+
+    .dropdown-panel::-webkit-scrollbar-thumb {
+      background-color: #4a4a4a !important;
+      border-radius: 12px !important;
+      min-height: 30px;
+    }
+
+    .dropdown-panel::-webkit-scrollbar-thumb:hover {
+      background-color: #626262 !important;
+    }
+
+    .dropdown-panel::-webkit-scrollbar-button,
+    .dropdown-panel::-webkit-scrollbar-button:start:decrement,
+    .dropdown-panel::-webkit-scrollbar-button:end:increment,
+    .dropdown-panel::-webkit-scrollbar-button:vertical:start,
+    .dropdown-panel::-webkit-scrollbar-button:vertical:end,
+    .dropdown-panel::-webkit-scrollbar-button:single-button,
+    .dropdown-panel::-webkit-scrollbar-button:double-button {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    .dropdown-panel::-webkit-scrollbar-corner {
+      background: transparent !important;
+    }
+
+    .dropdown-panel.hidden {
+      display: none;
+    }
+
+    .dropdown-item {
+      padding: 11px 12px;
+      font-size: 15.5px;
+      color: #e0e0e0;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.12s ease;
+    }
+
+    .dropdown-item:hover {
+      background: #2c2c2c;
+    }
+
+    .dropdown-item.selected {
+      background: #2a2a2a;
+      color: var(--t2);
+    }
+
+    .sets-header {
+      display: grid;
+      grid-template-columns: 48px 1fr 1fr 40px;
+      gap: 9.5px;
+      font-size: 13px;
+      color: #7a7a7a;
+      letter-spacing: 0.5px;
+      margin-bottom: 9.5px;
+      padding: 0 2.5px;
+      text-align: center;
+    }
+
+    .sets-header>span:first-child {
+      text-align: left;
+    }
+
+    .sets-header .reps-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .sets-header .reps-trigger:hover {
+      color: #b0b0b0;
+    }
+
+    .sets-header .reps-trigger .chev {
+      font-size: 11px;
+      transition: transform 0.15s ease;
+    }
+
+    .sets-header .reps-trigger.open .chev {
+      transform: rotate(180deg);
+    }
+
+    /* Exercícios "diferentes": alguns têm só 1 campo de dado por série
+     (ex.: só DURAÇÃO) em vez de 2 (KG+REPS). Essa variante ajusta o
+     grid pra não sobrar coluna vazia. */
+    .sets-header.field-count-1,
+    .set-row.field-count-1 {
+      grid-template-columns: 48px 1fr 40px;
+    }
+
+    /* Exercícios "rep apenas, sem série": não têm numeração de série,
+     tipo (aquecimento/falha) nem botão de remover — é só um campo
+     de repetições solto. */
+    .reps-only-row {
+      display: flex;
+      align-items: center;
+      gap: 9.5px;
+      margin-bottom: 9.5px;
+    }
+
+    .reps-only-row input {
+      max-width: 100px !important;
+    }
+
+    .set-row {
+      display: grid;
+      grid-template-columns: 48px 1fr 1fr 40px;
+      gap: 9.5px;
+      margin-bottom: 9.5px;
+      align-items: center;
+      position: relative;
+    }
+
+    .set-del-btn {
+      background: transparent;
+      border: none;
+      color: #7a7a7a;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 10px;
+      transition: color 0.15s ease;
+      outline: none;
+    }
+
+    .set-del-btn:hover {
+      color: #ff5e5e;
+    }
+
+    .set-num {
+      width: 43px;
+      height: 43px;
+      background: #1e1e1e;
+      border-radius: 9.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      color: var(--t2);
+      font-family: inherit;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .set-num.warmup {
+      background: #caa23c;
+      color: #1a1200;
+    }
+
+    .set-num.failure {
+      background: #1e1e1e;
+      color: #e24b4a;
+      border: 2px solid #e24b4a;
+    }
+
+    .set-row input,
+    .reps-only-row input {
+      background: #1e1e1e;
+      border: none;
+      border-radius: 9.5px;
+      padding: 11px 12px;
+      color: var(--t2);
+      font-size: 15.5px;
+      font-family: inherit;
+      width: 100%;
+      max-width: 140px;
+      margin: 0 auto;
+      outline: none;
+      transition: box-shadow 0.15s ease;
+      text-align: center;
+    }
+
+    .set-row input:focus,
+    .reps-only-row input:focus {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .reps-range {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      justify-content: center;
+    }
+
+    .reps-range span {
+      color: #7a7a7a;
+      font-size: 15.5px;
+    }
+
+    .type-popup {
+      position: absolute;
+      top: 50%;
+      left: 56px;
+      background: #2a2a2a;
+      border-radius: 12px;
+      box-shadow: 0 9.5px 29px rgba(0, 0, 0, 0.5);
+      z-index: 60;
+      padding: 7px;
+      width: 192px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: block !important;
+      opacity: 1;
+      visibility: visible;
+      transform-origin: left center;
+      transform: translateY(-50%) scale(1);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    }
+
+    .type-popup.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-50%) scale(0.97);
+      pointer-events: none;
+    }
+
+    .type-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9.5px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 15.5px;
+      color: #e0e0e0;
+      transition: background 0.12s ease;
+    }
+
+    .type-option:hover {
+      background: #2c2c2c;
+    }
+
+    .type-badge {
+      width: 29px;
+      height: 29px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14.5px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .type-badge.normal {
+      background: #1e1e1e;
+      color: var(--t2);
+    }
+
+    .type-badge.warmup {
+      background: #caa23c;
+      color: #1a1200;
+    }
+
+    .type-badge.failure {
+      background: #1e1e1e;
+      color: #e24b4a;
+      border: 2px solid #e24b4a;
+    }
+
+    .add-serie-btn {
+      width: 100%;
+      background: #262626;
+      border: none;
+      border-radius: 12px;
+      padding: 14.5px;
+      color: #d0d0d0;
+      font-size: 15.5px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background 0.15s ease;
+    }
+
+    .add-serie-btn:hover {
+      background: #303030;
+    }
+
+    .summary-card {
+      background: #141414;
+      border-radius: 17px;
+      padding: 19px;
+    }
+
+    .summary-title {
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 14.5px;
+    }
+
+    .summary-stats {
+      display: flex;
+      gap: 33.5px;
+    }
+
+    .summary-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .summary-label {
+      font-size: 14.5px;
+      color: #8a8a8a;
+    }
+
+    .summary-value {
+      font-size: 19px;
+      font-weight: 500;
+      color: #e8e8e8;
+    }
+
+    .lib-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .lib-top span:first-child {
+      font-size: 21.5px;
+      font-weight: 500;
+    }
+
+    .filter-box {
+      background: #1a1a1a;
+      border-radius: 9.5px;
+      padding: 12px 17px;
+      font-size: 15.5px;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      user-select: none;
+    }
+
+    .filter-box:hover {
+      background: #232323;
+    }
+
+    .filter-box .chev {
+      font-size: 13px;
+      color: #7a7a7a;
+      transition: transform 0.15s ease;
+    }
+
+    .filter-box.open .chev {
+      transform: rotate(180deg);
+    }
+
+    .filter-wrap {
+      position: relative;
+    }
+
+    .filter-wrap .dropdown-panel {
+      display: block !important;
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+      transform-origin: top center;
+    }
+
+    .filter-wrap .dropdown-panel.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-5px) scale(0.97);
+      pointer-events: none;
+    }
+
+    .muscle-group-label {
+      padding: 11px 12px 4px;
+      font-size: 12px;
+      color: #6a6a6a;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .search-box {
+      background: #1a1a1a;
+      border-radius: 24px;
+      padding: 12px 17px;
+      display: flex;
+      align-items: center;
+      gap: 9.5px;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .search-box:focus-within {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .search-box input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--t2);
+      font-size: 15.5px;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .search-box input::placeholder {
+      color: #7a7a7a;
+    }
+
+    .section-label {
+      font-size: 14.5px;
+      color: var(--t2);
+      margin-top: 5px;
+    }
+
+    .exercise-list {
+      display: flex;
+      flex-direction: column;
+      background: #141414;
+      border-radius: 17px;
+      padding: 10px 14.5px;
+      height: 100%;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    }
+
+    .exercise-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14.5px;
+      padding: 12px 9.5px;
+      border-bottom: 0.5px solid #262626;
+      font-size: 17px;
+      color: var(--t2);
+      cursor: pointer;
+      border-radius: 7px;
+      transition: background 0.3s ease;
+    }
+
+    .exercise-item:hover {
+      background: #1a1a1a;
+    }
+
+    .exercise-item:last-child {
+      border-bottom: none;
+    }
+
+    .exercise-item.added {
+      color: #8a8a8a;
+    }
+
+    .ex-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .ex-thumb {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fff;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .ex-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ex-thumb-card {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #fff;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .add-icon {
+      font-size: 18px;
+      color: var(--t2);
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .exercise-item:hover .add-icon {
+      background: #2a2a2a;
+    }
+
+    .exercise-item.added .add-icon {
+      transform: rotate(45deg);
+      color: #8a8a8a;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .no-results {
+      font-size: 15.5px;
+      color: #7a7a7a;
+      padding: 19px 0;
+      text-align: center;
+    }
+
+    body.glass-active .empty-state,
+    body.glass-active .summary-card,
+    body.glass-active .field-box,
+    body.glass-active .search-box,
+    body.glass-active .filter-box,
+    body.glass-active .exercise-card,
+    body.glass-active .exercise-list,
+    body.glass-active .dropdown-trigger,
+    body.glass-active .note-box,
+    body.glass-active .set-num,
+    body.glass-active .set-row input,
+    body.glass-active .reps-only-row input {
+      background: rgba(15, 15, 15, 0.45) !important;
+      backdrop-filter: blur(12px) saturate(1.6) brightness(1.08) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(1.6) brightness(1.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    body.glass-active .set-num.warmup {
+      background: rgba(202, 162, 60, 0.3) !important;
+      color: #caa23c !important;
+      border: 1px solid rgba(202, 162, 60, 0.4) !important;
+    }
+
+    body.glass-active .set-num.failure {
+      background: rgba(226, 75, 74, 0.15) !important;
+      color: #e24b4a !important;
+      border: 1px solid rgba(226, 75, 74, 0.4) !important;
+    }
+
+    /* ===== Modal "Exercício personalizado" ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal-box {
+      background: linear-gradient(180deg, #161616 0%, #121212 100%);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: var(--r24);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+      width: 900px;
+      max-width: calc(100% - 32px);
+      max-height: calc(100% - 64px);
+      overflow-y: auto;
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+      transform: scale(0.96) translateY(6px);
+      transition: transform 0.22s cubic-bezier(.2, .8, .2, 1);
+      scrollbar-width: thin;
+      scrollbar-color: #3a3a3a transparent;
+    }
+
+    .modal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 28px 36px;
+    }
+
+    @media (max-width: 620px) {
+      .modal-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+      }
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header span {
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--t1);
+      letter-spacing: -0.2px;
+    }
+
+    .modal-close {
+      background: #1e1e1e;
+      border: none;
+      color: #9a9a9a;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .modal-close svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .modal-close:hover {
+      background: #2a2a2a;
+      color: var(--t1);
+    }
+
+    /* Upload de foto: fica no canto inferior esquerdo do modal, com altura
+     equivalente ao bloco de chips ao lado pra não parecer pequeno demais. */
+    .modal-photo-wrap {
+      display: flex;
+      align-items: flex-end;
+      height: 100%;
+    }
+
+    .modal-photo-upload {
+      background: #181818;
+      border: 1.5px dashed #363636;
+      border-radius: var(--r20);
+      width: 100%;
+      max-width: 220px;
+      height: 172px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      color: #8a8a8a;
+      text-align: center;
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .modal-photo-upload:hover {
+      border-color: #5a5a5a;
+      background: #1c1c1c;
+    }
+
+    .modal-photo-upload img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-photo-upload .upload-icon {
+      width: 26px;
+      height: 26px;
+      opacity: 0.55;
+    }
+
+    .modal-photo-upload .upload-hint {
+      font-size: 13px;
+      line-height: 1.35;
+      padding: 0 14px;
+      color: #7a7a7a;
+    }
+
+    .modal-photo-upload.has-photo .upload-icon,
+    .modal-photo-upload.has-photo .upload-hint {
+      display: none;
+    }
+
+    .modal-photo-upload.has-photo:hover::after {
+      content: 'Alterar foto';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-field-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6f6f6f;
+    }
+
+    .modal-field-label .muscle-limit-hint {
+      text-transform: none;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: #555;
+    }
+
+    .modal-select-trigger {
+      background: #1a1a1a;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--t2);
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .modal-select-trigger .chev {
+      font-size: 10px;
+      color: #7a7a7a;
+      transition: transform 0.15s ease;
+    }
+
+    .modal-select-trigger.open .chev {
+      transform: rotate(180deg);
+    }
+
+    .modal-select-trigger .placeholder {
+      color: #6a6a6a;
+    }
+
+    .modal-select-trigger:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .modal-select-trigger.open {
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22);
+      border-color: transparent;
+    }
+
+    .modal-select-wrap {
+      position: relative;
+    }
+
+    .modal-select-panel {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #1e1e1e;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+      padding: 6px;
+      z-index: 30;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .modal-select-panel.hidden {
+      display: none;
+    }
+
+    .muscle-chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 9px;
+      max-height: 172px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .muscle-chip {
+      background: #1a1a1a;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 10px;
+      padding: 9px 15px;
+      font-size: 13.5px;
+      color: #a8a8a8;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+    }
+
+    .muscle-chip:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: var(--t1);
+    }
+
+    .muscle-chip.selected {
+      background: #fff;
+      color: #141414;
+      border-color: #fff;
+    }
+
+    .muscle-chip.selected:hover {
+      transform: none;
+    }
+
+    .muscle-chip.disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .modal-btn-cancel {
+      flex: 1;
+      background: transparent;
+      color: #9a9a9a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 15px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .modal-btn-cancel:hover {
+      background: #1e1e1e;
+      color: var(--t1);
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+
+    .modal-btn-save {
+      flex: 1.4;
+      background: #2c2c2c;
+      color: #6f6f6f;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: not-allowed;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .modal-btn-save.active {
+      background: #fff;
+      color: #141414;
+      cursor: pointer;
+    }
+
+    .modal-btn-save.active:hover {
+      background: #e6e6e6;
+    }
+
+    /* ===== Toast Notification ===== */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    .toast {
+      background-color: #242424;
+      color: #fff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: auto;
+      border-left: 4px solid transparent;
+      max-width: 320px;
+    }
+
+    .toast.toast-error {
+      border-left-color: #e53935;
+    }
+
+    .toast.toast-success {
+      border-left-color: #ff9800;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    /* ══════════ TOPBAR (embutida nesta página) ══════════ */
+    @keyframes mhTopbarSlideDown {
+      from {
+        transform: translate3d(0, -100%, 0);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1;
+      }
+    }
+
+    .topbar {
+      animation: mhTopbarSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+      transition: background 0.5s ease, border-bottom-color 0.5s ease;
+      background: rgba(7, 7, 7, .82) !important;
+      border: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, .04) !important;
+      box-shadow: none !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border-radius: 0 !important;
+      clip-path: none !important;
+      margin: 0 !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      height: 52px !important;
+      padding: 0 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 16px !important;
+      overflow: visible !important;
+      left: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 52 !important;
+    }
+
+    .tb-path {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-family: 'DM Mono', monospace !important;
+      font-size: 12px !important;
+      letter-spacing: .2px !important;
+    }
+
+    .tb-root {
+      color: #888 !important;
+      font-weight: 500 !important;
+    }
+
+    .tb-sep {
+      color: rgba(255, 255, 255, .22) !important;
+    }
+
+    .tb-cur {
+      color: #f0f0f0 !important;
+    }
+
+    .tb-r {
+      background: transparent !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin-left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="tb-path">
+      <span class="tb-root">Minsq</span>
+      <span class="tb-sep">/</span>
+      <span class="tb-cur">Foco</span>
+      <span class="tb-sep">/</span>
+      <span class="tb-cur">Criar Rotina</span>
+    </div>
+    <div class="tb-r"></div>
+  </div>
+
+  <div class="container">
+
+    <div class="col col-left">
+      <div class="col-fixed">
+        <div class="header">
+          <div class="header-left" id="backBtn">
+            <span class="back-arrow">&#8592;</span>
+            <span>Criar rotina</span>
+          </div>
+          <button class="save-btn" id="saveBtn">Guardar rotina</button>
+        </div>
+      </div>
+
+      <div class="col-scroll-wrap col-scroll-wrap--left">
+        <div class="col-scroll">
+          <div>
+            <p class="field-label">Título da rotina</p>
+            <div class="field-box">
+              <input type="text" autocomplete="off" id="titleInput" placeholder="Título da rotina de treino"
+                maxlength="46">
+            </div>
+          </div>
+
+          <div class="empty-state" id="emptyState">
+            <p class="title">Nenhum exercício</p>
+            <p class="desc">Até agora, não adicionaste nenhum exercício a esta rotina.</p>
+          </div>
+
+          <div class="selected-list hidden" id="selectedList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="col">
+      <div class="col-fixed">
+        <div class="summary-card" id="summaryCard">
+          <p class="summary-title">Resumo</p>
+          <div class="summary-stats">
+            <div class="summary-stat">
+              <span class="summary-label">Exercícios</span>
+              <span class="summary-value" id="statExercises">0</span>
+            </div>
+            <div class="summary-stat">
+              <span class="summary-label">Total de séries</span>
+              <span class="summary-value" id="statSets">0</span>
+            </div>
+            <div class="summary-stat">
+              <span class="summary-label">Grupos musculares</span>
+              <span class="summary-value" id="statMuscles">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lib-top">
+          <span>Biblioteca</span>
+        </div>
+
+        <div class="filter-wrap">
+          <div class="filter-box" id="muscleFilter">
+            <span id="muscleFilterLabel">Todos os músculos</span>
+            <span class="chev">&#9660;</span>
+          </div>
+          <div class="dropdown-panel hidden" id="muscleFilterPanel"></div>
+        </div>
+
+        <div class="search-box">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7a7a7a" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" autocomplete="off" id="searchInput" placeholder="Procurar exercícios">
+        </div>
+
+        <p class="section-label">Todos os exercícios</p>
+      </div>
+
+      <div class="col-scroll-wrap">
+        <div class="col-scroll">
+          <div class="exercise-list" id="exerciseList">
+            <div class="exercise-item" data-name="Agachamento Zercher">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/1.webp" alt=""><span
+                  class="ex-title">Agachamento Zercher</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Encolhimento com Salto (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/91.webp" alt=""><span
+                  class="ex-title">Encolhimento com Salto (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Sissy Squat Unilateral com Assistência">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/3.webp" alt=""><span
+                  class="ex-title">Sissy Squat Unilateral com Assistência</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Hiperextensão Lombar">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/4.webp" alt=""><span
+                  class="ex-title">Hiperextensão Lombar</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Extensão Lombar (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/5.webp" alt=""><span
+                  class="ex-title">Extensão Lombar (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Hiperextensão Lombar com Peso">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/6.webp" alt=""><span
+                  class="ex-title">Hiperextensão Lombar com Peso</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Band Pullaparts">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/7.webp" alt=""><span
+                  class="ex-title">Band Pullaparts</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Flexão de Punho Invertida (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/8.webp" alt=""><span
+                  class="ex-title">Flexão de Punho Invertida (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Behind the Back Curl (Cable)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/9.webp" alt=""><span
+                  class="ex-title">Behind the Back Curl (Cable)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Belt Squat (Machine)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/10.webp" alt=""><span
+                  class="ex-title">Belt Squat (Machine)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Bench">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/11.webp" alt=""><span
+                  class="ex-title">Bench</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Reto (Polia)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/12.webp" alt=""><span
+                  class="ex-title">Supino Reto (Polia)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Reto (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/13.webp" alt=""><span
+                  class="ex-title">Supino Reto (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Reto Smith">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/14.webp" alt=""><span
+                  class="ex-title">Supino Reto Smith</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino com Pegada Junta">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/15.webp" alt=""><span
+                  class="ex-title">Supino com Pegada Junta</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino - Pegada Aberta (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/16.webp" alt=""><span
+                  class="ex-title">Supino - Pegada Aberta (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Pendlay Row">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/111.webp" alt=""><span
+                  class="ex-title">Pendlay Row</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Aberturas Invertidas (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/35.webp" alt=""><span
+                  class="ex-title">Aberturas Invertidas (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Direta Barra W (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/19.webp" alt=""><span
+                  class="ex-title">Rosca Direta Barra W (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Direta na Polia">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/20.webp" alt=""><span
+                  class="ex-title">Rosca Direta na Polia</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Direta (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/21.webp" alt=""><span
+                  class="ex-title">Rosca Direta (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Direta (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/22.webp" alt=""><span
+                  class="ex-title">Rosca Direta (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento com Banco (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/23.webp" alt=""><span
+                  class="ex-title">Agachamento com Banco (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Boxe (Cardio)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/24.webp" alt=""><span
+                  class="ex-title">Boxe (Cardio)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento Búlgaro (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/25.webp" alt=""><span
+                  class="ex-title">Agachamento Búlgaro (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Abdominal (Corda)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/26.webp" alt=""><span
+                  class="ex-title">Abdominal (Corda)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Crucifixo na Polia Alta (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/27.webp" alt=""><span
+                  class="ex-title">Crucifixo na Polia Alta (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Good Morning (Cable)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/28.webp" alt=""><span
+                  class="ex-title">Good Morning (Cable)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Extensão de Panturrilha (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/29.webp" alt=""><span
+                  class="ex-title">Extensão de Panturrilha (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Panturrilha no Leg Press 45º">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/30.webp" alt=""><span
+                  class="ex-title">Panturrilha no Leg Press 45º</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Crucifixo no Voador (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/31.webp" alt=""><span
+                  class="ex-title">Crucifixo no Voador (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Aberturas no TRX">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/32.webp" alt=""><span
+                  class="ex-title">Aberturas no TRX</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Sentado (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/33.webp" alt=""><span
+                  class="ex-title">Supino Sentado (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Face Pull">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/58.webp" alt=""><span
+                  class="ex-title">Face Pull</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remadas de Cavalinho (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/105.webp" alt=""><span
+                  class="ex-title">Remadas de Cavalinho (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Aberturas Invertidas de Ombro Posterior (na Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/121.webp" alt=""><span
+                  class="ex-title">Aberturas Invertidas de Ombro Posterior (na Máquina)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Chin Up">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/38.webp" alt=""><span
+                  class="ex-title">Chin Up</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Lateral Unilateral (Cabo)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/95.webp" alt=""><span
+                  class="ex-title">Elevação Lateral Unilateral (Cabo)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Lateral (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/96.webp" alt=""><span
+                  class="ex-title">Elevação Lateral (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Martelo Alternada">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/41.webp" alt=""><span
+                  class="ex-title">Rosca Martelo Alternada</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Abdominal na Máquina">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/42.webp" alt=""><span
+                  class="ex-title">Abdominal na Máquina</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Abdominal (Com Peso)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/43.webp" alt=""><span
+                  class="ex-title">Abdominal (Com Peso)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Pendurado na Barra com Peso">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/44.webp" alt=""><span
+                  class="ex-title">Pendurado na Barra com Peso</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Lateral (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/97.webp" alt=""><span
+                  class="ex-title">Elevação Lateral (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Levantamento Terra (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/46.webp" alt=""><span
+                  class="ex-title">Levantamento Terra (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Levantamento Terra no Smith (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/47.webp" alt=""><span
+                  class="ex-title">Levantamento Terra no Smith (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Extensão de Pescoço Deitado (Com Peso)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/104.webp" alt=""><span
+                  class="ex-title">Extensão de Pescoço Deitado (Com Peso)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Declinado (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/49.webp" alt=""><span
+                  class="ex-title">Supino Declinado (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Declinado (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/50.webp" alt=""><span
+                  class="ex-title">Supino Declinado (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Declinado no Smith (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/51.webp" alt=""><span
+                  class="ex-title">Supino Declinado no Smith (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Abdominal Declinado (Com Peso)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/52.webp" alt=""><span
+                  class="ex-title">Abdominal Declinado (Com Peso)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/53.webp" alt=""><span
+                  class="ex-title">Remada (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rack Pull">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/120.webp" alt=""><span
+                  class="ex-title">Rack Pull</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Step Up (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/55.webp" alt=""><span
+                  class="ex-title">Step Up (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Cheat Curl">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/56.webp" alt=""><span
+                  class="ex-title">Cheat Curl</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Curl Wall">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/57.webp" alt=""><span
+                  class="ex-title">Curl Wall</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Aberturas Invertidas com Um Braço (Corda)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/126.webp" alt=""><span
+                  class="ex-title">Aberturas Invertidas com Um Braço (Corda)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="JM Press (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/89.webp" alt=""><span
+                  class="ex-title">JM Press (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino no Chão (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/60.webp" alt=""><span
+                  class="ex-title">Supino no Chão (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Inclinado (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/82.webp" alt=""><span
+                  class="ex-title">Supino Inclinado (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Inclinado no Smith (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/83.webp" alt=""><span
+                  class="ex-title">Supino Inclinado no Smith (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Front Squat">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/63.webp" alt=""><span
+                  class="ex-title">Front Squat</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Squat">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/64.webp" alt=""><span
+                  class="ex-title">Squat</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Glúteo Coice (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/65.webp" alt=""><span
+                  class="ex-title">Glúteo Coice (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento Goblet">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/66.webp" alt=""><span
+                  class="ex-title">Agachamento Goblet</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento Hack (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/67.webp" alt=""><span
+                  class="ex-title">Agachamento Hack (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Good Morning (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/68.webp" alt=""><span
+                  class="ex-title">Good Morning (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Martelo com Corda na Polia">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/69.webp" alt=""><span
+                  class="ex-title">Rosca Martelo com Corda na Polia</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Martelo (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/70.webp" alt=""><span
+                  class="ex-title">Rosca Martelo (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Alta (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/178.webp" alt=""><span
+                  class="ex-title">Remada Alta (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Alta (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/179.webp" alt=""><span
+                  class="ex-title">Remada Alta (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Arnold Press (Halteres)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/2.webp" alt=""><span
+                  class="ex-title">Arnold Press (Halteres)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação de Pernas na Barra Fixa (Com Peso)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/74.webp" alt=""><span
+                  class="ex-title">Elevação de Pernas na Barra Fixa (Com Peso)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Cadeira Abdutora (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/75.webp" alt=""><span
+                  class="ex-title">Cadeira Abdutora (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Cadeira Adutora (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/76.webp" alt=""><span
+                  class="ex-title">Cadeira Adutora (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Pélvica (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/77.webp" alt=""><span
+                  class="ex-title">Elevação Pélvica (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação de Quadril (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/78.webp" alt=""><span
+                  class="ex-title">Elevação de Quadril (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Pélvica no Smith (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/79.webp" alt=""><span
+                  class="ex-title">Elevação Pélvica no Smith (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Hiperextensão Lombar Zercher">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/80.webp" alt=""><span
+                  class="ex-title">Hiperextensão Lombar Zercher</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Inclinado (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/81.webp" alt=""><span
+                  class="ex-title">Supino Inclinado (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Supino Inclinado na Máquina">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/84.webp" alt=""><span
+                  class="ex-title">Supino Inclinado na Máquina</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Frontal (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/61.webp" alt=""><span
+                  class="ex-title">Elevação Frontal (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Frontal (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/62.webp" alt=""><span
+                  class="ex-title">Elevação Frontal (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Press de Peito Iso-Lateral (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/85.webp" alt=""><span
+                  class="ex-title">Press de Peito Iso-Lateral (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Barra (cable)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/134.webp" alt=""><span
+                  class="ex-title">Remada Barra (cable)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Barra Pegada Afastado (cable)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/135.webp" alt=""><span
+                  class="ex-title">Remada Barra Pegada Afastado (cable)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remadas Iso-Lateral (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/88.webp" alt=""><span
+                  class="ex-title">Remadas Iso-Lateral (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Tríceps Testa (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/159.webp" alt=""><span
+                  class="ex-title">Tríceps Testa (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Bicicleta (Cardio)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/162.webp" alt=""><span
+                  class="ex-title">Bicicleta (Cardio)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Clean">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/39.webp" alt=""><span
+                  class="ex-title">Clean</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Puxada Alta na Polia (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/92.webp" alt=""><span
+                  class="ex-title">Puxada Alta na Polia (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Puxada Alta (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/93.webp" alt=""><span
+                  class="ex-title">Puxada Alta (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Puxada Alta - Pegada Triângulo">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/94.webp" alt=""><span
+                  class="ex-title">Puxada Alta - Pegada Triângulo</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Clean Pull">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/40.webp" alt=""><span
+                  class="ex-title">Clean Pull</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Deadlift">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/45.webp" alt=""><span
+                  class="ex-title">Deadlift</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Levantamento Terra com Puxada Alta (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/48.webp" alt=""><span
+                  class="ex-title">Levantamento Terra com Puxada Alta (Barra)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Cadeira Extensora (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/98.webp" alt=""><span
+                  class="ex-title">Cadeira Extensora (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Leg Press 45º (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/99.webp" alt=""><span
+                  class="ex-title">Leg Press 45º (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Leg Press Horizontal (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/100.webp" alt=""><span
+                  class="ex-title">Leg Press Horizontal (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Afundo (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/101.webp" alt=""><span
+                  class="ex-title">Afundo (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Mesa Flexora (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/102.webp" alt=""><span
+                  class="ex-title">Mesa Flexora (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Flexão de Pescoço Deitado (Com Peso)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/103.webp" alt=""><span
+                  class="ex-title">Flexão de Pescoço Deitado (Com Peso)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Snatch (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/54.webp" alt=""><span
+                  class="ex-title">Snatch (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/145.webp" alt=""><span
+                  class="ex-title">Remada (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Muscle Up">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/106.webp" alt=""><span
+                  class="ex-title">Muscle Up</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Dips com Peso">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/175.webp" alt=""><span
+                  class="ex-title">Dips com Peso</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Hang Clean">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/72.webp" alt=""><span
+                  class="ex-title">Hang Clean</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Snatch Pendurado">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/73.webp" alt=""><span
+                  class="ex-title">Snatch Pendurado</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento com Pausa (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/110.webp" alt=""><span
+                  class="ex-title">Agachamento com Pausa (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação em Y com Apoio no Peito (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/36.webp" alt=""><span
+                  class="ex-title">Elevação em Y com Apoio no Peito (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento Pêndulo (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/112.webp" alt=""><span
+                  class="ex-title">Agachamento Pêndulo (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Prancha Abdominal">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/113.webp" alt=""><span
+                  class="ex-title">Prancha Abdominal</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/107.webp" alt=""><span
+                  class="ex-title">Desenvolvimento (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Dobrada (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/17.webp" alt=""><span
+                  class="ex-title">Remada Dobrada (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remadas Dobradas (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/18.webp" alt=""><span
+                  class="ex-title">Remadas Dobradas (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Scott (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/115.webp" alt=""><span
+                  class="ex-title">Rosca Scott (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Barra Fixa (Com Peso)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/118.webp" alt=""><span
+                  class="ex-title">Barra Fixa (Com Peso)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Pullover (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/119.webp" alt=""><span
+                  class="ex-title">Pullover (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/108.webp" alt=""><span
+                  class="ex-title">Desenvolvimento (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Scott (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/116.webp" alt=""><span
+                  class="ex-title">Rosca Scott (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rear Kick (Machine)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/122.webp" alt=""><span
+                  class="ex-title">Rear Kick (Machine)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Invertida (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/123.webp" alt=""><span
+                  class="ex-title">Rosca Invertida (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Invertida (Cabo)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/124.webp" alt=""><span
+                  class="ex-title">Rosca Invertida (Cabo)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Invertida (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/125.webp" alt=""><span
+                  class="ex-title">Rosca Invertida (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Scott (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/117.webp" alt=""><span
+                  class="ex-title">Rosca Scott (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Spider (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/160.webp" alt=""><span
+                  class="ex-title">Rosca Spider (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Larsen Press">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/59.webp" alt=""><span
+                  class="ex-title">Larsen Press</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Ring Pull Up">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/129.webp" alt=""><span
+                  class="ex-title">Ring Pull Up</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Levantamento Terra Romeno">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/130.webp" alt=""><span
+                  class="ex-title">Levantamento Terra Romeno</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Levantamento Terra Romeno (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/131.webp" alt=""><span
+                  class="ex-title">Levantamento Terra Romeno (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca com Corda (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/132.webp" alt=""><span
+                  class="ex-title">Rosca com Corda (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Puxada com Braços Esticados (Corda)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/133.webp" alt=""><span
+                  class="ex-title">Puxada com Braços Esticados (Corda)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Inclinada Apoiada no Peito (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/34.webp" alt=""><span
+                  class="ex-title">Remada Inclinada Apoiada no Peito (Halter)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remadas Altas Iso-Lateral (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/86.webp" alt=""><span
+                  class="ex-title">Remadas Altas Iso-Lateral (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Baixa Iso-Lateral">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/87.webp" alt=""><span
+                  class="ex-title">Remada Baixa Iso-Lateral</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação de Panturrilha Sentado (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/137.webp" alt=""><span
+                  class="ex-title">Elevação de Panturrilha Sentado (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Crucifixo Sentado (Cabo)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/138.webp" alt=""><span
+                  class="ex-title">Crucifixo Sentado (Cabo)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Inclinada (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/139.webp" alt=""><span
+                  class="ex-title">Rosca Inclinada (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento no Smith (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/109.webp" alt=""><span
+                  class="ex-title">Desenvolvimento no Smith (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Cadeira Flexora (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/141.webp" alt=""><span
+                  class="ex-title">Cadeira Flexora (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Clean and Jerk">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/114.webp" alt=""><span
+                  class="ex-title">Clean and Jerk</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Levantamento Lateral de Pesos Sentado (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/140.webp" alt=""><span
+                  class="ex-title">Levantamento Lateral de Pesos Sentado (Halter)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca de Punho (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/144.webp" alt=""><span
+                  class="ex-title">Rosca de Punho (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Sentada com Pegada em V (Cabo)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/136.webp" alt=""><span
+                  class="ex-title">Remada Sentada com Pegada em V (Cabo)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento Sentado (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/146.webp" alt=""><span
+                  class="ex-title">Desenvolvimento Sentado (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Extensão de Punho (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/147.webp" alt=""><span
+                  class="ex-title">Extensão de Punho (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento Sentado (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/142.webp" alt=""><span
+                  class="ex-title">Desenvolvimento Sentado (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento de Ombros (Máquina de Placas)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/149.webp" alt=""><span
+                  class="ex-title">Desenvolvimento de Ombros (Máquina de Placas)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Remada Unilateral na Polia">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/150.webp" alt=""><span
+                  class="ex-title">Remada Unilateral na Polia</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Unilateral (Cabo)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/151.webp" alt=""><span
+                  class="ex-title">Rosca Unilateral (Cabo)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Puxada Unilateral">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/152.webp" alt=""><span
+                  class="ex-title">Puxada Unilateral</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Extensão de Tríceps Unilateral (Cabo)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/154.webp" alt=""><span
+                  class="ex-title">Extensão de Tríceps Unilateral (Cabo)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Extensão de Tríceps Unilateral (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/153.webp" alt=""><span
+                  class="ex-title">Extensão de Tríceps Unilateral (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Extensão de Perna Unilateral (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/155.webp" alt=""><span
+                  class="ex-title">Extensão de Perna Unilateral (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Peso Morto Romano Unilateral (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/156.webp" alt=""><span
+                  class="ex-title">Peso Morto Romano Unilateral (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação Unilateral de Panturrilha em Pé (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/157.webp" alt=""><span
+                  class="ex-title">Elevação Unilateral de Panturrilha em Pé (Máquina)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento Sissy (Com Peso)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/158.webp" alt=""><span
+                  class="ex-title">Agachamento Sissy (Com Peso)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Flexão na Handstand">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/71.webp" alt=""><span
+                  class="ex-title">Flexão na Handstand</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Rosca Spider (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/161.webp" alt=""><span
+                  class="ex-title">Rosca Spider (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Puxada com Pega Inversa">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/127.webp" alt=""><span
+                  class="ex-title">Puxada com Pega Inversa</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Simulador de Escadas (Cardio)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/165.webp" alt=""><span
+                  class="ex-title">Simulador de Escadas (Cardio)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/163.webp" alt=""><span
+                  class="ex-title">Agachamento (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento no Smith (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/164.webp" alt=""><span
+                  class="ex-title">Agachamento no Smith (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Esteira (Cardio)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/174.webp" alt=""><span
+                  class="ex-title">Esteira (Cardio)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Glúteo na Polia">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/166.webp" alt=""><span
+                  class="ex-title">Glúteo na Polia</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação de Panturrilha em Pé (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/167.webp" alt=""><span
+                  class="ex-title">Elevação de Panturrilha em Pé (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação de Panturrilha em Pé (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/168.webp" alt=""><span
+                  class="ex-title">Elevação de Panturrilha em Pé (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Elevação de Panturrilha em Pé (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/169.webp" alt=""><span
+                  class="ex-title">Elevação de Panturrilha em Pé (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Flexão de Joelho em Pé (Máquina)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/170.webp" alt=""><span
+                  class="ex-title">Flexão de Joelho em Pé (Máquina)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Stiff">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/171.webp" alt=""><span
+                  class="ex-title">Stiff</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Deadlift Sumo">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/172.webp" alt=""><span
+                  class="ex-title">Deadlift Sumo</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento em Sumo (Barra)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/173.webp" alt=""><span
+                  class="ex-title">Agachamento em Sumo (Barra)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Pular Corda">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/90.webp" alt=""><span
+                  class="ex-title">Pular Corda</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Fundos nas Argolas">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/128.webp" alt=""><span
+                  class="ex-title">Fundos nas Argolas</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Tríceps na Polia">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/176.webp" alt=""><span
+                  class="ex-title">Tríceps na Polia</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Tríceps na Polia com Corda">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/177.webp" alt=""><span
+                  class="ex-title">Tríceps na Polia com Corda</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento Sentado Sem Apoio (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/143.webp" alt=""><span
+                  class="ex-title">Desenvolvimento Sentado Sem Apoio (Halter)</span></div><span
+                class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Desenvolvimento Sentado (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/148.webp" alt=""><span
+                  class="ex-title">Desenvolvimento Sentado (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <div class="exercise-item" data-name="Agachamento Sumô (Halter)">
+              <div class="ex-left"><img class="ex-thumb" loading="lazy" src="../assets/exercises/180.webp" alt=""><span
+                  class="ex-title">Agachamento Sumô (Halter)</span></div><span class="add-icon">+</span>
+            </div>
+            <p class="no-results hidden" id="noResults">Nenhum exercício encontrado.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="api-client.js"></script>
+    <script src="shared.js"></script>
+    <script>
+      function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+
+        let iconHtml = '';
+        if (type === 'success') {
+          iconHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="#ff9800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+        } else {
+          iconHtml = '<svg viewBox="0 0 24 24" fill="none" stroke="#e53935" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>';
+        }
+
+        toast.innerHTML = iconHtml + '<span>' + message + '</span>';
+        container.appendChild(toast);
+
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => toast.classList.add('show'));
+        });
+
+        setTimeout(() => {
+          toast.classList.remove('show');
+          toast.addEventListener('transitionend', () => toast.remove());
+        }, 4000);
+      }
+
+      let exerciseItems = Array.from(document.querySelectorAll('.exercise-item'));
+      const emptyState = document.getElementById('emptyState');
+      const selectedList = document.getElementById('selectedList');
+      const saveBtn = document.getElementById('saveBtn');
+      const titleInput = document.getElementById('titleInput');
+      const searchInput = document.getElementById('searchInput');
+      const noResults = document.getElementById('noResults');
+      const muscleFilter = document.getElementById('muscleFilter');
+      const muscleFilterLabel = document.getElementById('muscleFilterLabel');
+      const muscleFilterPanel = document.getElementById('muscleFilterPanel');
+
+      const EXERCISE_MUSCLES = {
+        "Agachamento Zercher": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial",
+            "Reto Femoral",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Quadrado Lombar",
+            "Glúteo Médio",
+            "Vasto Intermédio",
+            "Adutor Curto",
+            "Adutor Magno",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Encolhimento com Salto (Barra)": {
+          "primary": [
+            "Trapézio Superior"
+          ],
+          "secondary": []
+        },
+        "Sissy Squat Unilateral com Assistência": {
+          "primary": [
+            "Reto Femoral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Vasto Lateral"
+          ]
+        },
+        "Hiperextensão Lombar": {
+          "primary": [
+            "Lombar (Eretores)"
+          ],
+          "secondary": [
+            "Bíceps Femoral",
+            "Eretores da Espinha"
+          ]
+        },
+        "Extensão Lombar (Máquina)": {
+          "primary": [
+            "Lombar (Eretores)"
+          ],
+          "secondary": [
+            "Eretores da Espinha"
+          ]
+        },
+        "Hiperextensão Lombar com Peso": {
+          "primary": [
+            "Lombar (Eretores)"
+          ],
+          "secondary": [
+            "Bíceps Femoral",
+            "Eretores da Espinha"
+          ]
+        },
+        "Band Pullaparts": {
+          "primary": [
+            "Ombro Posterior"
+          ],
+          "secondary": [
+            "Trapézio Médio"
+          ]
+        },
+        "Flexão de Punho Invertida (Barra)": {
+          "primary": [],
+          "secondary": [
+            "Antebraço Flexores"
+          ]
+        },
+        "Behind the Back Curl (Cable)": {
+          "primary": [
+            "Bíceps Cabeça Longa"
+          ],
+          "secondary": []
+        },
+        "Belt Squat (Machine)": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": []
+        },
+        "Bench": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": [
+            "Tríceps Cabeça Lateral",
+            "Ombro Anterior"
+          ]
+        },
+        "Supino Reto (Polia)": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Supino Reto (Halter)": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Supino Reto Smith": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Supino com Pegada Junta": {
+          "primary": [],
+          "secondary": [
+            "Peito Médio"
+          ]
+        },
+        "Supino - Pegada Aberta (Barra)": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Pendlay Row": {
+          "primary": [],
+          "secondary": [
+            "Romboides",
+            "Trapézio Médio"
+          ]
+        },
+        "Aberturas Invertidas (Halter)": {
+          "primary": [
+            "Ombro Posterior"
+          ],
+          "secondary": [
+            "Trapézio Médio",
+            "Redondo Menor"
+          ]
+        },
+        "Rosca Direta Barra W (Barra)": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Rosca Direta na Polia": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Rosca Direta (Halter)": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Rosca Direta (Máquina)": {
+          "primary": [],
+          "secondary": [
+            "Bíceps Cabeça Longa"
+          ]
+        },
+        "Agachamento com Banco (Barra)": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Vasto Intermédio"
+          ]
+        },
+        "Boxe (Cardio)": {
+          "primary": [
+            "Cardio"
+          ],
+          "secondary": []
+        },
+        "Agachamento Búlgaro (Halter)": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Bíceps Femoral",
+            "Glúteo Médio",
+            "Glúteo Mínimo",
+            "Vasto Intermédio",
+            "Adutor Longo",
+            "Adutor Curto",
+            "Adutor Magno",
+            "Grácil",
+            "Tensor da Fáscia Lata",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Abdominal (Corda)": {
+          "primary": [
+            "Reto Abdominal Superior"
+          ],
+          "secondary": []
+        },
+        "Crucifixo na Polia Alta (Máquina)": {
+          "primary": [
+            "Peito Inferior"
+          ],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Good Morning (Cable)": {
+          "primary": [
+            "Bíceps Femoral",
+            "Lombar (Eretores)"
+          ],
+          "secondary": [
+            "Eretores da Espinha",
+            "Semitendíneo"
+          ]
+        },
+        "Extensão de Panturrilha (Máquina)": {
+          "primary": [
+            "Gastrocnêmio Medial",
+            "Gastrocnêmio Lateral"
+          ],
+          "secondary": []
+        },
+        "Panturrilha no Leg Press 45º": {
+          "primary": [
+            "Gastrocnêmio Medial"
+          ],
+          "secondary": [
+            "Sóleo"
+          ]
+        },
+        "Crucifixo no Voador (Máquina)": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Aberturas no TRX": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Supino Sentado (Máquina)": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Face Pull": {
+          "primary": [
+            "Ombro Posterior"
+          ],
+          "secondary": [
+            "Trapézio Médio",
+            "Romboides",
+            "Redondo Menor"
+          ]
+        },
+        "Remadas de Cavalinho (Barra)": {
+          "primary": [],
+          "secondary": [
+            "Trapézio Médio"
+          ]
+        },
+        "Aberturas Invertidas de Ombro Posterior (na Máquina)": {
+          "primary": [
+            "Ombro Posterior"
+          ],
+          "secondary": [
+            "Trapézio Médio",
+            "Redondo Menor"
+          ]
+        },
+        "Chin Up": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Bíceps Cabeça Curta",
+            "Redondo Maior"
+          ]
+        },
+        "Elevação Lateral Unilateral (Cabo)": {
+          "primary": [
+            "Ombro Medial"
+          ],
+          "secondary": [
+            "Trapézio Superior"
+          ]
+        },
+        "Elevação Lateral (Halter)": {
+          "primary": [
+            "Ombro Medial"
+          ],
+          "secondary": [
+            "Trapézio Superior"
+          ]
+        },
+        "Rosca Martelo Alternada": {
+          "primary": [
+            "Braquial"
+          ],
+          "secondary": []
+        },
+        "Abdominal na Máquina": {
+          "primary": [
+            "Reto Abdominal Superior"
+          ],
+          "secondary": []
+        },
+        "Abdominal (Com Peso)": {
+          "primary": [
+            "Reto Abdominal Superior"
+          ],
+          "secondary": [
+            "Reto Abdominal Inferior"
+          ]
+        },
+        "Pendurado na Barra com Peso": {
+          "primary": [
+            "Antebraço Flexores"
+          ],
+          "secondary": [
+            "Latíssimo do Dorso",
+            "Reto Abdominal Superior"
+          ]
+        },
+        "Elevação Lateral (Máquina)": {
+          "primary": [
+            "Ombro Medial"
+          ],
+          "secondary": [
+            "Trapézio Superior"
+          ]
+        },
+        "Levantamento Terra (Halter)": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Eretores da Espinha"
+          ]
+        },
+        "Levantamento Terra no Smith (Máquina)": {
+          "primary": [],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Eretores da Espinha"
+          ]
+        },
+        "Extensão de Pescoço Deitado (Com Peso)": {
+          "primary": [
+            "Pescoço (Extensores)"
+          ],
+          "secondary": [
+            "Trapézio Superior"
+          ]
+        },
+        "Supino Declinado (Halter)": {
+          "primary": [
+            "Peito Inferior"
+          ],
+          "secondary": []
+        },
+        "Supino Declinado (Máquina)": {
+          "primary": [
+            "Peito Inferior"
+          ],
+          "secondary": []
+        },
+        "Supino Declinado no Smith (Máquina)": {
+          "primary": [
+            "Peito Inferior"
+          ],
+          "secondary": []
+        },
+        "Abdominal Declinado (Com Peso)": {
+          "primary": [
+            "Reto Abdominal Superior"
+          ],
+          "secondary": [
+            "Reto Abdominal Inferior"
+          ]
+        },
+        "Remada (Halter)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Rack Pull": {
+          "primary": [
+            "Lombar (Eretores)",
+            "Trapézio Superior"
+          ],
+          "secondary": [
+            "Eretores da Espinha"
+          ]
+        },
+        "Step Up (Halter)": {
+          "primary": [
+            "Vasto Lateral",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Bíceps Femoral",
+            "Glúteo Médio",
+            "Glúteo Mínimo",
+            "Vasto Medial",
+            "Vasto Intermédio",
+            "Adutor Magno",
+            "Tensor da Fáscia Lata",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Cheat Curl": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Curl Wall": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": [
+            "Bíceps Cabeça Longa"
+          ]
+        },
+        "Aberturas Invertidas com Um Braço (Corda)": {
+          "primary": [
+            "Ombro Posterior"
+          ],
+          "secondary": [
+            "Trapézio Médio",
+            "Redondo Menor"
+          ]
+        },
+        "JM Press (Barra)": {
+          "primary": [
+            "Tríceps Cabeça Lateral",
+            "Tríceps Cabeça Medial"
+          ],
+          "secondary": [
+            "Tríceps Cabeça Longa"
+          ]
+        },
+        "Supino no Chão (Barra)": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Supino Inclinado (Halter)": {
+          "primary": [
+            "Peito Superior"
+          ],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Supino Inclinado no Smith (Máquina)": {
+          "primary": [
+            "Peito Superior"
+          ],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Front Squat": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial",
+            "Reto Femoral"
+          ],
+          "secondary": [
+            "Glúteo Máximo",
+            "Lombar (Eretores)",
+            "Quadrado Lombar",
+            "Vasto Intermédio",
+            "Adutor Curto",
+            "Adutor Magno"
+          ]
+        },
+        "Squat": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Adutor Magno",
+            "Lombar (Eretores)",
+            "Vasto Intermédio",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Glúteo Coice (Máquina)": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Glúteo Médio",
+            "Glúteo Mínimo"
+          ]
+        },
+        "Agachamento Goblet": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Vasto Intermédio",
+            "Adutor Magno"
+          ]
+        },
+        "Agachamento Hack (Máquina)": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Glúteo Máximo",
+            "Reto Femoral",
+            "Vasto Intermédio",
+            "Adutor Magno"
+          ]
+        },
+        "Good Morning (Barra)": {
+          "primary": [
+            "Bíceps Femoral",
+            "Lombar (Eretores)"
+          ],
+          "secondary": [
+            "Glúteo Máximo",
+            "Eretores da Espinha",
+            "Semitendíneo"
+          ]
+        },
+        "Rosca Martelo com Corda na Polia": {
+          "primary": [
+            "Braquial"
+          ],
+          "secondary": []
+        },
+        "Rosca Martelo (Halter)": {
+          "primary": [
+            "Braquial"
+          ],
+          "secondary": []
+        },
+        "Remada Alta (Barra)": {
+          "primary": [
+            "Trapézio Superior",
+            "Ombro Medial"
+          ],
+          "secondary": []
+        },
+        "Remada Alta (Halter)": {
+          "primary": [
+            "Trapézio Superior",
+            "Ombro Medial"
+          ],
+          "secondary": []
+        },
+        "Arnold Press (Halteres)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": []
+        },
+        "Elevação de Pernas na Barra Fixa (Com Peso)": {
+          "primary": [
+            "Reto Abdominal Inferior"
+          ],
+          "secondary": [
+            "Antebraço Flexores",
+            "Reto Abdominal Superior"
+          ]
+        },
+        "Cadeira Abdutora (Máquina)": {
+          "primary": [
+            "Glúteo Médio (Abdutor)"
+          ],
+          "secondary": [
+            "Tensor da Fáscia Lata",
+            "Glúteo Médio",
+            "Glúteo Mínimo"
+          ]
+        },
+        "Cadeira Adutora (Máquina)": {
+          "primary": [
+            "Adutor Longo",
+            "Adutor Magno"
+          ],
+          "secondary": [
+            "Grácil",
+            "Adutor Curto"
+          ]
+        },
+        "Elevação Pélvica (Barra)": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": []
+        },
+        "Elevação de Quadril (Máquina)": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": []
+        },
+        "Elevação Pélvica no Smith (Máquina)": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": []
+        },
+        "Hiperextensão Lombar Zercher": {
+          "primary": [
+            "Lombar (Eretores)"
+          ],
+          "secondary": [
+            "Glúteo Máximo",
+            "Bíceps Femoral",
+            "Eretores da Espinha"
+          ]
+        },
+        "Supino Inclinado (Barra)": {
+          "primary": [
+            "Peito Superior"
+          ],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Supino Inclinado na Máquina": {
+          "primary": [
+            "Peito Superior"
+          ],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Elevação Frontal (Barra)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": [
+            "Peito Superior"
+          ]
+        },
+        "Elevação Frontal (Halter)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": [
+            "Peito Superior"
+          ]
+        },
+        "Press de Peito Iso-Lateral (Máquina)": {
+          "primary": [],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Remada Barra (cable)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Trapézio Médio"
+          ]
+        },
+        "Remada Barra Pegada Afastado (cable)": {
+          "primary": [],
+          "secondary": [
+            "Ombro Posterior",
+            "Trapézio Médio"
+          ]
+        },
+        "Remadas Iso-Lateral (Máquina)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": []
+        },
+        "Tríceps Testa (Barra)": {
+          "primary": [],
+          "secondary": [
+            "Tríceps Cabeça Lateral"
+          ]
+        },
+        "Bicicleta (Cardio)": {
+          "primary": [
+            "Cardio"
+          ],
+          "secondary": []
+        },
+        "Clean": {
+          "primary": [],
+          "secondary": []
+        },
+        "Puxada Alta na Polia (Máquina)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Trapézio Inferior",
+            "Redondo Maior"
+          ]
+        },
+        "Puxada Alta (Máquina)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Trapézio Inferior",
+            "Redondo Maior"
+          ]
+        },
+        "Puxada Alta - Pegada Triângulo": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Trapézio Inferior",
+            "Redondo Maior"
+          ]
+        },
+        "Clean Pull": {
+          "primary": [],
+          "secondary": []
+        },
+        "Deadlift": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Eretores da Espinha",
+            "Semitendíneo"
+          ]
+        },
+        "Levantamento Terra com Puxada Alta (Barra)": {
+          "primary": [],
+          "secondary": []
+        },
+        "Cadeira Extensora (Máquina)": {
+          "primary": [
+            "Reto Femoral",
+            "Vasto Lateral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Vasto Intermédio"
+          ]
+        },
+        "Leg Press 45º (Máquina)": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Vasto Intermédio",
+            "Adutor Magno"
+          ]
+        },
+        "Leg Press Horizontal (Máquina)": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Vasto Intermédio",
+            "Adutor Magno"
+          ]
+        },
+        "Afundo (Barra)": {
+          "primary": [
+            "Vasto Lateral",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Bíceps Femoral",
+            "Glúteo Médio",
+            "Glúteo Mínimo",
+            "Vasto Medial",
+            "Vasto Intermédio",
+            "Adutor Longo",
+            "Adutor Curto",
+            "Adutor Magno",
+            "Grácil",
+            "Tensor da Fáscia Lata",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Mesa Flexora (Máquina)": {
+          "primary": [
+            "Bíceps Femoral"
+          ],
+          "secondary": [
+            "Semitendíneo",
+            "Grácil"
+          ]
+        },
+        "Flexão de Pescoço Deitado (Com Peso)": {
+          "primary": [
+            "Pescoço (Flexores)"
+          ],
+          "secondary": []
+        },
+        "Snatch (Halter)": {
+          "primary": [
+            "Ombro Medial"
+          ],
+          "secondary": []
+        },
+        "Remada (Máquina)": {
+          "primary": [],
+          "secondary": [
+            "Trapézio Médio"
+          ]
+        },
+        "Muscle Up": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Dips com Peso": {
+          "primary": [
+            "Peito Inferior",
+            "Tríceps Cabeça Lateral"
+          ],
+          "secondary": [
+            "Ombro Anterior",
+            "Peito Médio",
+            "Tríceps Cabeça Medial"
+          ]
+        },
+        "Hang Clean": {
+          "primary": [],
+          "secondary": []
+        },
+        "Snatch Pendurado": {
+          "primary": [
+            "Ombro Medial"
+          ],
+          "secondary": []
+        },
+        "Agachamento com Pausa (Barra)": {
+          "primary": [],
+          "secondary": [
+            "Lombar (Eretores)"
+          ]
+        },
+        "Elevação em Y com Apoio no Peito (Halter)": {
+          "primary": [
+            "Trapézio Inferior"
+          ],
+          "secondary": [
+            "Ombro Posterior",
+            "Trapézio Médio"
+          ]
+        },
+        "Agachamento Pêndulo (Máquina)": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Vasto Intermédio",
+            "Adutor Magno"
+          ]
+        },
+        "Prancha Abdominal": {
+          "primary": [
+            "Transverso Abdominal"
+          ],
+          "secondary": [
+            "Reto Abdominal Superior"
+          ]
+        },
+        "Desenvolvimento (Barra)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": [
+            "Peito Superior"
+          ]
+        },
+        "Remada Dobrada (Barra)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Remadas Dobradas (Halter)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Rosca Scott (Barra)": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Barra Fixa (Com Peso)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Pullover (Máquina)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Peito Inferior"
+          ]
+        },
+        "Desenvolvimento (Halter)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": [
+            "Peito Superior"
+          ]
+        },
+        "Rosca Scott (Halter)": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Rear Kick (Machine)": {
+          "primary": [],
+          "secondary": []
+        },
+        "Rosca Invertida (Barra)": {
+          "primary": [
+            "Braquiorradial"
+          ],
+          "secondary": [
+            "Antebraço Extensores"
+          ]
+        },
+        "Rosca Invertida (Cabo)": {
+          "primary": [
+            "Braquiorradial"
+          ],
+          "secondary": [
+            "Antebraço Extensores"
+          ]
+        },
+        "Rosca Invertida (Halter)": {
+          "primary": [
+            "Braquiorradial"
+          ],
+          "secondary": [
+            "Antebraço Extensores"
+          ]
+        },
+        "Rosca Scott (Máquina)": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Rosca Spider (Barra)": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Larsen Press": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": [
+            "Tríceps Cabeça Lateral",
+            "Ombro Anterior"
+          ]
+        },
+        "Ring Pull Up": {
+          "primary": [],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Levantamento Terra Romeno": {
+          "primary": [
+            "Bíceps Femoral",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Eretores da Espinha",
+            "Semitendíneo"
+          ]
+        },
+        "Levantamento Terra Romeno (Halter)": {
+          "primary": [
+            "Bíceps Femoral",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Eretores da Espinha",
+            "Quadrado Lombar",
+            "Glúteo Médio",
+            "Semitendíneo"
+          ]
+        },
+        "Rosca com Corda (Máquina)": {
+          "primary": [],
+          "secondary": []
+        },
+        "Puxada com Braços Esticados (Corda)": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Remada Inclinada Apoiada no Peito (Halter)": {
+          "primary": [],
+          "secondary": [
+            "Romboides"
+          ]
+        },
+        "Remadas Altas Iso-Lateral (Máquina)": {
+          "primary": [],
+          "secondary": []
+        },
+        "Remada Baixa Iso-Lateral": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": []
+        },
+        "Elevação de Panturrilha Sentado (Máquina)": {
+          "primary": [
+            "Sóleo"
+          ],
+          "secondary": []
+        },
+        "Crucifixo Sentado (Cabo)": {
+          "primary": [
+            "Peito Médio"
+          ],
+          "secondary": []
+        },
+        "Rosca Inclinada (Halter)": {
+          "primary": [
+            "Bíceps Cabeça Longa"
+          ],
+          "secondary": []
+        },
+        "Desenvolvimento no Smith (Máquina)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": [
+            "Peito Superior"
+          ]
+        },
+        "Cadeira Flexora (Máquina)": {
+          "primary": [],
+          "secondary": [
+            "Semitendíneo",
+            "Semimembranáceo",
+            "Grácil"
+          ]
+        },
+        "Clean and Jerk": {
+          "primary": [],
+          "secondary": []
+        },
+        "Levantamento Lateral de Pesos Sentado (Halter)": {
+          "primary": [
+            "Ombro Medial"
+          ],
+          "secondary": []
+        },
+        "Rosca de Punho (Halter)": {
+          "primary": [
+            "Antebraço Flexores"
+          ],
+          "secondary": []
+        },
+        "Remada Sentada com Pegada em V (Cabo)": {
+          "primary": [],
+          "secondary": [
+            "Romboides"
+          ]
+        },
+        "Desenvolvimento Sentado (Máquina)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": []
+        },
+        "Extensão de Punho (Barra)": {
+          "primary": [
+            "Antebraço Extensores"
+          ],
+          "secondary": []
+        },
+        "Desenvolvimento Sentado (Barra)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": []
+        },
+        "Desenvolvimento de Ombros (Máquina de Placas)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": []
+        },
+        "Remada Unilateral na Polia": {
+          "primary": [],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Rosca Unilateral (Cabo)": {
+          "primary": [],
+          "secondary": []
+        },
+        "Puxada Unilateral": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Redondo Maior"
+          ]
+        },
+        "Extensão de Tríceps Unilateral (Cabo)": {
+          "primary": [
+            "Tríceps Cabeça Longa"
+          ],
+          "secondary": []
+        },
+        "Extensão de Tríceps Unilateral (Halter)": {
+          "primary": [
+            "Tríceps Cabeça Longa"
+          ],
+          "secondary": []
+        },
+        "Extensão de Perna Unilateral (Máquina)": {
+          "primary": [],
+          "secondary": []
+        },
+        "Peso Morto Romano Unilateral (Halter)": {
+          "primary": [
+            "Bíceps Femoral",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Quadrado Lombar",
+            "Glúteo Médio",
+            "Glúteo Mínimo",
+            "Semitendíneo",
+            "Tensor da Fáscia Lata",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Elevação Unilateral de Panturrilha em Pé (Máquina)": {
+          "primary": [
+            "Gastrocnêmio Medial",
+            "Gastrocnêmio Lateral"
+          ],
+          "secondary": []
+        },
+        "Agachamento Sissy (Com Peso)": {
+          "primary": [
+            "Reto Femoral"
+          ],
+          "secondary": [
+            "Vasto Medial",
+            "Vasto Lateral"
+          ]
+        },
+        "Flexão na Handstand": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": [
+            "Tríceps Cabeça Lateral"
+          ]
+        },
+        "Rosca Spider (Halter)": {
+          "primary": [
+            "Bíceps Cabeça Curta"
+          ],
+          "secondary": []
+        },
+        "Puxada com Pega Inversa": {
+          "primary": [
+            "Latíssimo do Dorso"
+          ],
+          "secondary": [
+            "Bíceps Cabeça Curta",
+            "Redondo Maior"
+          ]
+        },
+        "Simulador de Escadas (Cardio)": {
+          "primary": [
+            "Cardio"
+          ],
+          "secondary": []
+        },
+        "Agachamento (Máquina)": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": []
+        },
+        "Agachamento no Smith (Máquina)": {
+          "primary": [
+            "Vasto Lateral",
+            "Vasto Medial",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Reto Femoral",
+            "Vasto Intermédio"
+          ]
+        },
+        "Esteira (Cardio)": {
+          "primary": [
+            "Cardio"
+          ],
+          "secondary": []
+        },
+        "Glúteo na Polia": {
+          "primary": [
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Glúteo Médio",
+            "Glúteo Mínimo",
+            "Tensor da Fáscia Lata",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Elevação de Panturrilha em Pé (Barra)": {
+          "primary": [
+            "Gastrocnêmio Medial",
+            "Gastrocnêmio Lateral"
+          ],
+          "secondary": []
+        },
+        "Elevação de Panturrilha em Pé (Halter)": {
+          "primary": [
+            "Gastrocnêmio Medial",
+            "Gastrocnêmio Lateral"
+          ],
+          "secondary": []
+        },
+        "Elevação de Panturrilha em Pé (Máquina)": {
+          "primary": [
+            "Gastrocnêmio Medial",
+            "Gastrocnêmio Lateral"
+          ],
+          "secondary": []
+        },
+        "Flexão de Joelho em Pé (Máquina)": {
+          "primary": [
+            "Bíceps Femoral"
+          ],
+          "secondary": [
+            "Semitendíneo",
+            "Grácil"
+          ]
+        },
+        "Stiff": {
+          "primary": [
+            "Bíceps Femoral",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Eretores da Espinha",
+            "Semitendíneo"
+          ]
+        },
+        "Deadlift Sumo": {
+          "primary": [
+            "Glúteo Máximo",
+            "Adutor Magno"
+          ],
+          "secondary": [
+            "Lombar (Eretores)",
+            "Eretores da Espinha",
+            "Glúteo Médio",
+            "Adutor Longo",
+            "Adutor Curto",
+            "Grácil"
+          ]
+        },
+        "Agachamento em Sumo (Barra)": {
+          "primary": [
+            "Adutor Longo",
+            "Adutor Magno",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Glúteo Médio",
+            "Glúteo Mínimo",
+            "Adutor Curto",
+            "Grácil",
+            "Glúteo Médio (Abdutor)"
+          ]
+        },
+        "Pular Corda": {
+          "primary": [],
+          "secondary": [
+            "Cardio"
+          ]
+        },
+        "Fundos nas Argolas": {
+          "primary": [
+            "Tríceps Cabeça Lateral",
+            "Peito Inferior"
+          ],
+          "secondary": [
+            "Ombro Anterior"
+          ]
+        },
+        "Tríceps na Polia": {
+          "primary": [],
+          "secondary": [
+            "Tríceps Cabeça Medial"
+          ]
+        },
+        "Tríceps na Polia com Corda": {
+          "primary": [],
+          "secondary": [
+            "Tríceps Cabeça Medial"
+          ]
+        },
+        "Desenvolvimento Sentado Sem Apoio (Halter)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": []
+        },
+        "Desenvolvimento Sentado (Halter)": {
+          "primary": [
+            "Ombro Anterior"
+          ],
+          "secondary": []
+        },
+        "Agachamento Sumô (Halter)": {
+          "primary": [
+            "Adutor Longo",
+            "Glúteo Máximo"
+          ],
+          "secondary": [
+            "Glúteo Médio",
+            "Glúteo Mínimo",
+            "Adutor Curto",
+            "Adutor Magno",
+            "Grácil",
+            "Glúteo Médio (Abdutor)"
+          ]
+        }
+      };
+
+      const MUSCLE_GROUPS = [
+        { group: 'Cardio', muscles: ['Cardio'] },
+        { group: 'Pescoço', muscles: ['Pescoço (Flexores)', 'Pescoço (Extensores)'] },
+        { group: 'Trapézio', muscles: ['Trapézio Superior', 'Trapézio Médio', 'Trapézio Inferior'] },
+        { group: 'Peito', muscles: ['Peito Superior', 'Peito Médio', 'Peito Inferior'] },
+        { group: 'Ombro', muscles: ['Ombro Anterior', 'Ombro Medial', 'Ombro Posterior'] },
+        { group: 'Bíceps', muscles: ['Bíceps Cabeça Longa', 'Bíceps Cabeça Curta', 'Braquial', 'Braquiorradial'] },
+        { group: 'Tríceps', muscles: ['Tríceps Cabeça Longa', 'Tríceps Cabeça Lateral', 'Tríceps Cabeça Medial'] },
+        { group: 'Antebraço', muscles: ['Antebraço Flexores', 'Antebraço Extensores'] },
+        { group: 'Costas', muscles: ['Latíssimo do Dorso', 'Redondo Maior', 'Redondo Menor', 'Romboides', 'Eretores da Espinha'] },
+        { group: 'Abdômen', muscles: ['Reto Abdominal Superior', 'Reto Abdominal Inferior', 'Transverso Abdominal'] },
+        { group: 'Lombar', muscles: ['Lombar (Eretores)', 'Quadrado Lombar'] },
+        { group: 'Glúteos', muscles: ['Glúteo Máximo', 'Glúteo Médio', 'Glúteo Mínimo'] },
+        { group: 'Quadríceps', muscles: ['Reto Femoral', 'Vasto Lateral', 'Vasto Medial', 'Vasto Intermédio'] },
+        { group: 'Posterior de Coxa', muscles: ['Bíceps Femoral', 'Semitendíneo', 'Semimembranáceo'] },
+        { group: 'Adutores', muscles: ['Adutor Longo', 'Adutor Curto', 'Adutor Magno', 'Grácil'] },
+        { group: 'Abdutores', muscles: ['Tensor da Fáscia Lata', 'Glúteo Médio (Abdutor)'] },
+        { group: 'Panturrilha', muscles: ['Gastrocnêmio Medial', 'Gastrocnêmio Lateral', 'Sóleo'] },
+      ];
+
+      function buildMuscleFilterPanel() {
+        let html = '<div class="dropdown-item muscle-item selected" data-muscle="Todos os músculos">Todos os músculos</div>';
+        MUSCLE_GROUPS.forEach(g => {
+          html += '<div class="muscle-group-label">' + g.group + '</div>';
+          g.muscles.forEach(m => {
+            html += '<div class="dropdown-item muscle-item" data-muscle="' + m + '">' + m + '</div>';
+          });
+        });
+        muscleFilterPanel.innerHTML = html;
+      }
+      buildMuscleFilterPanel();
+
+      let selectedMuscle = 'Todos os músculos';
+
+      function bindExerciseClick(item) {
+        item.addEventListener('click', () => {
+          const name = item.getAttribute('data-name');
+          const icon = item.querySelector('.add-icon');
+          if (selected.has(name)) {
+            selected.delete(name);
+            item.classList.remove('added');
+            icon.textContent = '+';
+          } else {
+            if (selected.size >= 12) {
+              if (typeof showToast === 'function') showToast('Limite de 12 exercícios atingido.', 'error');
+              return;
+            }
+            selected.set(name, newExerciseState(name));
+            item.classList.add('added');
+            icon.textContent = '+';
+          }
+          renderSelected();
+          updateSaveBtn();
+        });
+      }
+
+      function exerciseMatchesMuscle(name, muscle) {
+        if (muscle === 'Todos os músculos') return true;
+        const data = EXERCISE_MUSCLES[name];
+        if (!data) return false;
+        return data.primary.includes(muscle) || data.secondary.includes(muscle);
+      }
+
+      // Grupos de sinônimos PT <-> EN. Se a busca do usuário bater com
+      // qualquer termo de um grupo, todos os outros termos do grupo também
+      // passam a contar como "match" (ex.: "agachamento" também acha "Squat").
+      const SEARCH_SYNONYMS = [
+        ['agachamento', 'squat'],
+        ['supino', 'bench', 'press de peito', 'peito'],
+        ['levantamento terra', 'terra', 'deadlift'],
+        ['rosca', 'curl'],
+        ['remada', 'row'],
+        ['puxada', 'pulldown', 'pull up', 'chin up', 'barra fixa', 'pendurado', 'muscle up'],
+        ['desenvolvimento', 'press de ombro', 'ombro', 'shoulder press', 'overhead press'],
+        ['prensa', 'press'],
+        ['bom dia', 'good morning'],
+        ['arremesso', 'snatch'],
+        ['limpeza', 'clean'],
+        ['avanço', 'afundo', 'lunge'],
+        ['cinto', 'belt squat'],
+        ['chute', 'coice', 'kick'],
+        ['flexão', 'push up'],
+        ['mergulho', 'paralelas', 'dip', 'dips'],
+        ['elevação', 'raise'],
+        ['crucifixo', 'fly', 'flye', 'abertura', 'aberturas'],
+        ['stiff', 'levantamento terra romeno', 'romanian deadlift'],
+        ['subida', 'step up'],
+        ['rosto', 'face pull'],
+        ['tração', 'pull'],
+        ['encolhimento', 'shrug'],
+        ['pino', 'handstand'],
+        ['argolas', 'rings'],
+        ['corda', 'rope', 'band'],
+        ['máquina', 'machine'],
+        ['cabo', 'polia', 'cable'],
+        ['halter', 'halteres', 'dumbbell'],
+        ['barra', 'barbell'],
+      ];
+
+      function getSynonymTerms(query) {
+        let terms = [];
+        SEARCH_SYNONYMS.forEach(group => {
+          if (group.some(t => t.includes(query) || query.includes(t))) {
+            terms = terms.concat(group);
+          }
+        });
+        return terms;
+      }
+
+      function applyFilters() {
+        const query = searchInput.value.trim().toLowerCase();
+        const synonymTerms = query ? getSynonymTerms(query) : [];
+        let visibleCount = 0;
+        exerciseItems.forEach(item => {
+          const name = item.getAttribute('data-name');
+          const nameLower = name.toLowerCase();
+          const nameMatch = nameLower.includes(query) || synonymTerms.some(t => nameLower.includes(t));
+          const muscleMatch = exerciseMatchesMuscle(name, selectedMuscle);
+          const match = nameMatch && muscleMatch;
+          item.classList.toggle('hidden', !match);
+          if (match) visibleCount++;
+        });
+        noResults.classList.toggle('hidden', visibleCount !== 0);
+      }
+
+      muscleFilterPanel.addEventListener('click', (e) => {
+        const item = e.target.closest('.muscle-item');
+        if (!item) return;
+        e.stopPropagation();
+        muscleFilterPanel.querySelectorAll('.muscle-item').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
+        selectedMuscle = item.dataset.muscle;
+        muscleFilterLabel.textContent = selectedMuscle;
+        muscleFilter.classList.remove('open');
+        muscleFilterPanel.classList.add('hidden');
+        applyFilters();
+      });
+
+      const backBtn = document.getElementById('backBtn');
+
+      // Rest timer options: 5s steps up to 3:00, then 30s steps up to 7:00
+      function formatTime(totalSeconds) {
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }
+      function buildRestOptions() {
+        const opts = ['Desligado'];
+        for (let s = 5; s <= 180; s += 5) opts.push(formatTime(s));
+        for (let s = 210; s <= 420; s += 30) opts.push(formatTime(s));
+        return opts;
+      }
+      const REST_OPTIONS = buildRestOptions();
+
+      // ===== Exercícios com campos diferentes do padrão (KG + REPS) =====
+      // Todos mantêm a estrutura normal de séries (numeração, tipo
+      // aquecimento/normal/falha, adicionar/remover série) — só muda(m)
+      // o(s) campo(s) de dado por série:
+      // 'repsOnly'   -> só REPS por série (sem KG)
+      // 'duration'   -> só DURAÇÃO por série
+      // 'kgDuration' -> KG + DURAÇÃO por série
+      // 'rpmDuration'-> RPM MÉDIO + DURAÇÃO por série
+      // 'speedDuration' -> VELOCIDADE + DURAÇÃO por série
+      const EXERCISE_MODE = {
+        'Sissy Squat Unilateral com Assistência': 'repsOnly',
+        'Hiperextensão Lombar': 'repsOnly',
+        'Band Pullaparts': 'repsOnly',
+        'Aberturas no TRX': 'repsOnly',
+        'Flexão na Handstand': 'repsOnly',
+        'Muscle Up': 'repsOnly',
+        'Fundos nas Argolas': 'repsOnly',
+        'Ring Pull Up': 'repsOnly',
+        'Boxe (Cardio)': 'duration',
+        'Pendurado na Barra com Peso': 'kgDuration',
+        'Pular Corda': 'duration',
+        'Prancha Abdominal': 'duration',
+        'Bicicleta (Cardio)': 'rpmDuration',
+        'Esteira (Cardio)': 'speedDuration',
+        'Simulador de Escadas (Cardio)': 'speedDuration'
+      };
+
+      function getExerciseMode(name) {
+        return EXERCISE_MODE[name] || 'normal';
+      }
+
+      // Config de campos por modo: usado tanto pra montar o cabeçalho
+      // quanto os inputs de cada linha de série.
+      const MODE_FIELDS = {
+        normal: ['kg', 'reps'],
+        repsOnly: ['reps'],
+        duration: ['duration'],
+        kgDuration: ['kg', 'duration'],
+        rpmDuration: ['rpm', 'duration'],
+        speedDuration: ['speed', 'duration']
+      };
+      const FIELD_LABEL = { kg: 'KG', reps: 'REPS', duration: 'DURAÇÃO', rpm: 'RPM MÉDIO', km: 'KM', speed: 'VELOCIDADE' };
+      const FIELD_PLACEHOLDER = { kg: '0', reps: '0', duration: '00:30', rpm: '80', km: '1.0', speed: '5.0' };
+      const FIELD_TYPE = { kg: 'number', reps: 'number', duration: 'text', rpm: 'number', km: 'number', speed: 'number' };
+
+      function emptySet(mode) {
+        const set = { type: 'normal' };
+        if (mode === 'normal') {
+          set.kg = ''; set.reps = ''; set.repsMin = ''; set.repsMax = '';
+        } else {
+          MODE_FIELDS[mode].forEach(f => { set[f] = ''; });
+        }
+        return set;
+      }
+
+      // exercise name -> { mode, repsMode: 'single'|'range', restTime: string, sets: [...] }
+      const selected = new Map();
+
+      function newExerciseState(name) {
+        const mode = getExerciseMode(name);
+        return {
+          mode,
+          repsMode: 'single',
+          restTime: 'Desligado',
+          note: '',
+          sets: [emptySet(mode)]
+        };
+      }
+
+      function closeAllDropdowns(exceptEl) {
+        document.querySelectorAll('.dropdown-panel, .type-popup').forEach(p => {
+          if (p !== exceptEl) p.classList.add('hidden');
+        });
+        document.querySelectorAll('.dropdown-trigger.open, .sets-header .reps-trigger.open, .filter-box.open').forEach(t => {
+          t.classList.remove('open');
+        });
+        document.querySelectorAll('.exercise-card.timer-active').forEach(card => {
+          if (!exceptEl || !card.contains(exceptEl)) {
+            // Wait for CSS transition to finish before restoring the elements
+            setTimeout(() => {
+              const panel = card.querySelector('.dropdown-panel[data-kind="rest"]');
+              if (panel && panel.classList.contains('hidden')) {
+                card.classList.remove('timer-active');
+              }
+            }, 250);
+          }
+        });
+
+        document.querySelectorAll('.exercise-card.blur-active').forEach(card => {
+          if (!exceptEl || !card.contains(exceptEl)) {
+            setTimeout(() => {
+              // Check if both modals are actually hidden
+              const typeHidden = !card.querySelector('.type-popup:not(.hidden)');
+              const repsHidden = !card.querySelector('.reps-mode-panel:not(.hidden)');
+              if (typeHidden && repsHidden) {
+                card.classList.remove('blur-active');
+              }
+            }, 200);
+          }
+        });
+      }
+
+      function setLabelFor(sets, index) {
+        const type = sets[index].type;
+        if (type === 'warmup') return 'W';
+        if (type === 'failure') return 'F';
+        let count = 0;
+        for (let i = 0; i <= index; i++) {
+          if (sets[i].type === 'normal') count++;
+        }
+        return String(count);
+      }
+
+      function updateSummary() {
+        const exercisesCount = selected.size;
+        let setsCount = 0;
+        selected.forEach(state => { setsCount += state.sets.length; });
+        document.getElementById('statExercises').textContent = exercisesCount;
+        document.getElementById('statSets').textContent = setsCount;
+      }
+
+      function renderSelected() {
+        if (selected.size === 0) {
+          emptyState.classList.remove('hidden');
+          selectedList.classList.add('hidden');
+          selectedList.innerHTML = '';
+          updateSummary();
+          return;
+        }
+        emptyState.classList.add('hidden');
+        selectedList.classList.remove('hidden');
+        selectedList.innerHTML = '';
+
+        selected.forEach((state, name) => {
+          const card = document.createElement('div');
+          card.className = 'exercise-card';
+          card.setAttribute('data-name', name);
+
+          const libThumbEl = document.querySelector('.exercise-item[data-name="' + CSS.escape(name) + '"] .ex-thumb');
+          const thumbSrc = libThumbEl ? libThumbEl.getAttribute('src') : '';
+
+          const mode = state.mode || 'normal';
+
+          // Todos os modos (normal, repsOnly, duration, kgDuration,
+          // rpmDuration, speedDuration) mantêm a estrutura completa de
+          // séries: numeração, tipo (aquecimento/normal/falha) e
+          // adicionar/remover série. Só o(s) campo(s) de dado mudam.
+          const fields = MODE_FIELDS[mode];
+          const fieldCountClass = fields.length === 1 ? ' field-count-1' : '';
+
+          function fieldInputHtml(field, name, i, set) {
+            if (field === 'reps' && mode === 'normal' && state.repsMode === 'range') {
+              return '<div class="reps-range">' +
+                '<input type="number" autocomplete="off" placeholder="6" data-name="' + name + '" data-index="' + i + '" data-field="repsMin" value="' + set.repsMin + '">' +
+                '<span>-</span>' +
+                '<input type="number" autocomplete="off" placeholder="8" data-name="' + name + '" data-index="' + i + '" data-field="repsMax" value="' + set.repsMax + '">' +
+                '</div>';
+            }
+            const type = FIELD_TYPE[field] || 'number';
+            return '<input type="' + type + '" autocomplete="off" placeholder="' + FIELD_PLACEHOLDER[field] + '" data-name="' + name + '" data-index="' + i + '" data-field="' + field + '" value="' + (set[field] || '') + '">';
+          }
+
+          let setsHtml = '';
+          state.sets.forEach((set, i) => {
+            const label = setLabelFor(state.sets, i);
+            const typeClass = set.type === 'warmup' ? 'warmup' : (set.type === 'failure' ? 'failure' : '');
+            const fieldsHtml = fields.map(f => fieldInputHtml(f, name, i, set)).join('');
+
+            setsHtml += '<div class="set-row' + fieldCountClass + '">' +
+              '<button class="set-num ' + typeClass + '" data-name="' + name + '" data-index="' + i + '" data-action="toggleType">' + label + '</button>' +
+              '<div class="type-popup hidden" data-name="' + name + '" data-index="' + i + '">' +
+              '<div class="type-option" data-name="' + name + '" data-index="' + i + '" data-type="warmup"><span class="type-badge warmup">W</span>Aquecimento</div>' +
+              '<div class="type-option" data-name="' + name + '" data-index="' + i + '" data-type="normal"><span class="type-badge normal">1</span>Normal</div>' +
+              '<div class="type-option" data-name="' + name + '" data-index="' + i + '" data-type="failure"><span class="type-badge failure">F</span>Falha</div>' +
+              '</div>' +
+              fieldsHtml +
+              '<button class="set-del-btn" data-name="' + name + '" data-index="' + i + '" data-action="removeSet">&#10005;</button>' +
+              '</div>';
+          });
+
+          const restOptionsHtml = REST_OPTIONS.map(opt =>
+            '<div class="dropdown-item' + (opt === state.restTime ? ' selected' : '') + '" data-name="' + name + '" data-value="' + opt + '">' + opt + '</div>'
+          ).join('');
+
+          // Cabeçalho: no modo normal, a coluna REPS tem o dropdown de
+          // intervalo de repetições; nos demais modos os rótulos são
+          // apenas texto estático (não faz sentido "intervalo" pra
+          // duração/rpm/km).
+          const headerFieldsHtml = fields.map(f => {
+            if (f === 'reps' && mode === 'normal') {
+              return '<span style="position: relative; display: flex; justify-content: center;">' +
+                '<span class="reps-trigger" data-name="' + name + '" data-action="repsTrigger">REPS <span class="chev">&#9660;</span></span>' +
+                '<div class="dropdown-panel hidden reps-mode-panel" data-name="' + name + '" data-kind="repsmode">' +
+                '<div style="padding: 6px 8px 8px; font-size:12px; color:#8a8a8a;">Opções de repetição do exercício</div>' +
+                '<div class="dropdown-item' + (state.repsMode === 'range' ? ' selected' : '') + '" data-name="' + name + '" data-repsmode="range">Intervalo de repetições</div>' +
+                '<div class="dropdown-item' + (state.repsMode === 'single' ? ' selected' : '') + '" data-name="' + name + '" data-repsmode="single">Repetições</div>' +
+                '</div>' +
+                '</span>';
+            }
+            return '<span>' + FIELD_LABEL[f] + '</span>';
+          }).join('');
+
+          card.innerHTML =
+            '<div class="card-blur-overlay"></div>' +
+            '<div class="exercise-card-top">' +
+            '<div class="left">' +
+            '<span class="drag-handle">&#8942;&#8942;</span>' +
+            '<img class="ex-thumb-card" loading="lazy" src="' + thumbSrc + '" alt="">' +
+            '<span class="ex-name">' + name + '</span>' +
+            '</div>' +
+            '<button class="menu-btn" data-name="' + name + '">&#10005;</button>' +
+            '</div>' +
+            '<p class="card-label">Nota</p>' +
+            '<textarea class="note-box" data-name="' + name + '" placeholder="Adicionar nota afixada" maxlength="90">' + (state.note || '') + '</textarea>' +
+            '<p class="card-label">Temporizador de descanso:</p>' +
+            '<div class="dropdown-wrap">' +
+            '<div class="dropdown-trigger" data-name="' + name + '" data-action="restTrigger"><span>' + state.restTime + '</span><span class="chev">&#9660;</span></div>' +
+            '<div class="dropdown-panel hidden" data-name="' + name + '" data-kind="rest">' + restOptionsHtml + '</div>' +
+            '</div>' +
+            '<div class="sets-header' + fieldCountClass + '">' +
+            '<span>SÉRIE</span>' +
+            headerFieldsHtml +
+            '<span></span>' +
+            '</div>' +
+            setsHtml +
+            '<button class="add-serie-btn" data-name="' + name + '">+ Adicionar série</button>';
+
+          selectedList.appendChild(card);
+        });
+
+        attachCardHandlers();
+        updateSummary();
+      }
+
+      function attachCardHandlers() {
+        // Remove exercise
+        selectedList.querySelectorAll('.menu-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = btn.getAttribute('data-name');
+            selected.delete(name);
+            document.querySelectorAll('.exercise-item[data-name="' + CSS.escape(name) + '"]').forEach(el => {
+              el.classList.remove('added');
+              el.querySelector('.add-icon').textContent = '+';
+            });
+            renderSelected();
+            updateSaveBtn();
+          });
+        });
+
+        // Drag handle
+        selectedList.querySelectorAll('.drag-handle').forEach(handle => {
+          handle.addEventListener('mousedown', (e) => {
+            const card = e.target.closest('.exercise-card');
+            if (card) card.setAttribute('draggable', 'true');
+          });
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (!selectedList.querySelector('.dragging')) {
+            selectedList.querySelectorAll('.exercise-card').forEach(c => c.removeAttribute('draggable'));
+          }
+        });
+
+        selectedList.querySelectorAll('.exercise-card').forEach(card => {
+          card.addEventListener('dragstart', (e) => {
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', card.getAttribute('data-name'));
+            selectedList.classList.add('is-reordering');
+            setTimeout(() => card.classList.add('dragging'), 0);
+          });
+          card.addEventListener('dragend', () => {
+            card.classList.remove('dragging');
+            selectedList.classList.remove('is-reordering');
+            card.removeAttribute('draggable');
+          });
+          card.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            const dragging = selectedList.querySelector('.dragging');
+            if (dragging && dragging !== card) {
+              const rect = card.getBoundingClientRect();
+              const next = (e.clientY - rect.top) / (rect.bottom - rect.top) > 0.5;
+              selectedList.insertBefore(dragging, next ? card.nextSibling : card);
+            }
+          });
+          card.addEventListener('drop', (e) => {
+            e.preventDefault();
+
+            const dragging = selectedList.querySelector('.dragging');
+            if (dragging) {
+              dragging.classList.remove('dragging');
+              dragging.removeAttribute('draggable');
+            }
+            selectedList.classList.remove('is-reordering');
+
+            const newOrder = Array.from(selectedList.querySelectorAll('.exercise-card')).map(c => c.getAttribute('data-name'));
+            const newSelected = new Map();
+            newOrder.forEach(n => {
+              if (selected.has(n)) newSelected.set(n, selected.get(n));
+            });
+            selected.clear();
+            newSelected.forEach((v, k) => selected.set(k, v));
+          });
+        });
+
+        // Add serie
+        selectedList.querySelectorAll('.add-serie-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const name = btn.getAttribute('data-name');
+            const st = selected.get(name);
+            if (st.sets.length >= 10) {
+              if (typeof showToast === 'function') showToast('Limite de 10 séries atingido para este exercício.', 'error');
+              return;
+            }
+            st.sets.push(emptySet(st.mode || 'normal'));
+            renderSelected();
+          });
+        });
+
+        // Remove serie
+        selectedList.querySelectorAll('[data-action="removeSet"]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = btn.getAttribute('data-name');
+            const index = parseInt(btn.getAttribute('data-index'), 10);
+            selected.get(name).sets.splice(index, 1);
+            renderSelected();
+          });
+        });
+
+        // KG / reps / duração / rpm / km inputs
+        selectedList.querySelectorAll('.set-row input, .reps-only-row input').forEach(input => {
+          input.addEventListener('input', () => {
+            const name = input.getAttribute('data-name');
+            const index = parseInt(input.getAttribute('data-index'), 10);
+            const field = input.getAttribute('data-field');
+
+            let val = input.value;
+            if (field === 'kg' && Number(val) > 600) val = '600';
+            if (field === 'reps' && Number(val) > 200) val = '200';
+            if (field === 'speed' && Number(val) > 30) val = '30';
+            if (field === 'rpm' && Number(val) > 40) val = '40';
+            if (field === 'duration') {
+              // Basic time format limit to 18 hours max (1080:00)
+              if (val.length >= 5 && val.includes(':')) {
+                const parts = val.split(':');
+                if (Number(parts[0]) > 1080) val = '1080:00';
+              }
+            }
+
+            if (val !== input.value) input.value = val;
+            selected.get(name).sets[index][field] = val;
+          });
+          input.addEventListener('click', (e) => e.stopPropagation());
+        });
+
+        // Notes
+        selectedList.querySelectorAll('.note-box').forEach(textarea => {
+          textarea.addEventListener('input', () => {
+            const name = textarea.getAttribute('data-name');
+            if (selected.has(name)) {
+              selected.get(name).note = textarea.value;
+            }
+          });
+        });
+
+        // Set type toggle (SÉRIE badge)
+        selectedList.querySelectorAll('[data-action="toggleType"]').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = btn.getAttribute('data-name');
+            const index = btn.getAttribute('data-index');
+            const popup = selectedList.querySelector('.type-popup[data-name="' + name + '"][data-index="' + index + '"]');
+            const isHidden = popup.classList.contains('hidden');
+            const card = btn.closest('.exercise-card');
+            closeAllDropdowns();
+            if (isHidden) {
+              popup.classList.remove('hidden');
+              card.classList.add('blur-active');
+            }
+          });
+        });
+
+        selectedList.querySelectorAll('.type-option').forEach(opt => {
+          opt.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = opt.getAttribute('data-name');
+            const index = parseInt(opt.getAttribute('data-index'), 10);
+            const type = opt.getAttribute('data-type');
+            selected.get(name).sets[index].type = type;
+            closeAllDropdowns();
+            setTimeout(() => renderSelected(), 250);
+          });
+        });
+
+        // Rest timer dropdown
+        selectedList.querySelectorAll('[data-action="restTrigger"]').forEach(trigger => {
+          trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = trigger.getAttribute('data-name');
+            const card = trigger.closest('.exercise-card');
+            const panel = selectedList.querySelector('.dropdown-panel[data-kind="rest"][data-name="' + CSS.escape(name) + '"]');
+            const isHidden = panel.classList.contains('hidden');
+            closeAllDropdowns();
+            if (isHidden) {
+              panel.classList.remove('hidden');
+              trigger.classList.add('open');
+              card.classList.add('timer-active');
+              const sel = panel.querySelector('.selected');
+              if (sel) sel.scrollIntoView({ block: 'center' });
+            }
+          });
+        });
+
+        selectedList.querySelectorAll('.dropdown-panel[data-kind="rest"] .dropdown-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = item.getAttribute('data-name');
+            const value = item.getAttribute('data-value');
+            selected.get(name).restTime = value;
+            // Update text optimistically before re-rendering
+            const wrap = item.closest('.dropdown-wrap');
+            if (wrap) wrap.querySelector('.dropdown-trigger span:first-child').textContent = value;
+            closeAllDropdowns();
+            setTimeout(() => renderSelected(), 250);
+          });
+        });
+
+        // Reps mode dropdown (header)
+        selectedList.querySelectorAll('[data-action="repsTrigger"]').forEach(trigger => {
+          trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = trigger.getAttribute('data-name');
+            const panel = selectedList.querySelector('.reps-mode-panel[data-name="' + name + '"]');
+            const isHidden = panel.classList.contains('hidden');
+            const card = trigger.closest('.exercise-card');
+            closeAllDropdowns();
+            if (isHidden) {
+              panel.classList.remove('hidden');
+              trigger.classList.add('open');
+              card.classList.add('blur-active');
+            }
+          });
+        });
+
+        selectedList.querySelectorAll('.reps-mode-panel .dropdown-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const name = item.getAttribute('data-name');
+            const mode = item.getAttribute('data-repsmode');
+            selected.get(name).repsMode = mode;
+            closeAllDropdowns();
+            setTimeout(() => renderSelected(), 250);
+          });
+        });
+      }
+
+      document.addEventListener('click', () => closeAllDropdowns());
+
+      function updateSaveBtn() {
+        const hasTitle = titleInput.value.trim().length > 0;
+        const hasExercises = selected.size > 0;
+        saveBtn.classList.toggle('active', hasTitle && hasExercises);
+      }
+
+      exerciseItems.forEach(bindExerciseClick);
+
+      titleInput.addEventListener('input', updateSaveBtn);
+
+      saveBtn.addEventListener('click', async () => {
+        if (!saveBtn.classList.contains('active')) return;
+
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = 'A guardar...';
+        saveBtn.classList.remove('active');
+
+        try {
+          const name = titleInput.value.trim();
+          let durationMin = 0;
+
+          const exercisesList = [];
+          selected.forEach((state, exName) => {
+            exercisesList.push({
+              name: exName,
+              mode: state.mode,
+              repsMode: state.repsMode,
+              restTime: state.restTime,
+              note: state.note,
+              sets: state.sets
+            });
+
+            let restMins = 0;
+            if (state.restTime && state.restTime !== 'Desligado') {
+              const mMatch = state.restTime.match(/(\d+)min/);
+              const sMatch = state.restTime.match(/(\d+)s/);
+              if (mMatch) restMins += parseInt(mMatch[1], 10);
+              if (sMatch) restMins += parseInt(sMatch[1], 10) / 60;
+            } else {
+              restMins = 1;
+            }
+            durationMin += (state.sets.length * (1.5 + restMins));
+          });
+
+          await window.api.createFocoRoutine({
+            name: name,
+            durationMin: Math.round(durationMin) || 15, // fallback 15 mins
+            folderId: null,
+            exercises: exercisesList
+          });
+
+          if (typeof window.go === 'function') {
+            window.go('foco');
+          } else {
+            window.location.href = 'foco.html';
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('Erro ao guardar rotina: ' + (err.message || 'Tente novamente.'), 'error');
+          saveBtn.textContent = originalText;
+          saveBtn.classList.add('active');
+        }
+      });
+
+      searchInput.addEventListener('input', () => {
+        applyFilters();
+      });
+
+      muscleFilter.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const willOpen = !muscleFilter.classList.contains('open');
+        closeAllDropdowns();
+        if (willOpen) {
+          muscleFilter.classList.add('open');
+          muscleFilterPanel.classList.remove('hidden');
+        }
+      });
+      muscleFilterPanel.addEventListener('click', (e) => e.stopPropagation());
+
+      backBtn.addEventListener('click', () => {
+        if (typeof window.go === 'function') {
+          window.go('foco');
+        } else {
+          window.location.href = 'foco.html';
+        }
+      });
+
+      // ===== Scrollbar 100% customizada (não depende do navegador) =====
+      // A barra nativa fica sempre escondida (scrollbar-width:none / -ms-overflow-style:none
+      // / ::-webkit-scrollbar{display:none}) e desenhamos uma trilha+thumb próprios,
+      // sincronizados com o scroll real via JS. Isso garante visual idêntico em
+      // Brave, Chrome, Edge, Firefox e Safari, sem depender de como cada motor
+      // renderiza (ou ignora) as pseudo-classes de scrollbar.
+      const exList = document.getElementById('exerciseList');
+      if (exList) {
+        exList.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          exList.scrollTop += e.deltaY * 0.4;
+        }, { passive: false });
+      }
+
+      function initPanelScroll(scrollEl, trackHost) {
+        if (!scrollEl || !trackHost) return;
+
+        const track = document.createElement('div');
+        track.className = 'col-scroll-track';
+        const thumb = document.createElement('div');
+        thumb.className = 'col-scroll-thumb';
+        track.appendChild(thumb);
+        trackHost.appendChild(track);
+
+        // Não medir track.clientHeight aqui: quando a trilha está com
+        // display:none (sem overflow), ela mede 0 de altura, e isso trava
+        // o cálculo pra sempre em "sem overflow" mesmo depois que o
+        // conteúdo cresce. Medimos o host (sempre visível) e descontamos
+        // o respiro de 2px em cima + 2px embaixo definido no CSS da trilha.
+        function trackHeight() { return trackHost.clientHeight - 4; }
+
+        function update() {
+          const ch = scrollEl.clientHeight;
+          const sh = scrollEl.scrollHeight;
+          const th = trackHeight();
+
+          if (sh <= ch + 1 || th <= 0) {
+            track.style.display = 'none';
+            return;
+          }
+          track.style.display = 'block';
+
+          const thumbHeight = Math.max(30, (ch / sh) * th);
+          const maxThumbTop = th - thumbHeight;
+          const pct = scrollEl.scrollTop / (sh - ch);
+
+          thumb.style.height = thumbHeight + 'px';
+          thumb.style.top = (pct * maxThumbTop) + 'px';
+        }
+
+        let dragging = false, dragStartY = 0, dragStartTop = 0;
+
+        thumb.addEventListener('mousedown', (e) => {
+          dragging = true;
+          dragStartY = e.clientY;
+          dragStartTop = parseFloat(thumb.style.top) || 0;
+          document.body.style.userSelect = 'none';
+          e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!dragging) return;
+          const ch = scrollEl.clientHeight;
+          const sh = scrollEl.scrollHeight;
+          const th = trackHeight();
+          const thumbHeight = thumb.offsetHeight;
+          const maxThumbTop = th - thumbHeight;
+          let newTop = dragStartTop + (e.clientY - dragStartY);
+          newTop = Math.max(0, Math.min(maxThumbTop, newTop));
+          thumb.style.top = newTop + 'px';
+          scrollEl.scrollTop = (maxThumbTop > 0 ? newTop / maxThumbTop : 0) * (sh - ch);
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (!dragging) return;
+          dragging = false;
+          document.body.style.userSelect = '';
+        });
+
+        track.addEventListener('mousedown', (e) => {
+          if (e.target === thumb) return;
+          const rect = track.getBoundingClientRect();
+          const clickY = e.clientY - rect.top;
+          const th = trackHeight();
+          const thumbHeight = thumb.offsetHeight;
+          let newTop = clickY - thumbHeight / 2;
+          newTop = Math.max(0, Math.min(th - thumbHeight, newTop));
+          const ch = scrollEl.clientHeight;
+          const sh = scrollEl.scrollHeight;
+          thumb.style.top = newTop + 'px';
+          scrollEl.scrollTop = ((th - thumbHeight) > 0 ? newTop / (th - thumbHeight) : 0) * (sh - ch);
+        });
+
+        scrollEl.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        new ResizeObserver(update).observe(scrollEl);
+        // Conteúdo muda (exercícios adicionados/removidos etc.) sem o próprio
+        // elemento mudar de tamanho — por isso observamos o conteúdo também.
+        const mo = new MutationObserver(() => requestAnimationFrame(update));
+        mo.observe(scrollEl, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+        update();
+      }
+
+      // ===== Navegação por "-" para o painel esquerdo (exercícios da rotina) =====
+      // Em vez de uma barra contínua, os exercícios adicionados viram traços
+      // empilhados bem juntinhos na lateral esquerda. Ao passar o cursor sobre
+      // o conjunto, os próprios traços se transformam na lista completa dos
+      // exercícios (sem balão flutuante à parte); clicar num nome rola até o
+      // cartão correspondente.
+      function initExerciseDashNav(scrollEl, trackHost, getItems) {
+        if (!scrollEl || !trackHost) return;
+
+        const container = document.createElement('div');
+        container.className = 'col-scroll-dashnav';
+        trackHost.appendChild(container);
+
+        function rebuild() {
+          const items = getItems();
+          const ch = scrollEl.clientHeight;
+          const sh = scrollEl.scrollHeight;
+
+          container.innerHTML = '';
+
+          if (sh <= ch + 1 || items.length === 0) {
+            container.style.display = 'none';
+            return;
+          }
+          container.style.display = 'flex';
+
+          const stack = document.createElement('div');
+          stack.className = 'dash-stack';
+
+          items.forEach(({ name, el }) => {
+            const dash = document.createElement('div');
+            dash.className = 'col-scroll-dash';
+
+            const label = document.createElement('span');
+            label.className = 'dash-label';
+            label.textContent = name;
+            dash.appendChild(label);
+
+            dash.addEventListener('click', () => {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            stack.appendChild(dash);
+          });
+
+          container.appendChild(stack);
+        }
+
+        window.addEventListener('resize', rebuild);
+        new ResizeObserver(rebuild).observe(scrollEl);
+        const mo = new MutationObserver(() => requestAnimationFrame(rebuild));
+        mo.observe(scrollEl, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
+        rebuild();
+      }
+
+      document.querySelectorAll('.col-scroll-wrap').forEach((wrap) => {
+        if (wrap.classList.contains('col-scroll-wrap--left')) {
+          initExerciseDashNav(wrap.querySelector('.col-scroll'), wrap, () => {
+            return Array.from(selectedList.querySelectorAll('.exercise-card')).map((el) => ({
+              name: el.querySelector('.ex-name')?.textContent || '',
+              el
+            }));
+          });
+        } else {
+          initPanelScroll(wrap.querySelector('.col-scroll'), wrap);
+        }
+      });
+    </script>
+
+    <script>
+      (function () {
+
+
+        try {
+          var glassState = JSON.parse(localStorage.getItem('focoGlassState') || '{}');
+          var u = window.getActiveUserContext ? window.getActiveUserContext() : null;
+          var hasBg = u && (u.profile_page_bg_img || (u.customization_json && u.customization_json.profile_page_bg_img));
+          if (hasBg || Object.keys(glassState).some(k => glassState[k])) {
+            document.body.classList.add('glass-active');
+          }
+        } catch (e) { }
+
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            document.body.style.opacity = '1';
+            if (typeof window.hideMhLoader === 'function') {
+              window.hideMhLoader();
+            }
+          });
+        });
+      })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,3793 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <script>try { if (localStorage.getItem('minsq_is_maintenance') === 'true') { document.documentElement.style.display = 'none'; window.top.location.replace('/pages/api/maintenance.html'); } } catch (e) { }</script>
+  <meta charset="UTF-8">
+  <style id="mh-early">
+    body {
+      padding-left: 0;
+      opacity: 0;
+      background: #070707;
+      transition: opacity .18s ease
+    }
+  </style>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minsq</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Exo+2:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@300;400;500&family=Exo+2:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    :root {
+      --mh-sb: 0px;
+      --bg: #070707;
+      --s1: #0d0d0d;
+      --s2: #121212;
+      --s3: #181818;
+      --s4: #1e1e1e;
+      --s5: #242424;
+      --b1: rgba(255, 255, 255, .04);
+      --b2: rgba(255, 255, 255, .08);
+      --b3: rgba(255, 255, 255, .14);
+      --b4: rgba(255, 255, 255, .22);
+      --t1: #f0f0f0;
+      --t2: #c0c0c0;
+      --t3: #888;
+      --t4: #444;
+      --t5: #2a2a2a;
+      --up: #b8e0b8;
+      --dn: #888;
+      --warn: #c8a060;
+      --accent: #e8e8e8;
+      --r4: 4px;
+      --r8: 8px;
+      --r12: 12px;
+      --r16: 16px;
+      --r20: 20px;
+      --r24: 24px;
+      --fm: 'Exo 2', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    html,
+    body {
+      scroll-behavior: smooth;
+      height: 100%;
+      overflow: hidden
+    }
+
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none
+    }
+
+    ::-webkit-scrollbar {
+      display: none
+    }
+
+    body {
+      font-family: var(--fm);
+      background: var(--bg);
+      color: var(--t2)
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes pageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* ── LAYOUT ── */
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden
+    }
+
+    .content {
+      padding: 22px 24px;
+      overflow-y: auto;
+      flex: 1
+    }
+
+    /* ── CARDS (flat, estilo foco) ── */
+    .card {
+      background: var(--s1);
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: var(--r16);
+      padding: 18px;
+      transition: border-color .2s
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, .12)
+    }
+
+    .card-sm {
+      padding: 14px;
+      border-radius: 0
+    }
+
+    .lbl {
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px
+    }
+
+    .metric {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      color: var(--t1);
+      line-height: 1
+    }
+
+    /* ── STAGGER ── */
+    .stg>* {
+      opacity: 0;
+      animation: fadeUp .3s ease forwards
+    }
+
+    .stg>*:nth-child(1) {
+      animation-delay: .03s
+    }
+
+    .stg>*:nth-child(2) {
+      animation-delay: .07s
+    }
+
+    .stg>*:nth-child(3) {
+      animation-delay: .11s
+    }
+
+    .stg>*:nth-child(4) {
+      animation-delay: .15s
+    }
+
+    .stg>*:nth-child(5) {
+      animation-delay: .19s
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+      gap: 12px
+    }
+
+    .empty-icon {
+      font-size: 36px;
+      opacity: .4;
+      margin-bottom: 4px
+    }
+
+    .empty-t {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--t3);
+      letter-spacing: -.3px
+    }
+
+    .empty-s {
+      font-size: 12px;
+      color: var(--t4);
+      line-height: 1.6;
+      max-width: 260px
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      padding: 7px 13px;
+      border-radius: var(--r8);
+      font-size: 11px;
+      font-family: var(--fm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      border: 1px solid;
+      letter-spacing: -.1px
+    }
+
+    .btn-p {
+      background: var(--t1);
+      color: var(--bg);
+      border-color: var(--t1)
+    }
+
+    .btn-p:hover {
+      background: var(--t2)
+    }
+
+    .btn-g {
+      background: transparent;
+      color: var(--t3);
+      border-color: var(--b2)
+    }
+
+    .btn-g:hover {
+      background: var(--s3);
+      color: var(--t2);
+      border-color: var(--b3)
+    }
+
+    .sh-add-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      color: var(--t1);
+      font-size: 17px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .15s;
+    }
+
+    .sh-add-btn:hover {
+      background: var(--s4);
+      border-color: var(--b3);
+    }
+
+    /* ── BADGE ── */
+    .badge {
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-size: 9px;
+      font-family: var(--mono);
+      font-weight: 500;
+      border: 1px solid;
+      letter-spacing: .3px
+    }
+
+    .b-mid {
+      color: var(--t3);
+      border-color: var(--b2);
+      background: rgba(255, 255, 255, .03)
+    }
+
+    /* ── CATEGORIAS — apenas título + descrição, sem quadrados, sem clique ── */
+    .goal-section-simple {
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .goal-section-simple+.goal-section-simple {
+      border-top: 1px solid var(--b1)
+    }
+
+    .goal-section-simple-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: var(--r8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0
+    }
+
+    .goal-section-simple-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--t1);
+      letter-spacing: -.1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .goal-section-simple-desc {
+      font-size: 9.5px;
+      color: var(--t4);
+      font-family: var(--mono);
+      margin-top: 2px;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    /* ── PLANOS DE AÇÃO — cards com foto + nome + descrição, não clicáveis ── */
+    .mm-plan-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      padding: 14px
+    }
+
+    .mm-plan-card {
+      position: relative;
+      border-radius: var(--r16);
+      overflow: hidden;
+      background: var(--s1);
+      border: 1px solid rgba(255, 255, 255, .08);
+      display: flex;
+      flex-direction: column;
+      transition: border-color .15s;
+    }
+
+    .mm-plan-photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/10;
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(255, 255, 255, .03);
+    }
+
+    .mm-plan-photo.no-photo {
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .mm-plan-photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      color: rgba(255, 255, 255, .2)
+    }
+
+    .mm-plan-photo-placeholder span {
+      font-size: 9px;
+      font-family: var(--mono);
+      letter-spacing: .2px;
+      color: rgba(255, 255, 255, .18)
+    }
+
+    .mm-plan-info {
+      padding: 14px 18px 16px
+    }
+
+    .mm-plan-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--t1);
+      letter-spacing: -.2px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .mm-plan-desc {
+      font-size: 10.5px;
+      color: var(--t4);
+      font-family: var(--mono);
+      margin-top: 4px;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden
+    }
+
+    .mm-plan-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity .15s;
+      z-index: 2
+    }
+
+    .mm-plan-actions button {
+      width: 23px;
+      height: 23px;
+      border-radius: 7px;
+      background: rgba(0, 0, 0, .5);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, .14);
+      color: rgba(255, 255, 255, .8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+
+    .mm-plan-card {
+      cursor: pointer
+    }
+
+    .mm-plan-card:hover {
+      border-color: rgba(255, 255, 255, .18)
+    }
+
+    .mm-plan-card:hover .mm-plan-actions {
+      opacity: 1
+    }
+
+    .mm-plan-actions button:hover {
+      background: rgba(0, 0, 0, .75);
+      color: #fff
+    }
+
+    .mm-plan-actions button.danger:hover {
+      color: #e07070
+    }
+
+    /* ── PREVIEW MODAL (abre ao clicar no card do plano) ── */
+    .mm-preview-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 15900;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .mm-preview-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .6);
+      backdrop-filter: blur(18px) saturate(.7);
+      -webkit-backdrop-filter: blur(18px) saturate(.7);
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+
+    .mm-preview-overlay.open .mm-preview-backdrop {
+      opacity: 1
+    }
+
+    .mm-preview-box {
+      position: relative;
+      width: min(560px, 100%);
+      height: min(760px, 90vh);
+      background: var(--s2);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: var(--r24);
+      box-shadow: 0 30px 90px rgba(0, 0, 0, .65);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(16px) scale(.97);
+      transition: opacity .25s cubic-bezier(.16, 1, .3, 1), transform .3s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .mm-preview-overlay.open .mm-preview-box {
+      opacity: 1;
+      transform: translateY(0) scale(1)
+    }
+
+    .mm-preview-photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(255, 255, 255, .04);
+      flex-shrink: 0;
+    }
+
+    .mm-preview-photo.no-photo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .015));
+    }
+
+    .mm-preview-photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255, 255, 255, .2)
+    }
+
+    .mm-preview-photo-placeholder span {
+      font-size: 9px;
+      font-family: var(--mono);
+      letter-spacing: .3px;
+      color: rgba(255, 255, 255, .18)
+    }
+
+    .mm-preview-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, .5);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, .14);
+      color: rgba(255, 255, 255, .85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+
+    .mm-preview-close:hover {
+      background: rgba(0, 0, 0, .75);
+      color: #fff
+    }
+
+    .mm-preview-body {
+      padding: 28px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0
+    }
+
+    .mm-preview-title {
+      font-size: 23px;
+      font-weight: 700;
+      color: var(--t1);
+      letter-spacing: -.4px;
+      line-height: 1.25;
+      text-align: center;
+      flex-shrink: 0
+    }
+
+    .mm-preview-title-input {
+      font-size: 23px;
+      font-weight: 700;
+      color: var(--t1);
+      letter-spacing: -.4px;
+      line-height: 1.25;
+      text-align: center;
+      flex-shrink: 0;
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .mm-preview-desc-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0 9px;
+      flex-shrink: 0
+    }
+
+    .mm-preview-desc-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--t4);
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    .mm-preview-align-toggle {
+      display: flex;
+      gap: 3px;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 8px;
+      padding: 2px
+    }
+
+    .mm-align-btn {
+      width: 22px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, .32);
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+
+    .mm-align-btn:hover {
+      color: rgba(255, 255, 255, .7)
+    }
+
+    .mm-align-btn.active {
+      background: rgba(255, 255, 255, .12);
+      color: var(--t1)
+    }
+
+    .mm-preview-desc-box {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--t2);
+      width: 100%;
+      text-align: center;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .mm-preview-desc-input {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: none;
+      font-family: var(--fm);
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--t2);
+      text-align: inherit;
+      padding: 2px 4px;
+      overflow: hidden;
+    }
+
+    .mm-preview-desc-input::placeholder {
+      color: var(--t4)
+    }
+
+    .mm-preview-desc-input:focus {
+      color: var(--t1)
+    }
+
+    /* ── CATEGORIAS — mesmo estilo de card do Plano de Ação, em grade de 2 colunas ── */
+    .catcard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      padding: 16px
+    }
+
+    .catcard {
+      position: relative;
+      border-radius: var(--r16);
+      overflow: hidden;
+      background: var(--s1);
+      border: 1px solid rgba(255, 255, 255, .08);
+      display: flex;
+      flex-direction: column;
+      transition: border-color .15s;
+      cursor: pointer;
+    }
+
+    .catcard-photo {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: center;
+      background-color: rgba(255, 255, 255, .03);
+    }
+
+    .catcard-photo.no-photo {
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .catcard-photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      color: rgba(255, 255, 255, .2)
+    }
+
+    .catcard-photo-placeholder span {
+      font-size: 9px;
+      font-family: var(--mono);
+      letter-spacing: .2px;
+      color: rgba(255, 255, 255, .18)
+    }
+
+    .catcard-info {
+      padding: 13px 15px 14px
+    }
+
+    .catcard-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--t1);
+      letter-spacing: -.2px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .catcard-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity .15s;
+      z-index: 2
+    }
+
+    .catcard-actions button {
+      width: 23px;
+      height: 23px;
+      border-radius: 7px;
+      background: rgba(0, 0, 0, .5);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, .14);
+      color: rgba(255, 255, 255, .8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+
+    .catcard:hover {
+      border-color: rgba(255, 255, 255, .18)
+    }
+
+    .catcard:hover .catcard-actions {
+      opacity: 1
+    }
+
+    .catcard-actions button:hover {
+      background: rgba(0, 0, 0, .75);
+      color: #fff
+    }
+
+    .catcard-actions button.danger:hover {
+      color: #e07070
+    }
+
+    .catcard-empty {
+      padding: 32px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      grid-column: 1/-1
+    }
+
+    /* ── MODAL ── */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      backdrop-filter: blur(16px);
+      z-index: 15000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s
+    }
+
+    .modal-bg.on {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    .modal {
+      background: var(--s1);
+      border: 1px solid var(--b2);
+      border-radius: var(--r20);
+      padding: 24px;
+      width: 420px;
+      max-width: 90vw;
+      transform: scale(.96) translateY(8px);
+      transition: transform .25s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    .modal-bg.on .modal {
+      transform: scale(1) translateY(0)
+    }
+
+    .m-t {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      margin-bottom: 3px;
+      color: var(--t1)
+    }
+
+    .m-s {
+      font-size: 12px;
+      color: var(--t3);
+      margin-bottom: 20px
+    }
+
+    .fr {
+      margin-bottom: 13px
+    }
+
+    .fr label {
+      display: block;
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4);
+      margin-bottom: 6px;
+      letter-spacing: .8px
+    }
+
+    .fr input,
+    .fr select,
+    .fr textarea {
+      width: 100%;
+      background: var(--s3);
+      border: 1px solid var(--b2);
+      border-radius: var(--r8);
+      color: var(--t2);
+      font-family: var(--fm);
+      font-size: 12px;
+      padding: 9px 11px;
+      outline: none;
+      transition: border-color .2s;
+      resize: none
+    }
+
+    .fr input:focus,
+    .fr select:focus,
+    .fr textarea:focus {
+      border-color: var(--b3);
+      color: var(--t1)
+    }
+
+    .fr select {
+      color-scheme: dark;
+      cursor: pointer
+    }
+
+    .fr select option {
+      background: var(--s3);
+      color: var(--t2)
+    }
+
+    .m-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 20px
+    }
+
+    .auth-err {
+      font-size: 11px;
+      color: #e06060;
+      font-family: var(--mono);
+      min-height: 16px
+    }
+
+    /* ── MODAL: visual idêntico ao hoje.html ── */
+    .modal {
+      position: relative;
+    }
+
+    #modal .modal {
+      --s1: #18181b;
+      --s2: #1c1c1f;
+      --s3: rgba(255, 255, 255, .05);
+      --s4: rgba(255, 255, 255, .10);
+      --s5: rgba(255, 255, 255, .16);
+      --b1: #27272a;
+      --b2: #27272a;
+      --b3: #3f3f46;
+      --b4: rgba(255, 255, 255, .3);
+      --t1: #ffffff;
+      --t2: #e4e4e7;
+      --t3: #9ca3af;
+      --t4: #71717a;
+      --t5: #52525b;
+      --r4: 6px;
+      --r8: 10px;
+      --r12: 10px;
+      --r16: 12px;
+      --r20: 12px;
+      --r24: 14px;
+      background: var(--s1);
+      border-color: var(--b3);
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, .55);
+    }
+
+    #modal .m-t {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -.3px;
+      padding-right: 30px;
+    }
+
+    #modal .m-s {
+      font-size: 12.5px;
+    }
+
+    #modal .fr label {
+      font-family: var(--fm);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--t3);
+      text-transform: lowercase;
+      margin-bottom: 8px;
+    }
+
+    #modal .fr label::first-letter {
+      text-transform: uppercase;
+    }
+
+    #modal .btn {
+      font-size: 12.5px;
+      padding: 9px 16px;
+    }
+
+    #modal .btn-g:hover {
+      background: var(--s4);
+    }
+
+    .m-actions {
+      justify-content: flex-end;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 30px;
+      height: 30px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, .1);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--t1, #fff);
+      transition: background-color .2s ease, transform .15s ease;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 255, 255, .2);
+    }
+
+    .modal-close:active {
+      transform: scale(.92);
+    }
+
+    .modal-close svg {
+      width: 15px;
+      height: 15px;
+      display: block;
+    }
+
+    /* ── CONFIRM ── */
+    #mohiConfirmOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, .7);
+      backdrop-filter: blur(20px) saturate(.6);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s
+    }
+
+    #mohiConfirmOverlay.on {
+      opacity: 1;
+      pointer-events: all
+    }
+
+    #mohiConfirmBox {
+      background: var(--s2);
+      border: 1px solid var(--b2);
+      border-radius: 18px;
+      padding: 28px 28px 22px;
+      width: 320px;
+      max-width: 88vw;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, .6);
+      transform: scale(.92) translateY(10px);
+      transition: transform .25s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    #mohiConfirmOverlay.on #mohiConfirmBox {
+      transform: scale(1) translateY(0)
+    }
+
+    #mohiConfirmIcon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      text-align: center
+    }
+
+    #mohiConfirmMsg {
+      font-size: 13px;
+      color: var(--t2);
+      line-height: 1.55;
+      text-align: center;
+      margin-bottom: 6px
+    }
+
+    #mohiConfirmSub {
+      font-size: 10px;
+      color: var(--t4);
+      font-family: var(--mono);
+      text-align: center;
+      margin-bottom: 22px;
+      letter-spacing: .3px
+    }
+
+    .mohi-confirm-actions {
+      display: flex;
+      gap: 8px
+    }
+
+    #mohiConfirmNo {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 10px;
+      background: var(--s4);
+      border: 1px solid var(--b2);
+      color: var(--t3);
+      font-family: var(--fm);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s
+    }
+
+    #mohiConfirmNo:hover {
+      background: var(--s5);
+      color: var(--t1);
+      border-color: var(--b3)
+    }
+
+    #mohiConfirmYes {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 10px;
+      background: rgba(220, 60, 60, .18);
+      border: 1px solid rgba(220, 60, 60, .35);
+      color: #f87171;
+      font-family: var(--fm);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s
+    }
+
+    #mohiConfirmYes:hover {
+      background: rgba(220, 60, 60, .32);
+      border-color: rgba(220, 60, 60, .6);
+      color: #fca5a5
+    }
+
+    /* ── GOAL DEL MODAL ── */
+    #goalDelModal.on {
+      display: flex !important
+    }
+
+    /* ══ GOAL DETAIL OVERLAY — painel lateral ══ */
+    #goalDetailOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 16000;
+      pointer-events: none;
+      visibility: hidden;
+      transition: visibility .35s step-end;
+    }
+
+    #goalDetailOverlay.open {
+      pointer-events: all;
+      visibility: visible;
+      transition: visibility 0s step-start;
+    }
+
+    #goalDetailBackdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .72);
+      backdrop-filter: blur(22px) saturate(.6);
+      opacity: 0;
+      transition: opacity .28s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    #goalDetailOverlay.open #goalDetailBackdrop {
+      opacity: 1;
+    }
+
+    #goalDetailBox {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(520px, 100vw);
+      background: #0a0a0a;
+      border-left: 1px solid rgba(255, 255, 255, .07);
+      box-shadow: -24px 0 80px rgba(0, 0, 0, .7);
+      overflow: hidden;
+      transform: translateX(100%);
+      transition: transform .35s cubic-bezier(.16, 1, .3, 1);
+      will-change: transform;
+    }
+
+    #goalDetailOverlay.open #goalDetailBox {
+      transform: translateX(0);
+    }
+
+    /* topbar do modal */
+    .gdm-topbar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .gdm-tb-path {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 0 16px;
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--t4);
+    }
+
+    .gdm-tb-sep {
+      color: rgba(255, 255, 255, .15);
+    }
+
+    .gdm-tb-cur {
+      color: var(--t2);
+      font-size: 10px;
+    }
+
+    .gdm-tb-actions {
+      display: flex;
+      align-items: center;
+      border-left: 1px solid rgba(255, 255, 255, .06);
+      height: 100%;
+    }
+
+    .gdm-tb-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 100%;
+      padding: 0 13px;
+      border-right: 1px solid rgba(255, 255, 255, .06);
+      color: rgba(255, 255, 255, .28);
+      cursor: pointer;
+      font-size: 9px;
+      font-family: var(--mono);
+      letter-spacing: .4px;
+      transition: background .12s, color .12s;
+      user-select: none;
+      background: transparent;
+      border-top: none;
+      border-bottom: none;
+      border-left: none;
+      white-space: nowrap;
+    }
+
+    .gdm-tb-btn:last-child {
+      border-right: none;
+    }
+
+    .gdm-tb-btn:hover {
+      background: rgba(255, 255, 255, .04);
+      color: rgba(255, 255, 255, .7);
+    }
+
+    .gdm-tb-btn.danger:hover {
+      background: rgba(200, 60, 60, .08);
+      color: rgba(220, 100, 100, .8);
+    }
+
+    .gdm-tb-btn.close-btn {
+      color: rgba(255, 255, 255, .2);
+    }
+
+    /* hero — faixa de categoria */
+    .gdm-hero {
+      padding: 16px 18px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .gdm-hero-cat {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 9px 2px 7px;
+      border: 1px solid;
+      border-radius: 0;
+      font-family: var(--mono);
+      font-size: 8px;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .gdm-hero-name {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.6px;
+      color: var(--t1);
+      line-height: 1.2;
+      word-break: break-word;
+      margin-bottom: 14px;
+    }
+
+    /* layout em 2 colunas */
+    .gdm-body {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+    }
+
+    .gdm-main {
+      border-right: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .gdm-sidebar {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* células do sidebar (estilo foco-stat-cell) */
+    .gdm-stat {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .gdm-stat-name {
+      font-family: var(--mono);
+      font-size: 7px;
+      color: rgba(255, 255, 255, .22);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .gdm-stat-val {
+      font-family: var(--fm);
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--t1);
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .gdm-stat-sub {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(255, 255, 255, .28);
+      margin-top: 3px;
+      letter-spacing: .2px;
+    }
+
+    /* barra de progresso no sidebar */
+    .gdm-prog-track {
+      height: 2px;
+      background: rgba(255, 255, 255, .06);
+      border-radius: 0;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+
+    .gdm-prog-fill {
+      height: 100%;
+      border-radius: 0;
+      transition: width .5s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    /* seção de passos */
+    .gdm-steps-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .gdm-steps-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, .22);
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+    }
+
+    .gdm-steps-count {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: rgba(255, 255, 255, .28);
+      letter-spacing: .3px;
+    }
+
+    .gdm-steps-list {
+      padding: 0;
+    }
+
+    .gdm-step-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .04);
+      transition: background .12s;
+    }
+
+    .gdm-step-row:last-child {
+      border-bottom: none;
+    }
+
+    .gdm-step-row.done {
+      opacity: .4;
+    }
+
+    .gdm-step-row.locked {
+      opacity: .3;
+    }
+
+    .gdm-step-node {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-right: 10px;
+      transition: all .3s;
+    }
+
+    .gdm-step-text {
+      flex: 1;
+      font-size: 11px;
+      color: var(--t2);
+      line-height: 1.4;
+      word-break: break-word;
+      letter-spacing: -.1px;
+    }
+
+    .gdm-step-text.done {
+      text-decoration: line-through;
+      color: var(--t4);
+    }
+
+    .gdm-step-text.next {
+      color: var(--t1);
+      font-weight: 500;
+    }
+
+    .gdm-step-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 9px;
+      margin-left: 10px;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 0;
+      color: rgba(255, 255, 255, .6);
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .3px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+
+    .gdm-step-btn:hover {
+      background: rgba(255, 255, 255, .12);
+      color: var(--t1);
+    }
+
+    /* empty steps */
+    .gdm-no-steps {
+      padding: 20px 16px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: rgba(255, 255, 255, .14);
+      letter-spacing: .5px;
+    }
+
+    /* all done banner */
+    .gdm-alldone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-top: 1px solid rgba(255, 255, 255, .06);
+      font-family: var(--mono);
+      font-size: 9px;
+      color: #b8e0b8;
+      letter-spacing: .4px;
+    }
+
+    /* prazo tag */
+    .gdm-prazo-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, .08);
+      border-radius: 0;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .3px;
+      color: var(--t4);
+      background: rgba(255, 255, 255, .03);
+    }
+
+    /* ── Background layer ── */
+    #metasBgLayer {
+      position: fixed;
+      top: 0;
+      left: var(--mh-sb);
+      width: calc(100% - var(--mh-sb));
+      height: 100%;
+      background-size: 100% 100%;
+      background-position: center center;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Glass morphism ── */
+    .glass-card {
+      --s2: rgba(255, 255, 255, .04);
+      --s3: rgba(255, 255, 255, .06);
+      --s4: rgba(255, 255, 255, .07);
+      --b1: rgba(255, 255, 255, .08);
+      --b2: rgba(255, 255, 255, .11);
+    }
+
+    .card.glass-card {
+      background: rgba(15, 15, 15, .45) !important;
+      border: 1px solid rgba(255, 255, 255, .13) !important;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .07) !important;
+    }
+
+    .card.glass-card:hover {
+      border-color: rgba(255, 255, 255, .22) !important;
+      background: rgba(20, 20, 20, .5) !important;
+    }
+
+    .glass-card .badge,
+    .glass-card .b-mid {
+      background: rgba(255, 255, 255, .06) !important;
+      border-color: rgba(255, 255, 255, .1) !important;
+    }
+
+    /* ── Dashboard customization panel ── */
+    #dashCustomOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 17000;
+      background: rgba(0, 0, 0, .6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn .2s ease;
+    }
+
+    #dashCustomOverlay.open {
+      display: flex;
+    }
+
+    #dashCustomPanel {
+      background: var(--s1);
+      border: 1px solid var(--b2);
+      border-radius: var(--r20);
+      padding: 24px;
+      width: 420px;
+      max-width: calc(100vw - 32px);
+      max-height: 85vh;
+      overflow: hidden;
+      animation: pageIn .22s ease;
+      position: relative;
+    }
+
+    .dash-custom-section {
+      margin-bottom: 20px;
+    }
+
+    .dash-custom-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .dash-custom-title {
+      font-size: 9px;
+      font-family: var(--mono);
+      color: var(--t4);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .dash-glass-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      border-radius: var(--r8);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      user-select: none;
+    }
+
+    .dash-glass-toggle-row:hover {
+      border-color: var(--b2);
+      background: var(--s3);
+    }
+
+    .dash-glass-toggle-row span {
+      font-size: 11px;
+      color: var(--t2);
+      font-weight: 500;
+    }
+
+    .dash-glass-switch {
+      width: 34px;
+      height: 19px;
+      border-radius: 10px;
+      background: var(--s4);
+      border: 1px solid var(--b2);
+      position: relative;
+      flex-shrink: 0;
+      transition: background .22s, border-color .22s;
+    }
+
+    .dash-glass-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--t4);
+      transition: transform .22s cubic-bezier(.4, 0, .2, 1), background .22s;
+    }
+
+    .dash-glass-toggle-row.active .dash-glass-switch {
+      background: rgba(255, 255, 255, .18);
+      border-color: rgba(255, 255, 255, .28);
+    }
+
+    .dash-glass-toggle-row.active .dash-glass-switch::after {
+      transform: translateX(15px);
+      background: #fff;
+    }
+
+    /* ── Sidebar style picker ── */
+    .dc-sb-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .dc-sb-card {
+      position: relative;
+      padding: 14px 10px 12px;
+      border-radius: var(--r12);
+      background: var(--s2);
+      border: 1px solid var(--b1);
+      cursor: pointer;
+      transition: border-color .18s, background .18s;
+      text-align: center;
+      user-select: none;
+    }
+
+    .dc-sb-card:hover {
+      border-color: var(--b2);
+      background: var(--s3);
+    }
+
+    .dc-sb-card.sel {
+      border-color: rgba(255, 255, 255, .35);
+      background: var(--s3);
+    }
+
+    .dc-sb-card.sel::after {
+      content: '✓';
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 9px;
+      color: var(--t3);
+      font-family: var(--mono);
+    }
+
+    .dc-sb-preview {
+      width: 36px;
+      height: 48px;
+      border-radius: 8px;
+      margin: 0 auto 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dc-sb-preview-default {
+      background: #0d0d0d;
+      border: 1px solid rgba(255, 255, 255, .06);
+    }
+
+    .dc-sb-preview-branco {
+      background: #e8e0d5;
+      border: 1px solid rgba(0, 0, 0, .08);
+    }
+
+    .dc-sb-preview-branco .dc-sb-dot {
+      background: rgba(0, 0, 0, .12);
+    }
+
+    .dc-sb-preview-blackout {
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, .03);
+    }
+
+    .dc-sb-dot {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .12);
+    }
+
+    .dc-sb-dot:nth-child(1) {
+      top: 8px;
+    }
+
+    .dc-sb-dot:nth-child(2) {
+      top: 22px;
+    }
+
+    .dc-sb-dot:nth-child(3) {
+      top: 36px;
+    }
+
+    .dc-sb-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--t2);
+      margin-bottom: 3px;
+      letter-spacing: -.1px;
+    }
+
+    .dc-sb-sub {
+      font-size: 9px;
+      color: var(--t4);
+      font-family: var(--mono);
+      line-height: 1.45;
+    }
+
+    /* Sidebar modo branco */
+    body.sb-branco .mh-sidebar {
+      background: #e8e0d5 !important;
+      border-right-color: rgba(0, 0, 0, .08) !important;
+    }
+
+    
+
+    
+
+    body.sb-branco .mh-nb {
+      color: #888 !important;
+    }
+
+    body.sb-branco .mh-nb:hover {
+      background: rgba(0, 0, 0, .06) !important;
+      color: #222 !important;
+    }
+
+    body.sb-branco .mh-nb.on {
+      background: rgba(0, 0, 0, .1) !important;
+      color: #111 !important;
+      border-color: rgba(0, 0, 0, .12) !important;
+    }
+
+    body.sb-branco .mh-div {
+      background: rgba(0, 0, 0, .08) !important;
+    }
+
+    body.sb-branco .mh-av {
+      background: rgba(0, 0, 0, .08) !important;
+      border-color: rgba(0, 0, 0, .12) !important;
+      color: #333 !important;
+    }
+
+    /* Sidebar modo blackout */
+    body.sb-blackout .mh-sidebar {
+      background: #000 !important;
+      border-right-color: transparent !important;
+      backdrop-filter: none !important;
+    }
+
+    /* ── Botão Visual Metas: target ripple ── */
+    @keyframes metasRipple {
+      0% {
+        box-shadow: 0 0 0 0 rgba(200, 160, 255, .6), 0 0 0 0 rgba(200, 160, 255, .3);
+      }
+
+      60% {
+        box-shadow: 0 0 0 6px rgba(200, 160, 255, 0), 0 0 0 12px rgba(200, 160, 255, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(200, 160, 255, 0), 0 0 0 0 rgba(200, 160, 255, 0);
+      }
+    }
+
+    @keyframes metasDotPulse {
+
+      0%,
+      100% {
+        r: 1.2;
+        opacity: 1;
+      }
+
+      50% {
+        r: 2.2;
+        opacity: .6;
+      }
+    }
+
+    .btn-metas-visual {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      background: transparent;
+      border: 1px solid var(--b2);
+      color: var(--t3);
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+
+    .btn-metas-visual:hover {
+      border-color: rgba(200, 160, 255, .45);
+      color: rgba(200, 160, 255, .9);
+      animation: metasRipple .65s ease-out;
+    }
+
+    .btn-metas-visual:hover .metas-target-svg circle:last-child {
+      animation: metasDotPulse .45s ease-in-out forwards;
+    }
+
+    .no-anim,
+    .no-anim #goalDetailBox,
+    .no-anim #goalDetailBackdrop {
+      transition: none !important;
+    }
+
+    @keyframes gdmFadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── MAPA MENTAL: seleção em retângulo (estilo Windows) ── */
+    #mmSelectBox {
+      position: absolute;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+      border: 1px solid rgba(64, 140, 255, .9);
+      background: rgba(64, 140, 255, .16);
+      border-radius: 2px;
+    }
+
+    .mm-node-dim {
+      color: #a3a3a3 !important;
+      transition: color .12s ease
+    }
+      /* ══════════ TOPBAR (embutida nesta página) ══════════ */
+    @keyframes mhTopbarSlideDown {
+      from { transform: translate3d(0, -100%, 0); opacity: 0; }
+      to { transform: translate3d(0, 0, 0); opacity: 1; }
+    }
+
+    .topbar {
+      animation: mhTopbarSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+      transition: background 0.5s ease, border-bottom-color 0.5s ease;
+      background: rgba(15, 15, 15, .45) !important;
+      border: none !important;
+      border-bottom: 1px solid rgba(255, 255, 255, .13) !important;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .07) !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border-radius: 0 !important;
+      clip-path: none !important;
+      margin: 0 !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      height: 52px !important;
+      padding: 0 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 16px !important;
+      overflow: visible !important;
+      left: 0 !important;
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 52 !important;
+    }
+
+    .tb-path {
+      background: transparent !important;
+      border: none !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      position: static !important;
+      top: auto !important;
+      left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-family: 'DM Mono', monospace !important;
+      font-size: 12px !important;
+      letter-spacing: .2px !important;
+    }
+
+    .tb-root {
+      color: #888 !important;
+      font-weight: 500 !important;
+    }
+
+    .tb-sep {
+      color: rgba(255, 255, 255, .22) !important;
+    }
+
+    .tb-cur {
+      color: #f0f0f0 !important;
+    }
+
+    .tb-r {
+      background: transparent !important;
+      border-radius: 0 !important;
+      height: auto !important;
+      width: auto !important;
+      flex: 0 0 auto !important;
+      overflow: visible !important;
+      white-space: nowrap !important;
+      padding: 0 !important;
+      margin-left: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+    }
+
+    </style>
+  <script>// Body opacity will be faded in after data load to prevent flashes of unstyled content</script>
+</head>
+
+<body>
+
+  <div id="metasBgLayer"></div>
+
+  <div class="app">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="tb-path">
+        <span class="tb-root">Minsq</span>
+        <span class="tb-sep">/</span>
+        <span class="tb-cur">Metas de Vida</span>
+      </div>
+      <div class="tb-r"></div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+      <!-- PLANOS DE AÇÃO (cards de metas simples, tabela plans_action) — CARD PRINCIPAL -->
+      <div class="card stg" id="mindmapCard" data-glass-label="Mapa de ação"
+        style="margin-bottom:16px;padding:0;overflow:hidden">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:0.5px;">Metas</div>
+          <button onclick="catNewCard()" class="sh-add-btn" title="Nova meta" id="catNewBtn" data-mh-help="Nova Meta: Clique aqui para criar um novo grande objetivo de vida.">+</button>
+        </div>
+        <div id="goalsGridInner" data-mh-help="Quadro de Metas: Aqui ficam suas metas de vida. Clique em qualquer uma para criar e riscar pequenos passos a cada dia."></div>
+      </div>
+
+      <!-- Bottom row: Categorias (simplificado) + Controle de Vícios -->
+      <div style="display:flex;align-items:center;gap:10px;margin-top:20px;margin-bottom:12px">
+        <span
+          style="font-size:9px;font-family:var(--mono);color:var(--t4);letter-spacing:1px;text-transform:uppercase">Ferramentas</span>
+        <div style="flex:1;height:1px;background:var(--b1)"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0;align-items:start">
+
+        <!-- MAPA DE AÇÃO (editor de mapa mental, tabela mindmaps) -->
+        <div class="card stg" id="goalsGrid" data-glass-label="Metas" style="padding:0;overflow:hidden;height:auto">
+          <div
+            style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:0.5px;">Plano de Ação</div>
+            <button onclick="mmNewMap()" class="sh-add-btn" title="Novo plano" id="mmNewBtn" data-mh-help="Novo Plano: Crie mapas mentais para planos complexos. É aqui que você se torna grande com um bom plano.">+</button>
+          </div>
+          <!-- grid preenchido via JS -->
+          <div id="mmTableWrap" style="position:relative" data-mh-help="Planos de Ação: Seus planos visuais ficam organizados aqui."></div>
+        </div>
+
+        <!-- CONTROLE DE VÍCIOS -->
+        <div class="card stg" style="padding:0;overflow:hidden;height:auto" id="addictionStreakCard"
+          data-glass-label="Controle de vício">
+          <div
+            style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.85);letter-spacing:0.5px;">Controle de Vícios</div>
+            <button onclick="openAddictionModal()" class="sh-add-btn" title="Registrar" id="addVicioBtn" data-mh-help="Registrar Hábito: Adicione um hábito ruim que você quer eliminar da sua vida.">+</button>
+          </div>
+          <div id="addictionList" style="position:relative" data-mh-help="Controle de Vícios: Acompanhe seus dias sem recaídas. O Minsq conta o seu progresso automaticamente."></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ GOAL DETAIL OVERLAY (painel lateral) ═══ -->
+  <div id="goalDetailOverlay">
+    <div id="goalDetailBackdrop" onclick="closeGoalModal()"></div>
+    <div id="goalDetailBox"></div>
+  </div>
+
+  <!-- ═══ PREVIEW DO PLANO DE AÇÃO (modal com fundo desfocado) ═══ -->
+  <div id="mmPreviewOverlay" class="mm-preview-overlay">
+    <div class="mm-preview-backdrop" onclick="mmClosePlanPreview()"></div>
+    <div class="mm-preview-box">
+      <div id="mmPreviewPhoto" class="mm-preview-photo no-photo">
+        <div class="mm-preview-photo-placeholder">
+          <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M2.5 6a1 1 0 0 1 1-1h2l.9-1.5a1 1 0 0 1 .85-.5h4.5a1 1 0 0 1 .85.5L13.5 5h2a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V6z"
+              stroke="rgba(255,255,255,.2)" stroke-width="1.3" stroke-linejoin="round" />
+            <circle cx="10" cy="10.3" r="2.6" stroke="rgba(255,255,255,.2)" stroke-width="1.3" />
+          </svg>
+          <span>sem foto</span>
+        </div>
+        <button class="mm-preview-close" onclick="mmClosePlanPreview()"><svg width="12" height="12" viewBox="0 0 16 16"
+            fill="none">
+            <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg></button>
+      </div>
+      <div class="mm-preview-body">
+        <input type="text" id="mmPreviewTitle" class="mm-preview-title-input" maxlength="28"
+          onblur="mmPreviewSaveTitle()" onkeydown="if(event.key==='Enter') this.blur()">
+        <div class="mm-preview-desc-label-row">
+          <div class="mm-preview-desc-label">Descrição</div>
+          <div class="mm-preview-align-toggle">
+            <button id="mmPreviewAlignLeftBtn" class="mm-align-btn" onclick="mmPreviewSetAlign('left')">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path d="M2 4h12M2 8h8M2 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+              </svg>
+            </button>
+            <button id="mmPreviewAlignCenterBtn" class="mm-align-btn active" onclick="mmPreviewSetAlign('center')">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path d="M2 4h12M4 8h8M3 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div id="mmPreviewDescWrap" class="mm-preview-desc-box">
+          <textarea id="mmPreviewDescBox" class="mm-preview-desc-input" placeholder="Adicionar descrição…"
+            onblur="mmPreviewSaveDesc()"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL PRINCIPAL (Central) ═══ -->
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <div class="csel-focus-overlay" id="cselFocusOverlay"></div>
+      <button class="modal-close" type="button" onclick="closeModal()" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="m-t" id="mT">Adicionar</div>
+      <div class="m-s" id="mS">Registre algo</div>
+      <div id="mB"></div>
+      <div class="auth-err" id="modalErr" style="text-align:left;margin-top:6px"></div>
+      <div class="m-actions">
+        <button class="btn btn-g" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-p" id="mSave">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL MAPA MENTAL (fullscreen) ═══ -->
+  <div id="mmOverlay"
+    style="display:none;position:fixed;inset:0;z-index:16000;background:var(--bg);animation:fadeIn .18s ease">
+
+    <!-- Floating Back Button (Top Left) -->
+    <div style="position:absolute;top:16px;left:16px;z-index:16002;display:flex;align-items:center;gap:10px">
+      <button onclick="mmCloseModal()"
+        style="display:flex;align-items:center;gap:6px;height:36px;padding:0 16px;background:rgba(7,7,7,.6);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.06);border-radius:18px;color:rgba(255,255,255,.5);cursor:pointer;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.4px;transition:all .15s;white-space:nowrap"
+        onmouseover="this.style.background='rgba(7,7,7,.8)';this.style.color='rgba(255,255,255,.9)'"
+        onmouseout="this.style.background='rgba(7,7,7,.6)';this.style.color='rgba(255,255,255,.5)'">
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        METAS
+      </button>
+      <div id="mmModalTitle" style="display:none">Mapa</div>
+    </div>
+
+    <!-- Floating Actions Stack (Bottom Right) -->
+    <div
+      style="position:absolute;bottom:16px;right:16px;z-index:16002;display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+
+      <!-- Node Actions (only visible when node is selected) -->
+      <div id="mmNodeActions" style="display:none;flex-direction:column;gap:8px">
+        <!-- apagar -->
+        <button onclick="mmDeleteNode()"
+          style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:rgba(220,80,80,.1);backdrop-filter:blur(10px);border:1px solid rgba(220,80,80,.2);border-radius:50%;color:rgba(220,80,80,.8);cursor:pointer;transition:all .15s"
+          onmouseover="this.style.background='rgba(220,80,80,.2)';this.style.color='rgba(220,80,80,1)'"
+          onmouseout="this.style.background='rgba(220,80,80,.1)';this.style.color='rgba(220,80,80,.8)'">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+            <path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5L11 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- centrar -->
+      <button onclick="mmCenterView()"
+        style="display:flex;align-items:center;justify-content:center;width:48px;height:48px;background:rgba(7,7,7,.8);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:50%;color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;box-shadow:0 4px 12px rgba(0,0,0,.2)"
+        onmouseover="this.style.background='rgba(25,25,25,1)';this.style.color='rgba(255,255,255,1)'"
+        onmouseout="this.style.background='rgba(7,7,7,.8)';this.style.color='rgba(255,255,255,.7)'">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4" />
+          <path d="M8 1v2M8 13v2M1 8h2M13 8h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Hint Text (Bottom Center) -->
+    <div
+      style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);z-index:16001;pointer-events:none;font-family:'Exo 2',sans-serif;font-size:11px;color:rgba(0,0,0,.35);letter-spacing:0;background:transparent;text-align:center">
+      <span style="font-weight:600">Tab</span> criar filho <span style="margin:0 6px;opacity:0.3">•</span> <span
+        style="font-weight:600">Enter</span> criar irmão
+    </div>
+
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden">
+      <div id="mmWrap"
+        style="position:relative;flex:1;overflow:hidden;cursor:default;background:#ffffff;touch-action:none">
+        <svg id="mmSvg" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none"></svg>
+        <div id="mmStage"
+          style="position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CONFIRM DIALOG ═══ -->
+  <div id="mohiConfirmOverlay">
+    <div id="mohiConfirmBox">
+      <div id="mohiConfirmIcon">⚠️</div>
+      <div id="mohiConfirmMsg">Você tem certeza dessa ação?</div>
+      <div id="mohiConfirmSub">ESSA AÇÃO NÃO PODE SER DESFEITA</div>
+      <div class="mohi-confirm-actions">
+        <button id="mohiConfirmNo" onclick="mohiConfirmResolve(false)">✕ Não</button>
+        <button id="mohiConfirmYes" onclick="mohiConfirmResolve(true)">Sim</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VISUAL CUSTOMIZER OVERLAY ═══ -->
+  <div id="dashCustomOverlay" onclick="if(event.target===this)closeDashCustom()">
+    <div id="dashCustomPanel">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--t1);letter-spacing:-.3px">Personalizar Visual</div>
+          <div style="font-size:10px;font-family:var(--mono);color:var(--t4);margin-top:2px">imagem de fundo, vidro e
+            sidebar</div>
+        </div>
+        <button onclick="closeDashCustom()"
+          style="width:28px;height:28px;background:var(--s3);border:1px solid var(--b2);border-radius:8px;color:var(--t3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s"
+          onmouseover="this.style.borderColor='var(--b4)';this.style.color='var(--t1)'"
+          onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--t3)'">✕</button>
+      </div>
+
+      <!-- Seção: Imagem de fundo -->
+      <div class="dash-custom-section">
+        <div class="dash-custom-title">⬚ Imagem de fundo</div>
+        <div id="dashBgCard" onclick="document.getElementById('dashBgFileInput').click()"
+          style="position:relative;height:160px;border-radius:var(--r12);overflow:hidden;cursor:pointer;border:1px solid var(--b1);background:var(--s2);transition:border-color .2s"
+          onmouseover="this.style.borderColor='var(--b2)'" onmouseout="this.style.borderColor='var(--b1)'">
+          <div id="dashBgEmpty"
+            style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:18px;text-align:center">
+            <div style="font-size:22px">🖼️</div>
+            <div style="font-size:10px;font-weight:500;color:var(--t2)">Clique para fazer upload</div>
+            <div style="font-size:9px;font-family:var(--mono);color:var(--t4)">PNG · JPG · WEBP · GIF</div>
+          </div>
+          <div id="dashBgCardImg"
+            style="display:none;position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat">
+          </div>
+          <button id="dashBgRemoveBtn" onclick="event.stopPropagation();dashBgRemove()"
+            style="display:none;position:absolute;top:7px;right:7px;width:22px;height:22px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.15);border-radius:5px;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;align-items:center;justify-content:center;padding:0;line-height:1;transition:all .15s;z-index:2"
+            onmouseover="this.style.color='#fff';this.style.background='rgba(0,0,0,.85)'"
+            onmouseout="this.style.color='rgba(255,255,255,.7)';this.style.background='rgba(0,0,0,.65)'">✕</button>
+          <input type="file" id="dashBgFileInput" accept="image/png,image/jpeg,image/webp,image/gif"
+            style="display:none" onchange="dashBgLoad(this)">
+        </div>
+        <div style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <div style="font-size:9px;font-family:var(--mono);color:var(--t4);letter-spacing:.5px">OPACIDADE DA IMAGEM
+            </div>
+            <div id="dashBgOpacityLabel" style="font-size:9px;font-family:var(--mono);color:var(--t3)">55%</div>
+          </div>
+          <input type="range" id="dashBgOpacity" min="10" max="100" value="55" oninput="dashBgUpdateOpacity(this.value)"
+            style="width:100%;accent-color:rgba(255,255,255,.5);cursor:pointer">
+        </div>
+      </div>
+
+      <div style="height:1px;background:var(--b1);margin-bottom:18px"></div>
+
+      <!-- Seção: Estilo da sidebar -->
+      <div class="dash-custom-section">
+        <div class="dash-custom-title">◧ Estilo da sidebar</div>
+        <div class="dc-sb-grid" id="dcSbGrid">
+          <div class="dc-sb-card sel" data-val="default" onclick="dcSelectSidebar(this)">
+            <div class="dc-sb-preview dc-sb-preview-default">
+              <div class="dc-sb-dot"></div>
+              <div class="dc-sb-dot"></div>
+              <div class="dc-sb-dot"></div>
+            </div>
+            <div class="dc-sb-label">Padrão</div>
+            <div class="dc-sb-sub">Escura sólida, sem alterações</div>
+          </div>
+          <div class="dc-sb-card" data-val="branco" onclick="dcSelectSidebar(this)">
+            <div class="dc-sb-preview dc-sb-preview-branco">
+              <div class="dc-sb-dot"></div>
+              <div class="dc-sb-dot"></div>
+              <div class="dc-sb-dot"></div>
+            </div>
+            <div class="dc-sb-label">Branco</div>
+            <div class="dc-sb-sub">Tom claro suave, minimalista</div>
+          </div>
+          <div class="dc-sb-card" data-val="blackout" onclick="dcSelectSidebar(this)">
+            <div class="dc-sb-preview dc-sb-preview-blackout">
+              <div class="dc-sb-dot" style="background:rgba(255,255,255,.06)"></div>
+              <div class="dc-sb-dot" style="background:rgba(255,255,255,.06)"></div>
+              <div class="dc-sb-dot" style="background:rgba(255,255,255,.06)"></div>
+            </div>
+            <div class="dc-sb-label">Blackout</div>
+            <div class="dc-sb-sub">Preto puro, sem bordas</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:1px;background:var(--b1);margin-bottom:18px"></div>
+
+      <!-- Seção: Vidro fosco por card -->
+      <div class="dash-custom-section">
+        <div class="dash-custom-title">◈ Efeito vidro fosco — selecionar cards</div>
+        <div id="dashGlassToggles">
+          <div class="dash-glass-toggle-row" id="gtrow-goalsCard" onclick="dashGlassToggle('goalsCard',this)">
+            <span>Card — Metas</span>
+            <div class="dash-glass-switch"></div>
+          </div>
+          <div class="dash-glass-toggle-row" id="gtrow-mindmapCard" onclick="dashGlassToggle('mindmapCard',this)">
+            <span>Mapa de Ação</span>
+            <div class="dash-glass-switch"></div>
+          </div>
+          <div class="dash-glass-toggle-row" id="gtrow-addictionStreakCard"
+            onclick="dashGlassToggle('addictionStreakCard',this)">
+            <span>Controle de Vícios</span>
+            <div class="dash-glass-switch"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button onclick="dashGlassAll(true)"
+            style="flex:1;padding:7px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r8);color:var(--t3);font-size:9px;font-family:var(--mono);cursor:pointer;transition:all .15s"
+            onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--t3)'">◈ Ativar todos</button>
+          <button onclick="dashGlassAll(false)"
+            style="flex:1;padding:7px;background:var(--s2);border:1px solid var(--b1);border-radius:var(--r8);color:var(--t3);font-size:9px;font-family:var(--mono);cursor:pointer;transition:all .15s"
+            onmouseover="this.style.color='var(--t1)'" onmouseout="this.style.color='var(--t3)'">○ Desativar
+            todos</button>
+        </div>
+      </div>
+
+      <div style="height:1px;background:var(--b1);margin:20px 0"></div>
+
+      <!-- Seção: Fonte da Página -->
+      <div class="dash-custom-section">
+        <div class="dash-custom-title">🗚 Fonte da Página</div>
+        <div id="dashFontGrid" class="dc-font-grid"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ GOAL DELETE MODAL ═══ -->
+  <div id="goalDelModal" onclick="if(event.target===this)_goalDelCancel()"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99995;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+    <div
+      style="background:var(--s2);border:1px solid var(--b3);border-radius:var(--r16);padding:24px 20px 18px;width:280px;text-align:center;animation:fadeUp .15s ease">
+      <div style="font-size:22px;margin-bottom:8px">🗑️</div>
+      <div style="font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px">Apagar meta?</div>
+      <div style="font-size:11px;color:var(--t3);font-family:var(--mono);margin-bottom:18px">Esta ação não pode ser
+        desfeita.</div>
+      <div style="display:flex;gap:8px">
+        <button onclick="_goalDelCancel()"
+          style="flex:1;padding:8px;border-radius:var(--r8);background:var(--b1);border:1px solid var(--b2);color:var(--t2);font-size:11px;cursor:pointer">Cancelar</button>
+        <button id="gdmConfirmBtn" onclick="_goalDelConfirm()"
+          style="flex:1;padding:8px;border-radius:var(--r8);background:rgba(180,40,40,.25);border:1px solid rgba(200,60,60,.35);color:#e88;font-size:11px;cursor:pointer">Apagar</button>
+      </div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--t4);text-align:center;margin-top:10px">ESC para
+        cancelar · Enter para apagar</div>
+    </div>
+  </div>
+  <script>
+    // ══════════════════════════════════════
+    // CORE UTILITIES
+    // ══════════════════════════════════════
+    function setEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+    function escHtml(s) { if (!s) return ''; return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    function toast(msg, tipo = 'ok') {
+      const el = document.createElement('div');
+      el.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:9999;padding:10px 16px;border-radius:8px;font-size:12px;font-family:"Exo 2", sans-serif;border:1px solid;animation:fadeUp .3s ease;background:${tipo === 'ok' ? 'var(--s4)' : 'var(--s3)'};color:${tipo === 'ok' ? 'var(--t1)' : 'var(--warn)'};border-color:${tipo === 'ok' ? 'var(--b3)' : 'var(--b2)'};`;
+      el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 3000);
+    }
+
+    // ══════════════════════════════════════
+    // MODAL PRINCIPAL (Central)
+    // ══════════════════════════════════════
+    let _modalResolve = null;
+    window.closeModal = function () {
+      document.getElementById('modal').classList.remove('on');
+      if (_modalResolve) {
+        _modalResolve(null); // Retorna nulo se cancelar
+        _modalResolve = null;
+      }
+    };
+    window.openModal = function (title, subtitle, bodyHtml, btnText) {
+      document.getElementById('mT').textContent = title;
+      document.getElementById('mS').textContent = subtitle;
+      document.getElementById('mB').innerHTML = bodyHtml;
+      const mSave = document.getElementById('mSave');
+      if (mSave) { mSave.textContent = btnText || 'Salvar'; mSave.disabled = false; }
+      document.getElementById('modalErr').textContent = '';
+      document.getElementById('modal').classList.add('on');
+    };
+
+    // ══════════════════════════════════════
+    // STORAGE + STATE
+
+    // ══════════════════════════════════════
+
+    // ══════════════════════════════════════
+    // MOHI CONFIRM
+    // ══════════════════════════════════════
+    (function () {
+      var _resolve = null;
+      window.mohiConfirm = function (msg, sub, btnYes, btnNo) {
+        return new Promise(function (resolve) {
+          _resolve = resolve;
+          var overlay = document.getElementById('mohiConfirmOverlay');
+          var msgEl = document.getElementById('mohiConfirmMsg');
+          var subEl = document.getElementById('mohiConfirmSub');
+          var yesEl = document.getElementById('mohiConfirmYes');
+          var noEl = document.getElementById('mohiConfirmNo');
+          if (msgEl) msgEl.textContent = msg || 'Você tem certeza?';
+          if (subEl) subEl.textContent = sub || 'ESSA AÇÃO NÃO PODE SER DESFEITA';
+          if (yesEl) yesEl.textContent = btnYes || 'Sim';
+          if (noEl) noEl.textContent = btnNo || '✕ Não';
+          if (overlay) overlay.classList.add('on');
+        });
+      };
+      window.mohiConfirmResolve = function (val) {
+        var overlay = document.getElementById('mohiConfirmOverlay');
+        if (overlay) overlay.classList.remove('on');
+        if (_resolve) { _resolve(val); _resolve = null; }
+      };
+      document.addEventListener('DOMContentLoaded', function () {
+        var overlay = document.getElementById('mohiConfirmOverlay');
+        if (overlay) overlay.addEventListener('click', function (e) { if (e.target === overlay) mohiConfirmResolve(false); });
+      });
+    })();
+
+    // ══════════════════════════════════════
+    // GOAL DELETE MODAL
+    // ══════════════════════════════════════
+    (function () {
+      var style = document.createElement('style');
+      style.textContent = '#goalDelModal.on{display:flex!important}';
+      document.head.appendChild(style);
+      document.addEventListener('keydown', function (e) {
+        var kModal = document.getElementById('dashKModal');
+        if (kModal && kModal.classList.contains('open')) return;
+
+        var confirmOverlay = document.getElementById('mohiConfirmOverlay');
+        if (confirmOverlay && confirmOverlay.classList.contains('on')) {
+          if (e.key === 'Escape') { e.preventDefault(); mohiConfirmResolve(false); return; }
+          if (e.key === 'Enter') { e.preventDefault(); mohiConfirmResolve(true); return; }
+        }
+
+        // Modal Central
+        var mainModal = document.getElementById('modal');
+        if (mainModal && mainModal.classList.contains('on')) {
+          if (e.key === 'Escape') { e.preventDefault(); closeModal(); return; }
+          if (e.key === 'Enter' && !e.shiftKey) {
+            const active = document.activeElement;
+            if (active && active.tagName === 'TEXTAREA') return;
+            e.preventDefault();
+            document.getElementById('mSave')?.click();
+            return;
+          }
+        }
+
+        // Fecha painel lateral da meta com ESC
+        var panel = document.getElementById('goalDetailOverlay');
+        if (panel && panel.classList.contains('open')) {
+          if (e.key === 'Escape') { e.preventDefault(); closeGoalModal(); return; }
+        }
+        var modal = document.getElementById('goalDelModal');
+        if (!modal || !modal.classList.contains('on')) return;
+        if (e.key === 'Escape') { e.preventDefault(); _goalDelCancel(); }
+        if (e.key === 'Enter') { e.preventDefault(); _goalDelConfirm(); }
+      });
+    })();
+
+    // ══════════════════════════════════════
+    // RENDER GOALS
+    // ══════════════════════════════════════
+    function renderGoals() {
+      rebuildGoalsGrid();
+    }
+
+    function openGoalModal(goalId) {
+      const g = S.goals.find(x => x.id === goalId); if (!g) return;
+      const pct = g.progresso || 0; const passos = g.passos || [];
+      const catMeta = {
+        conhecimento: { label: 'Conhecimento', icon: '◈', accent: 'rgba(140,180,255,.75)', glow: 'rgba(140,180,255,.18)', accentSolid: '#8cb4ff' },
+        financeiro: { label: 'Financeiro', icon: '◇', accent: 'rgba(160,230,160,.75)', glow: 'rgba(160,230,160,.18)', accentSolid: '#a0e6a0' },
+        saude: { label: 'Saúde & Vida', icon: '◉', accent: 'rgba(255,160,155,.75)', glow: 'rgba(255,160,155,.18)', accentSolid: '#ffa09b' },
+        carreira: { label: 'Carreira', icon: '◆', accent: 'rgba(255,210,120,.75)', glow: 'rgba(255,210,120,.18)', accentSolid: '#ffd278' },
+        disciplina: { label: 'Disciplina', icon: '▲', accent: 'rgba(200,160,255,.75)', glow: 'rgba(200,160,255,.18)', accentSolid: '#c8a0ff' },
+        relacionamentos: { label: 'Relacionamentos', icon: '◐', accent: 'rgba(255,190,140,.75)', glow: 'rgba(255,190,140,.18)', accentSolid: '#ffbe8c' },
+      };
+      const cat = catMeta[g.categoria] || { label: g.categoria, icon: '◦', accent: 'rgba(255,255,255,.4)', glow: 'rgba(255,255,255,.06)', accentSolid: '#888' };
+
+      // prazo
+      let prazoDias = null; let prazoTxt = '--'; let prazoCor = 'rgba(255,255,255,.22)';
+      if (g.prazo) {
+        prazoDias = Math.ceil((new Date(g.prazo) - new Date()) / 86400000);
+        prazoTxt = prazoDias < 0 ? `${-prazoDias}d atrasado` : prazoDias === 0 ? 'hoje' : prazoDias === 1 ? 'amanhã' : `${prazoDias}d`;
+        prazoCor = prazoDias < 0 ? '#e08080' : prazoDias <= 7 ? 'var(--warn)' : 'rgba(255,255,255,.45)';
+      }
+
+      // passos
+      const feitos = passos.filter(p => p.concluido).length;
+      const allDone = passos.length > 0 && feitos === passos.length;
+      const ringCol = pct >= 100 ? '#b8e0b8' : cat.accentSolid;
+      const r = 34, circ = 2 * Math.PI * r, dashOff = circ * (1 - pct / 100);
+
+      // steps HTML — estilo foco-routine-card (células com borda)
+      let stepsListHTML = '<div class="gdm-no-steps">sem etapas definidas</div>';
+      if (passos.length) {
+        stepsListHTML = passos.map((p, i) => {
+          const done = p.concluido;
+          const isNext = !done && passos.slice(0, i).every(x => x.concluido);
+          const isLocked = !done && !isNext;
+          const nodeColor = done ? 'rgba(184,224,184,.35)' : isNext ? cat.accent : 'rgba(255,255,255,.1)';
+          const nodeBg = done ? 'rgba(184,224,184,.08)' : isNext ? cat.glow : 'transparent';
+          const nodeIcon = done
+            ? `<svg width="7" height="7" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#b8e0b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+            : isNext
+              ? `<span style="width:4px;height:4px;border-radius:50%;background:${cat.accentSolid};display:block;box-shadow:0 0 6px ${cat.accentSolid}"></span>`
+              : `<span style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.2);display:block"></span>`;
+          const cls = `gdm-step-row${done ? ' done' : isLocked ? ' locked' : ''}`;
+          const btnHTML = isNext
+            ? `<button class="gdm-step-btn" onclick="goalStepDone('${g.id}',${i},this)"><svg width="7" height="7" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>feito</button>`
+            : '';
+          return `<div class="${cls}">
+        <div class="gdm-step-node" style="background:${nodeBg};border-color:${nodeColor}">${nodeIcon}</div>
+        <span class="gdm-step-text${done ? ' done' : isNext ? ' next' : ''}">${escHtml(p.texto)}</span>
+        ${btnHTML}
+      </div>`;
+        }).join('')
+          + (allDone ? '<div class="gdm-alldone"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#b8e0b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>todas as etapas concluídas</div>' : '');
+      }
+
+      const content = `
+<div class="gdm-topbar">
+  <div class="gdm-tb-path">
+    <span style="color:rgba(255,255,255,.3)">metas</span>
+    <span class="gdm-tb-sep">/</span>
+    <span class="gdm-tb-cur">${escHtml(g.nome.slice(0, 28) + (g.nome.length > 28 ? '...' : ''))}</span>
+  </div>
+  <div class="gdm-tb-actions">
+    <button class="gdm-tb-btn danger" onclick="solicitarDeleteGoal('${g.id}')">
+      <svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M2 3.5h10M5 3.5V2.5h4v1M5.5 6v4M8.5 6v4M3 3.5l1 8h6l1-8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      apagar
+    </button>
+    <button class="gdm-tb-btn close-btn" onclick="closeGoalModal()">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M9.5 2.5l-7 7M2.5 2.5l7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="gdm-hero">
+  <div class="gdm-hero-cat" style="color:${cat.accentSolid};border-color:${cat.accent.replace('.75', '.2')};background:${cat.glow}">
+    <span>${cat.icon}</span>
+    <span>${cat.label.toUpperCase()}</span>
+  </div>
+  <div class="gdm-hero-name">${escHtml(g.nome)}</div>
+</div>
+
+<div class="gdm-body">
+  <div class="gdm-main">
+    <div class="gdm-steps-header">
+      <span class="gdm-steps-label">Etapas</span>
+      <span class="gdm-steps-count" id="passo-count-${g.id}" style="color:${allDone ? '#b8e0b8' : 'rgba(255,255,255,.28)'}">${feitos}/${passos.length}</span>
+    </div>
+    <div class="gdm-steps-list" id="steps-block-${g.id}">
+      <div id="steps-list-${g.id}">${stepsListHTML}</div>
+    </div>
+  </div>
+
+  <div class="gdm-sidebar">
+    <div class="gdm-stat">
+      <div class="gdm-stat-name">Progresso</div>
+      <div style="position:relative;width:80px;height:80px;margin:4px 0 6px">
+        <svg width="80" height="80" viewBox="0 0 80 80" style="transform:rotate(-90deg);display:block">
+          <circle cx="40" cy="40" r="${r}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="4"/>
+          <circle data-ring-arc cx="40" cy="40" r="${r}" fill="none" stroke="${ringCol}" stroke-width="4" stroke-linecap="square" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dashOff.toFixed(1)}" style="transition:stroke-dashoffset .6s cubic-bezier(.16,1,.3,1)"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <span data-ring-num style="font-size:16px;font-weight:700;color:var(--t1);font-family:var(--mono);letter-spacing:-1px;line-height:1">${pct}</span>
+          <span style="font-size:7px;font-family:var(--mono);color:var(--t4);letter-spacing:.4px">%</span>
+        </div>
+      </div>
+      <div class="gdm-prog-track">
+        <div data-prog-fill class="gdm-prog-fill" style="width:${pct}%;background:${ringCol}"></div>
+      </div>
+      <div class="gdm-stat-sub" data-prog-label style="margin-top:6px;color:${pct >= 100 ? '#b8e0b8' : 'rgba(255,255,255,.28)'}">${pct >= 100 ? 'concluída' : 'em andamento'}</div>
+    </div>
+
+    <div class="gdm-stat">
+      <div class="gdm-stat-name">Prazo</div>
+      <div class="gdm-stat-val" style="font-size:16px;color:${prazoCor}">${prazoTxt}</div>
+      ${g.prazo ? `<div class="gdm-stat-sub">${new Date(g.prazo + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}</div>` : '<div class="gdm-stat-sub">sem prazo</div>'}
+    </div>
+  </div>
+</div>
+`;
+      const detailBox = document.getElementById('goalDetailBox');
+      if (detailBox) detailBox.innerHTML = content;
+      document.getElementById('goalDetailOverlay').classList.add('open');
+    }
+
+    function closeGoalModal() {
+      const panel = document.getElementById('goalDetailOverlay');
+      if (panel) panel.classList.remove('open');
+    }
+
+    async function goalStepDone(goalId, stepIdx, btn) {
+      const g = S.goals.find(x => x.id === goalId); if (!g || !g.passos || !g.passos[stepIdx]) return;
+      if (g.passos[stepIdx].concluido) return;
+      g.passos[stepIdx].concluido = true;
+      const feitos = g.passos.filter(p => p.concluido).length;
+      const prevPct = g.progresso || 0;
+      g.progresso = Math.round(feitos / g.passos.length * 100);
+
+      try {
+        const concluida = g.progresso >= 100;
+        await window.api.updateGoal(g.id, {
+          progresso: g.progresso,
+          concluida,
+          passos_json: g.passos
+        });
+        if (concluida) {
+          await window.api.completeGoal(g.id);
+        }
+      } catch (e) {
+        console.error("Erro ao marcar etapa como concluída:", e);
+        if (typeof toast === 'function') toast("Erro ao salvar progresso no banco.", "erro");
+        g.passos[stepIdx].concluido = false;
+        g.progresso = prevPct;
+        return;
+      }
+
+      const catMeta2 = { conhecimento: { accent: 'rgba(140,180,255,.75)', glow: 'rgba(140,180,255,.18)', accentSolid: '#8cb4ff' }, financeiro: { accent: 'rgba(160,230,160,.75)', glow: 'rgba(160,230,160,.18)', accentSolid: '#a0e6a0' }, saude: { accent: 'rgba(255,160,155,.75)', glow: 'rgba(255,160,155,.18)', accentSolid: '#ffa09b' }, carreira: { accent: 'rgba(255,210,120,.75)', glow: 'rgba(255,210,120,.18)', accentSolid: '#ffd278' }, disciplina: { accent: 'rgba(200,160,255,.75)', glow: 'rgba(200,160,255,.18)', accentSolid: '#c8a0ff' }, relacionamentos: { accent: 'rgba(255,190,140,.75)', glow: 'rgba(255,190,140,.18)', accentSolid: '#ffbe8c' } };
+      const cat2 = catMeta2[g.categoria] || { accent: 'rgba(255,255,255,.4)', glow: 'rgba(255,255,255,.06)', accentSolid: '#888' };
+      const allDone = feitos === g.passos.length;
+      const listEl = document.getElementById('steps-list-' + goalId);
+      if (listEl) {
+        const stepItems = g.passos.map((p, i) => {
+          const done = p.concluido;
+          const isNext = !done && g.passos.slice(0, i).every(x => x.concluido);
+          const isLocked = !done && !isNext;
+          const nodeColor = done ? 'rgba(184,224,184,.35)' : isNext ? cat2.accent : 'rgba(255,255,255,.1)';
+          const nodeBg = done ? 'rgba(184,224,184,.08)' : isNext ? cat2.glow : 'transparent';
+          const nodeIcon = done
+            ? `<svg width="7" height="7" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#b8e0b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+            : isNext
+              ? `<span style="width:4px;height:4px;border-radius:50%;background:${cat2.accentSolid};display:block;box-shadow:0 0 6px ${cat2.accentSolid}"></span>`
+              : `<span style="width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.2);display:block"></span>`;
+          const cls = `gdm-step-row${done ? ' done' : isLocked ? ' locked' : ''}`;
+          const btnHTML = isNext ? `<button class="gdm-step-btn" onclick="goalStepDone('${g.id}',${i},this)"><svg width="7" height="7" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>feito</button>` : '';
+          return `<div class="${cls}"><div class="gdm-step-node" style="background:${nodeBg};border-color:${nodeColor}">${nodeIcon}</div><span class="gdm-step-text${done ? ' done' : isNext ? ' next' : ''}">${escHtml(p.texto)}</span>${btnHTML}</div>`;
+        }).join('') + (allDone ? '<div class="gdm-alldone"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 5l2.5 2.5 4.5-5" stroke="#b8e0b8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>todas as etapas concluídas</div>' : '');
+        listEl.innerHTML = stepItems;
+      }
+      const countEl = document.getElementById('passo-count-' + goalId); if (countEl) { countEl.textContent = `${feitos}/${g.passos.length}`; countEl.style.color = allDone ? '#b8e0b8' : 'rgba(255,255,255,.28)'; }
+      const box = document.getElementById('goalDetailBox');
+      if (box) {
+        const modalBar = box.querySelector('[data-prog-fill]'); if (modalBar) modalBar.style.width = g.progresso + '%';
+        const ringNum = box.querySelector('[data-ring-num]'); if (ringNum) ringNum.textContent = g.progresso;
+        const ringArc = box.querySelector('[data-ring-arc]'); if (ringArc) { const r = 34, circ = 2 * Math.PI * r; ringArc.style.strokeDashoffset = String(circ * (1 - g.progresso / 100)); }
+        const progLabel = box.querySelector('[data-prog-label]'); if (progLabel) { progLabel.textContent = g.progresso >= 100 ? 'concluída' : 'em andamento'; progLabel.style.color = g.progresso >= 100 ? '#b8e0b8' : 'rgba(255,255,255,.28)'; }
+      }
+      const nowComplete = g.progresso >= 100; const wasComplete = prevPct >= 100;
+      if (!wasComplete && nowComplete) { toast('🎯 Meta concluída! Parabéns!', 'up'); setTimeout(() => { renderGoals(); }, 400); }
+      else { setTimeout(() => { renderGoals(); }, 200); }
+    }
+
+    var _goalDelPendingId = null;
+    function solicitarDeleteGoal(id) { closeGoalModal(); _goalDelPendingId = id; document.getElementById('goalDelModal').classList.add('on'); setTimeout(() => document.getElementById('gdmConfirmBtn')?.focus(), 80); }
+    function _goalDelCancel() { _goalDelPendingId = null; document.getElementById('goalDelModal').classList.remove('on'); }
+    async function _goalDelConfirm() {
+      if (!_goalDelPendingId) return;
+      try {
+        await window.api.deleteGoal(_goalDelPendingId);
+        S.goals = S.goals.filter(g => g.id !== _goalDelPendingId);
+        _goalDelPendingId = null;
+        document.getElementById('goalDelModal').classList.remove('on');
+        renderGoals();
+        if (typeof toast === 'function') toast('Meta removida');
+      } catch (e) {
+        console.error("Erro ao excluir meta:", e);
+      }
+    }
+    function rebuildGoalsGrid() {
+      catCardsRender();
+    }
+
+    // ══════════════════════════════════════
+    // CATEGORIAS — cards com foto + título (estilo Plano de Ação)
+    // ══════════════════════════════════════
+    (function () {
+
+      let cards = [];
+
+      async function loadCategories() {
+        try {
+          const res = await window.api.getPlansAction();
+          cards = (res || []).map(function (c) {
+            return { id: c.cat_id, title: c.name, photo: c.photo_url || null, desc: c.desc || '', descAlign: c.desc_align || 'center' };
+          });
+        } catch (e) {
+          console.error('Erro ao carregar categorias:', e);
+          cards = [];
+        }
+      }
+
+      function render() {
+        const grid = document.getElementById('goalsGridInner'); if (!grid) return;
+        const btn = document.getElementById('catNewBtn'); if (btn) btn.style.display = '';
+        if (!cards.length) {
+          grid.innerHTML = '<div class="catcard-empty"><svg width="24" height="24" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="6" height="6" rx="1" stroke="rgba(255,255,255,.15)" stroke-width="1.3"/><rect x="11" y="3" width="6" height="6" rx="1" stroke="rgba(255,255,255,.15)" stroke-width="1.3"/><rect x="3" y="11" width="6" height="6" rx="1" stroke="rgba(255,255,255,.15)" stroke-width="1.3"/><rect x="11" y="11" width="6" height="6" rx="1" stroke="rgba(255,255,255,.15)" stroke-width="1.3"/></svg><div><div style="font-size:12px;font-weight:500;color:rgba(255,255,255,.3)">Nenhum plano criado</div><div style="font-size:10px;color:rgba(255,255,255,.15);font-family:var(--mono);margin-top:4px;letter-spacing:.2px">Crie seu primeiro plano de ação</div></div></div>';
+          return;
+        }
+        const html = cards.map(function (c) {
+          const hasPhoto = !!c.photo;
+          const photoStyle = hasPhoto ? `background-image:url('${escHtml(c.photo).replace(/'/g, '%27')}')` : '';
+          const photoInner = hasPhoto ? '' : '<div class="catcard-photo-placeholder"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2.5 6a1 1 0 0 1 1-1h2l.9-1.5a1 1 0 0 1 .85-.5h4.5a1 1 0 0 1 .85.5L13.5 5h2a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V6z" stroke="rgba(255,255,255,.2)" stroke-width="1.3" stroke-linejoin="round"/><circle cx="10" cy="10.3" r="2.6" stroke="rgba(255,255,255,.2)" stroke-width="1.3"/></svg><span>adicionar foto</span></div>';
+          return '<div class="catcard" onclick="mmOpenPlanPreview(\'' + c.id + '\')">' +
+            '<div class="catcard-photo' + (hasPhoto ? '' : ' no-photo') + '" style="' + photoStyle + '">' +
+            photoInner +
+            '<div class="catcard-actions">' +
+            '<button onclick="event.stopPropagation();catUploadPhoto(\'' + c.id + '\')"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 5.5a1 1 0 0 1 1-1h1.6l.7-1.2A1 1 0 0 1 6.15 2.8h3.7a1 1 0 0 1 .85.5l.7 1.2H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="8" cy="8.3" r="2.2" stroke="currentColor" stroke-width="1.2"/></svg></button>' +
+            '<button onclick="event.stopPropagation();catDeleteCard(\'' + c.id + '\')" class="danger"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5L11 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
+            '</div>' +
+            '</div>' +
+            '<div class="catcard-info"><div class="catcard-name">' + escHtml(c.title) + '</div></div>' +
+            '</div>';
+        }).join('');
+        grid.innerHTML = '<div class="catcard-grid">' + html + '</div>';
+      }
+
+      window.catCardsRender = async function () { await loadCategories(); render(); };
+      window.catGetCard = function (id) { return cards.find(function (x) { return x.id === id; }); };
+
+      window.catNewCard = function () {
+        return new Promise(resolve => {
+          _modalResolve = resolve;
+          const bodyHtml = `
+            <div class="fr">
+              <label>TÍTULO DA META</label>
+              <input type="text" id="catPromptInput" placeholder="Ex: Financeiro, Saúde…" maxlength="28">
+            </div>
+            <div style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,.25);letter-spacing:.3px;margin-bottom:12px">
+              a foto pode ser adicionada depois, passando o mouse sobre o card
+            </div>
+          `;
+          openModal('Nova Meta', 'Meta', bodyHtml, 'Criar Meta →');
+
+          document.getElementById('mSave').onclick = async () => {
+            const input = document.getElementById('catPromptInput');
+            const err = document.getElementById('modalErr');
+            const val = input.value.trim();
+            if (!val) { err.textContent = 'Digite um título para continuar.'; input.focus(); return; }
+            if (val.length < 3 || val.length > 28) { err.textContent = 'O título deve ter entre 3 e 28 caracteres.'; input.focus(); return; }
+            if (!/^[a-zA-Z0-9\sÀ-ÿ]+$/.test(val)) { err.textContent = 'O título não pode conter caracteres especiais.'; input.focus(); return; }
+            if (cards.length >= 7) { err.textContent = 'Você já atingiu o limite de 7 metas.'; return; }
+
+            document.getElementById('mSave').disabled = true;
+            const cat_id = 'cat_' + Date.now();
+            try {
+              await window.api.upsertPlansAction({ cat_id, name: val, desc: '', desc_align: 'center' });
+              cards.push({ id: cat_id, title: val, photo: null, desc: '', descAlign: 'center' });
+
+              const res = _modalResolve; // Salva ref antes de fechar
+              _modalResolve = null;
+              closeModal();
+              if (res) res({ title: val }); // Resolve a promise (opcional)
+
+              render();
+              if (typeof toast === 'function') toast('Mapa de ação criado!');
+            } catch (e) {
+              err.textContent = 'Erro ao salvar: ' + (e.message || 'tente novamente');
+            } finally {
+              const btn = document.getElementById('mSave');
+              if (btn) btn.disabled = false;
+            }
+          };
+          setTimeout(() => { const inp = document.getElementById('catPromptInput'); if (inp) inp.focus(); }, 120);
+        });
+      };
+
+      window.catUploadPhoto = function (id) {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = 'image/jpeg, image/png';
+        input.onchange = async function () {
+          const file = input.files && input.files[0]; if (!file) return;
+          if (file.size < 8192) { if (typeof toast === 'function') toast('A foto deve ter no mínimo 8KB.', 'erro'); return; }
+          if (file.size > 2097152) { if (typeof toast === 'function') toast('A foto deve ter no máximo 2MB.', 'erro'); return; }
+          const c = cards.find(function (x) { return x.id === id; }); if (!c) return;
+          try {
+            const res = await window.api.uploadFile(file, 'category-covers');
+            c.photo = res.url;
+            render();
+            await window.api.upsertPlansAction({ cat_id: c.id, name: c.title, photo_url: res.url, desc: c.desc || null, desc_align: c.descAlign || 'center' });
+            if (typeof toast === 'function') toast('foto alterada');
+          } catch (e) {
+            console.error('Erro ao enviar foto:', e);
+            if (typeof toast === 'function') toast('Erro ao enviar foto.', 'erro');
+          }
+        };
+        input.click();
+      };
+
+      window.catDeleteCard = function (id) {
+        const c = cards.find(function (x) { return x.id === id; }); if (!c) return;
+        function doDelete() {
+          window.api.deletePlansAction(c.id).then(function () {
+            cards = cards.filter(function (x) { return x.id !== id; });
+            render();
+            if (typeof window.mmDeleteMapSilent === 'function') window.mmDeleteMapSilent(id);
+            if (typeof toast === 'function') toast('meta apagada');
+          }).catch(function (e) {
+            if (typeof toast === 'function') toast('Erro ao remover: ' + (e.message || ''), 'erro');
+          });
+        }
+        if (typeof mohiConfirm === 'function') {
+          mohiConfirm('certeza que deseja apagar esta meta', '', 'apagar', 'cancelar').then(function (ok) { if (ok) doDelete(); });
+        } else {
+          doDelete();
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        await loadCategories();
+        render();
+      });
+    })();
+
+    // ══════════════════════════════════════
+    // MAPA MENTAL (completo)
+    // ══════════════════════════════════════
+    (function () {
+      let DB = { maps: [] }; let activeMapId = null;
+      async function dbSave() {
+        if (!activeMapId) return;
+        const m = getMap(activeMapId);
+        if (!m) return;
+        try {
+          await window.api.updateMindmap(activeMapId, {
+            title: m.title,
+            layout: m.layout,
+            pan: m.pan,
+            scale: parseFloat(m.scale),
+            nodes: m.nodes
+          });
+        } catch (e) {
+          console.error("Erro ao salvar mapa mental:", e);
+        }
+      }
+      async function dbLoad() {
+        try {
+          const res = await window.api.getMindmaps();
+          DB.maps = (res || []).map(m => ({
+            id: m.map_id,
+            title: m.title,
+            layout: m.layout,
+            pan: m.pan || { x: 0, y: 0 },
+            scale: parseFloat(m.scale) || 1,
+            nodes: m.nodes || [],
+            photo: m.photo || null
+          }));
+          renderTable();
+        } catch (e) {
+          console.error("Erro ao carregar mapas mentais:", e);
+        }
+      }
+      function getMap(id) { return DB.maps.find(m => m.id === id); }
+      function activeMap() { return getMap(activeMapId); }
+      function newMapData(title) { return { id: 'map_' + Date.now(), title: title || 'Novo Mapa', layout: 'horizontal', pan: { x: 0, y: 0 }, scale: 1, photo: null, nodes: [{ id: 'root', parentId: null, text: title || 'Centro', color: '#000000', collapsed: false, x: 0, y: 0 }] }; }
+      function gnode(id) { const m = activeMap(); return m ? m.nodes.find(n => n.id === id) : null; }
+      function gid() { return 'n' + Date.now() + Math.random().toString(36).slice(2, 5); }
+      function children(id) { const m = activeMap(); return m ? m.nodes.filter(n => n.parentId === id) : []; }
+      function allDescendants(id) { const res = []; function walk(x) { children(x).forEach(c => { res.push(c.id); walk(c.id); }); } walk(id); return res; }
+      function isHidden(id, m) { const map = m || activeMap(); if (!map) return false; const n = map.nodes.find(x => x.id === id); if (!n || !n.parentId) return false; const p = map.nodes.find(x => x.id === n.parentId); if (!p) return false; if (p.collapsed) return true; return isHidden(n.parentId, map); }
+
+      function renderTable() {
+        const wrap = document.getElementById('mmTableWrap'); const btn = document.getElementById('mmNewBtn'); if (!wrap) return;
+        const planMaps = DB.maps;
+        if (btn) btn.style.display = '';
+        if (!planMaps.length) { wrap.innerHTML = `<div style="padding:32px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center"><svg width="26" height="26" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="rgba(255,255,255,.15)" stroke-width="1.4"/></svg><div><div style="font-size:12px;font-weight:500;color:rgba(255,255,255,.3)">Nenhum plano criado</div><div style="font-size:10px;color:rgba(255,255,255,.15);font-family:var(--mono);margin-top:4px;letter-spacing:.2px">Crie seu primeiro plano de ação</div></div></div>`; return; }
+        const cards = planMaps.map((m) => {
+          const hasPhoto = !!m.photo;
+          const photoStyle = hasPhoto ? `background-image:url('${escHtml(m.photo).replace(/'/g, '%27')}')` : '';
+          const photoInner = hasPhoto ? '' : `<div class="mm-plan-photo-placeholder"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2.5 6a1 1 0 0 1 1-1h2l.9-1.5a1 1 0 0 1 .85-.5h4.5a1 1 0 0 1 .85.5L13.5 5h2a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1V6z" stroke="rgba(255,255,255,.2)" stroke-width="1.3" stroke-linejoin="round"/><circle cx="10" cy="10.3" r="2.6" stroke="rgba(255,255,255,.2)" stroke-width="1.3"/></svg><span>adicionar foto</span></div>`;
+          return `<div class="mm-plan-card" onclick="mmOpenMap('${m.id}')">
+        <div class="mm-plan-photo${hasPhoto ? '' : ' no-photo'}" style="${photoStyle}">
+          ${photoInner}
+          <div class="mm-plan-actions">
+            <button onclick="event.stopPropagation();mmUploadPhoto('${m.id}')"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 5.5a1 1 0 0 1 1-1h1.6l.7-1.2A1 1 0 0 1 6.15 2.8h3.7a1 1 0 0 1 .85.5l.7 1.2H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><circle cx="8" cy="8.3" r="2.2" stroke="currentColor" stroke-width="1.2"/></svg></button>
+            <button onclick="event.stopPropagation();mmEditPlan('${m.id}')"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2-9 9H2.5v-2l9-9z" stroke="currentColor" stroke-linejoin="round"/></svg></button>
+            <button onclick="event.stopPropagation();mmDeleteMap('${m.id}')" class="danger"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5L11 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+        <div class="mm-plan-info">
+          <div class="mm-plan-name">${escHtml(m.title)}</div>
+        </div>
+      </div>`;
+        }).join('');
+        wrap.innerHTML = `<div class="mm-plan-grid">${cards}</div>`;
+      }
+
+      window.mmUploadPhoto = function (id) {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = 'image/*';
+        input.onchange = async function () {
+          const file = input.files && input.files[0]; if (!file) return;
+          const m = getMap(id); if (!m) return;
+          try {
+            const res = await window.api.uploadFile(file, 'mindmap-covers');
+            m.photo = res.url;
+            renderTable();
+            await window.api.updateMindmap(id, { photo: m.photo });
+          } catch (e) {
+            console.error('Erro ao enviar foto:', e);
+            if (typeof toast === 'function') toast('Erro ao enviar foto.', 'erro');
+          }
+        };
+        input.click();
+      };
+
+      // ── PREVIEW DO PLANO (modal com fundo desfocado ao clicar no card) ──
+      window.mmOpenPlanPreview = function (id) {
+        const c = window.catGetCard(id); if (!c) return;
+        const overlay = document.getElementById('mmPreviewOverlay'); if (!overlay) return;
+        const photo = document.getElementById('mmPreviewPhoto');
+        const titleEl = document.getElementById('mmPreviewTitle');
+        const descBox = document.getElementById('mmPreviewDescBox');
+        const hasPhoto = !!c.photo;
+        if (photo) {
+          photo.classList.toggle('no-photo', !hasPhoto);
+          photo.style.backgroundImage = hasPhoto ? `url('${escHtml(c.photo).replace(/'/g, '%27')}')` : '';
+          const ph = photo.querySelector('.mm-preview-photo-placeholder');
+          if (ph) ph.style.display = hasPhoto ? 'none' : 'flex';
+        }
+        if (titleEl) titleEl.value = c.title;
+        if (descBox) descBox.value = c.desc || '';
+        overlay.dataset.planId = id;
+        mmPreviewApplyAlign(c.descAlign || 'center');
+        overlay.style.display = 'flex';
+        requestAnimationFrame(() => { overlay.classList.add('open'); });
+      };
+      window.mmPreviewApplyAlign = function (align) {
+        const wrap = document.getElementById('mmPreviewDescWrap');
+        const centerBtn = document.getElementById('mmPreviewAlignCenterBtn');
+        const leftBtn = document.getElementById('mmPreviewAlignLeftBtn');
+        const isLeft = align === 'left';
+        if (wrap) wrap.style.textAlign = isLeft ? 'left' : 'center';
+        if (centerBtn) centerBtn.classList.toggle('active', !isLeft);
+        if (leftBtn) leftBtn.classList.toggle('active', isLeft);
+      };
+      window.mmPreviewSetAlign = async function (align) {
+        const overlay = document.getElementById('mmPreviewOverlay'); const id = overlay ? overlay.dataset.planId : ''; if (!id) return;
+        const c = window.catGetCard(id); if (!c) return;
+        c.descAlign = align;
+        mmPreviewApplyAlign(align);
+        try {
+          await window.api.upsertPlansAction({ cat_id: id, name: c.title, desc: c.desc || '', desc_align: align, photo_url: c.photo || null });
+        } catch (e) {
+          console.error('Erro ao salvar alinhamento:', e);
+        }
+      };
+      window.mmPreviewSaveDesc = async function () {
+        const overlay = document.getElementById('mmPreviewOverlay'); const id = overlay ? overlay.dataset.planId : ''; if (!id) return;
+        const descBox = document.getElementById('mmPreviewDescBox'); if (!descBox) return;
+        const c = window.catGetCard(id); if (!c) return;
+        const val = descBox.value.trim();
+        if (c.desc === val) return;
+        if (val.length > 0 && (val.length < 8 || val.length > 1000)) {
+          if (typeof toast === 'function') toast('A descrição deve ter entre 8 e 1000 caracteres.', 'erro');
+          descBox.value = c.desc || '';
+          return;
+        }
+        c.desc = val;
+        try {
+          await window.api.upsertPlansAction({ cat_id: id, name: c.title, desc: val, desc_align: c.descAlign || 'center', photo_url: c.photo || null });
+          window.catCardsRender();
+          if (typeof toast === 'function') toast('descricao atualizada');
+        } catch (e) {
+          console.error('Erro ao salvar descrição:', e);
+          if (typeof toast === 'function') toast('Erro ao salvar descrição.', 'erro');
+        }
+      };
+      window.mmPreviewSaveTitle = async function () {
+        const overlay = document.getElementById('mmPreviewOverlay'); const id = overlay ? overlay.dataset.planId : ''; if (!id) return;
+        const titleBox = document.getElementById('mmPreviewTitle'); if (!titleBox) return;
+        const c = window.catGetCard(id); if (!c) return;
+        const val = titleBox.value.trim();
+        if (!val || c.title === val) { titleBox.value = c.title; return; }
+        if (val.length < 3 || val.length > 28) { if (typeof toast === 'function') toast('O título deve ter entre 3 e 28 caracteres.', 'erro'); titleBox.value = c.title; return; }
+        if (!/^[a-zA-Z0-9\sÀ-ÿ]+$/.test(val)) { if (typeof toast === 'function') toast('O título não pode conter caracteres especiais.', 'erro'); titleBox.value = c.title; return; }
+        c.title = val;
+        try {
+          await window.api.upsertPlansAction({ cat_id: id, name: val, desc: c.desc || '', desc_align: c.descAlign || 'center', photo_url: c.photo || null });
+          if (typeof getMap === 'function') {
+            const m = getMap(id);
+            if (m) {
+              m.title = val;
+              const root = m.nodes.find(n => n.id === 'root');
+              if (root) root.text = val;
+              await window.api.updateMindmap(id, { title: m.title, desc: m.desc || '', nodes: m.nodes }).catch(() => { });
+            }
+          }
+          window.catCardsRender();
+          if (typeof toast === 'function') toast('meta atualizada');
+        } catch (e) {
+          console.error('Erro ao salvar título:', e);
+          if (typeof toast === 'function') toast('Erro ao salvar título.', 'erro');
+        }
+      };
+      window.mmClosePlanPreview = function () {
+        const overlay = document.getElementById('mmPreviewOverlay'); if (!overlay) return;
+        mmPreviewSaveDesc();
+        mmPreviewSaveTitle();
+        overlay.classList.remove('open');
+        setTimeout(() => { overlay.style.display = 'none'; overlay.dataset.planId = ''; }, 220);
+      };
+
+      function calcDepth(map) { let max = 0; function walk(id, d) { max = Math.max(max, d); map.nodes.filter(n => n.parentId === id).forEach(c => walk(c.id, d + 1)); } walk('root', 0); return max; }
+
+      // mmPrompt modal
+      function mmPromptOpen(opts) {
+        return new Promise(resolve => {
+          _modalResolve = resolve;
+          const bodyHtml = `
+            <div class="fr">
+              <label>NOME DO PLANO</label>
+              <input type="text" id="mmPromptInput" placeholder="${opts.placeholder || 'Ex: Mudar de carreira…'}" value="${opts.defaultValue || ''}" maxlength="36">
+            </div>
+          `;
+          openModal(opts.title || 'Novo Plano', opts.sub || 'Novo Plano de Ação', bodyHtml, opts.confirmLabel || 'CRIAR PLANO →');
+
+          document.getElementById('mSave').onclick = () => {
+            const input = document.getElementById('mmPromptInput');
+            const err = document.getElementById('modalErr');
+            const tVal = input.value.trim();
+
+            if (!tVal) { err.textContent = 'O título é obrigatório.'; input.focus(); return; }
+            if (tVal.length > 36) { err.textContent = 'O título deve ter no máximo 36 caracteres.'; input.focus(); return; }
+            // if (!/^[a-zA-Z0-9\sÀ-ÿ]+$/.test(tVal)) { err.textContent = 'O título não pode conter caracteres especiais.'; input.focus(); return; }
+
+            const res = _modalResolve;
+            _modalResolve = null;
+            closeModal();
+            if (res) res({ title: tVal });
+          };
+
+          setTimeout(() => { const inp = document.getElementById('mmPromptInput'); if (inp) inp.focus(); }, 120);
+        });
+      }
+      window.mmPromptClose = function () { closeModal(); };
+      window.mmPromptConfirm = function () { document.getElementById('mSave')?.click(); };
+
+      // Public table actions
+      window.mmNewMap = function () {
+        if (DB.maps.length >= 6) {
+          if (typeof toast === 'function') toast('Você já atingiu o limite de 6 planos de ação.', 'erro');
+          return;
+        }
+        mmPromptOpen({ title: 'Novo Plano de Ação', sub: 'Novo Plano de Ação', placeholder: 'Ex: Mudar de carreira, Montar empresa…', confirmLabel: 'CRIAR PLANO →' }).then(async function (vals) {
+          if (!vals) return;
+          const m = newMapData(vals.title);
+          try {
+            await window.api.createMindmap({
+              map_id: m.id,
+              title: m.title,
+              layout: m.layout,
+              pan: m.pan,
+              scale: parseFloat(m.scale),
+              nodes: m.nodes,
+              photo: m.photo
+            });
+            DB.maps.push(m);
+            renderTable();
+          } catch (e) {
+            console.error("Erro ao criar plano de ação:", e);
+            if (typeof toast === 'function') toast("Erro ao criar plano de ação.", "erro");
+          }
+        });
+      };
+      window.mmEditPlan = function (id) {
+        const m = getMap(id); if (!m) return;
+        mmPromptOpen({ title: 'Editar Plano', sub: 'Editar Plano de Ação', placeholder: 'Nome do plano', confirmLabel: 'SALVAR →', defaultValue: m.title }).then(async function (vals) {
+          if (!vals) return;
+          m.title = vals.title;
+          const root = m.nodes.find(n => n.id === 'root');
+          if (root) root.text = vals.title;
+          try {
+            await window.api.updateMindmap(id, {
+              title: m.title,
+              nodes: m.nodes
+            });
+            renderTable();
+            if (typeof toast === 'function') toast('nome alterado');
+          } catch (e) {
+            console.error("Erro ao editar plano:", e);
+            if (typeof toast === 'function') toast("Erro ao editar plano.", "erro");
+          }
+        });
+      };
+      window.mmDeleteMap = function (id) {
+        mohiConfirm('certeza que deseja apagar esta meta', '', 'apagar', 'cancelar').then(async function (ok) {
+          if (!ok) return;
+          try {
+            await window.api.deleteMindmap(id);
+            DB.maps = DB.maps.filter(m => m.id !== id);
+            renderTable();
+            if (typeof toast === 'function') toast('meta apagada');
+          } catch (e) {
+            console.error("Erro ao excluir mapa:", e);
+            if (typeof toast === 'function') toast("Erro ao excluir mapa.", "erro");
+          }
+        });
+      };
+      window.mmDeleteMapSilent = async function (id) {
+        const exists = getMap(id); if (!exists) return;
+        try {
+          await window.api.deleteMindmap(id);
+          DB.maps = DB.maps.filter(m => m.id !== id);
+          renderTable();
+        } catch (e) {
+          console.error("Erro ao excluir mapa vinculado à categoria:", e);
+        }
+      };
+      window.mmOpenMap = function (id, skipPush) { const m = getMap(id); if (!m) return; activeMapId = id; M.sel = null; M.editing = null; const overlay = document.getElementById('mmOverlay'); const titleEl = document.getElementById('mmModalTitle'); if (overlay) overlay.style.display = 'block'; if (titleEl) titleEl.textContent = m.title; mmSetLayout(m.layout, true); if (typeof window.mmActivateCursor === 'function') window.mmActivateCursor(); setTimeout(() => { mmCenterView(); render(); }, 60); };
+      window.mmOpenOrCreate = async function (mapId, titleIfNew) {
+        let m = getMap(mapId);
+        if (!m) {
+          m = newMapData(titleIfNew || 'Novo Mapa');
+          m.id = mapId;
+          try {
+            await window.api.createMindmap({ map_id: m.id, title: m.title, desc: m.desc, layout: m.layout, pan: m.pan, scale: parseFloat(m.scale), nodes: m.nodes, photo: m.photo });
+            DB.maps.push(m);
+          } catch (e) {
+            console.error('Erro ao criar mapa mental para categoria:', e);
+            if (typeof toast === 'function') toast('Erro ao criar mapa mental.', 'erro');
+            return false;
+          }
+        }
+        window.mmOpenMap(m.id);
+        return true;
+      };
+      window.mmCloseModal = function () { clearMultiSel(); M.sel = null; M.editing = null; const overlay = document.getElementById('mmOverlay'); if (overlay) overlay.style.display = 'none'; activeMapId = null; if (typeof window.mmDeactivateCursor === 'function') window.mmDeactivateCursor(); renderTable(); };
+
+      // Canvas engine
+      const M = { sel: null, editing: null, panning: false, panStart: null, multiSel: new Set(), boxSelecting: false, suppressNextClick: false };
+      function clearMultiSel() { M.multiSel.clear(); document.querySelectorAll('.mm-node').forEach(el => el.classList.remove('mm-node-dim')); }
+      function startBoxSelect(e) {
+        e.preventDefault();
+        const wrap = document.getElementById('mmWrap'); if (!wrap) return;
+        clearMultiSel();
+        const rect = wrap.getBoundingClientRect();
+        const startX = e.clientX - rect.left, startY = e.clientY - rect.top;
+        let box = document.getElementById('mmSelectBox');
+        if (!box) { box = document.createElement('div'); box.id = 'mmSelectBox'; wrap.appendChild(box); }
+        box.style.left = startX + 'px'; box.style.top = startY + 'px'; box.style.width = '0px'; box.style.height = '0px'; box.style.display = 'block';
+        M.boxSelecting = true; wrap.style.cursor = 'crosshair'; document.body.classList.add('mm-selecting-active');
+        function onMove(ev) {
+          const cx = ev.clientX - rect.left, cy = ev.clientY - rect.top;
+          const x = Math.min(cx, startX), y = Math.min(cy, startY), w = Math.abs(cx - startX), h = Math.abs(cy - startY);
+          box.style.left = x + 'px'; box.style.top = y + 'px'; box.style.width = w + 'px'; box.style.height = h + 'px';
+          const selRect = { left: x, top: y, right: x + w, bottom: y + h };
+          const wrapRect = wrap.getBoundingClientRect();
+          M.multiSel.clear();
+          wrap.querySelectorAll('.mm-node').forEach(el => {
+            const r = el.getBoundingClientRect();
+            const nr = { left: r.left - wrapRect.left, top: r.top - wrapRect.top, right: r.right - wrapRect.left, bottom: r.bottom - wrapRect.top };
+            const hit = !(nr.right < selRect.left || nr.left > selRect.right || nr.bottom < selRect.top || nr.top > selRect.bottom);
+            if (hit) { M.multiSel.add(el.dataset.id); el.classList.remove('mm-node-dim'); }
+            else { el.classList.add('mm-node-dim'); }
+          });
+        }
+        function onUp() {
+          M.boxSelecting = false; box.style.display = 'none'; wrap.style.cursor = (e.ctrlKey || e.metaKey) ? 'crosshair' : 'default'; document.body.classList.remove('mm-selecting-active');
+          document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp);
+          if (M.multiSel.size) { M.suppressNextClick = true; if (typeof toast === 'function') toast(M.multiSel.size + ' nó(s) selecionados · Ctrl+C copia'); }
+          else { clearMultiSel(); }
+        }
+        document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp);
+      }
+      function initCtrlCursor() {
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Control' || e.key === 'Meta') {
+            const overlay = document.getElementById('mmOverlay'); if (!overlay || overlay.style.display === 'none') return;
+            if (M.panning) return;
+            const wrap = document.getElementById('mmWrap'); if (wrap) wrap.style.cursor = 'crosshair';
+            document.body.classList.add('mm-ctrl-active');
+          }
+        });
+        document.addEventListener('keyup', e => {
+          if (e.key === 'Control' || e.key === 'Meta') {
+            if (M.boxSelecting || M.panning) return;
+            const wrap = document.getElementById('mmWrap'); if (wrap) wrap.style.cursor = 'default';
+            document.body.classList.remove('mm-ctrl-active');
+          }
+        });
+        window.addEventListener('blur', () => {
+          document.body.classList.remove('mm-ctrl-active');
+          document.body.classList.remove('mm-selecting-active');
+        });
+      }
+      const NODE_MIN_W = 30, NODE_H = 26, GAP_X = 48, GAP_Y = 4;
+      let _measureCtx = null;
+      function measureTextWidth(text, isRoot) {
+        if (!_measureCtx) { const c = document.createElement('canvas'); _measureCtx = c.getContext('2d'); }
+        _measureCtx.font = (isRoot ? '700 13px' : '500 11px') + " 'Exo 2', sans-serif";
+        return Math.max(NODE_MIN_W, _measureCtx.measureText(text || ' ').width + (isRoot ? 24 : 16));
+      }
+      function hexA(hex, a) { hex = hex || '#000000'; if (hex[0] !== '#') return hex; let r, g, b; if (hex.length === 4) { r = parseInt(hex[1] + hex[1], 16); g = parseInt(hex[2] + hex[2], 16); b = parseInt(hex[3] + hex[3], 16); } else { r = parseInt(hex.slice(1, 3), 16); g = parseInt(hex.slice(3, 5), 16); b = parseInt(hex.slice(5, 7), 16); } return `rgba(${r},${g},${b},${a})`; }
+      function subtreeH(id, map) { const n = map.nodes.find(x => x.id === id); if (!n) return NODE_H; if (n.collapsed) return NODE_H; const ch = map.nodes.filter(x => x.parentId === id); if (!ch.length) return NODE_H; return Math.max(NODE_H, ch.reduce((s, c) => s + subtreeH(c.id, map), 0) + Math.max(0, ch.length - 1) * GAP_Y); }
+      function doLayout(map) {
+        if (!map) return;
+        const root = map.nodes.find(x => x.id === 'root');
+        if (!root) return;
+        root.x = 0;
+        if (typeof root.y !== 'number' || isNaN(root.y)) root.y = 0;
+        layoutH(map, 'root', 0, 0, 0);
+      }
+
+      function layoutH(map, id, dir, parentX, parentW) {
+        const n = map.nodes.find(x => x.id === id);
+        if (!n) return;
+        n.w = measureTextWidth(n.text || '', id === 'root');
+
+        if (id === 'root') {
+          n.x = 0;
+        } else {
+          if (dir < 0) n.x = parentX - GAP_X - n.w;
+          else n.x = parentX + parentW + GAP_X;
+        }
+
+        const ch = map.nodes.filter(x => x.parentId === id);
+        if (!ch.length || n.collapsed) return;
+
+        if (id === 'root') {
+          const half = Math.ceil(ch.length / 2);
+          const rightKids = ch.slice(0, half);
+          const leftKids = ch.slice(half);
+
+          let curR = (n.y + NODE_H / 2) - (rightKids.reduce((s, c) => s + subtreeH(c.id, map), 0) + Math.max(0, rightKids.length - 1) * GAP_Y) / 2;
+          rightKids.forEach(c => { const h = subtreeH(c.id, map); c.y = curR + h / 2 - NODE_H / 2; layoutH(map, c.id, 1, n.x, n.w); curR += h + GAP_Y; });
+
+          let curL = (n.y + NODE_H / 2) - (leftKids.reduce((s, c) => s + subtreeH(c.id, map), 0) + Math.max(0, leftKids.length - 1) * GAP_Y) / 2;
+          leftKids.forEach(c => { const h = subtreeH(c.id, map); c.y = curL + h / 2 - NODE_H / 2; layoutH(map, c.id, -1, n.x, n.w); curL += h + GAP_Y; });
+        } else {
+          const heights = ch.map(c => subtreeH(c.id, map));
+          const totalH = heights.reduce((s, h) => s + h, 0) + Math.max(0, ch.length - 1) * GAP_Y;
+          let cur = (n.y + NODE_H / 2) - totalH / 2;
+          ch.forEach((c, i) => {
+            c.y = cur + heights[i] / 2 - NODE_H / 2;
+            layoutH(map, c.id, dir, n.x, n.w);
+            cur += heights[i] + GAP_Y;
+          });
+        }
+      }
+
+      function render(opts) {
+        const map = activeMap(); const wrap = document.getElementById('mmWrap'); const svg = document.getElementById('mmSvg'); const stage = document.getElementById('mmStage'); const hint = document.getElementById('mmHint');
+        if (!wrap || !svg || !stage || !map) return;
+        const W = wrap.clientWidth, H = wrap.clientHeight;
+        if (W === 0 || H === 0) return;
+        if (!(opts && opts.skipLayout)) doLayout(map); const pan = map.pan, sc = map.scale; const rpx = Math.round(pan.x), rpy = Math.round(pan.y); stage.style.transform = `translate3d(${rpx}px,${rpy}px,0)`;
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        const paths = []; const dots = []; const vis = map.nodes.filter(n => !isHidden(n.id, map));
+        const anchor = (nd, dir) => { const half = (dir === 'l' ? 0 : nd.w) * sc; return { x: pan.x + nd.x * sc + half, y: pan.y + nd.y * sc + (NODE_H / 2) * sc }; };
+        vis.forEach(n => {
+          const allKids = map.nodes.filter(x => x.parentId === n.id);
+          if (!allKids.length) return;
+          const kids = n.collapsed ? [] : allKids.filter(x => !isHidden(x.id, map));
+          const isRoot = n.id === 'root';
+          const isLeftNode = n.x < 0;
+          const trunkCol = n.color || '#000000';
+          const lw = Math.max(0.75, 1.6 * sc);
+
+          if (!isRoot) {
+            const outDir = isLeftNode ? 'l' : 'r';
+            const from = anchor(n, outDir);
+            const branchGap = Math.max(18 * sc, GAP_X * 0.4 * sc);
+            const branch = { x: from.x + (isLeftNode ? -branchGap : branchGap), y: from.y };
+            paths.push(`<path d="M${from.x},${from.y} L${branch.x},${branch.y}" stroke="${trunkCol}" stroke-width="${lw}" fill="none" stroke-linecap="round" opacity=".85"/>`);
+
+            const N = kids.length;
+            const mid = (N - 1) / 2;
+            kids.forEach((c, ki) => {
+              const to = anchor(c, isLeftNode ? 'r' : 'l');
+              const off = Math.abs(to.x - branch.x) * 0.5;
+
+              const rel = ki - mid;
+              const dir = rel === 0 ? 0 : (rel > 0 ? 1 : -1);
+              const level = Math.min(2, Math.ceil(Math.abs(rel)));
+              const bulge = level * dir * Math.min(22 * sc, off * 0.6);
+
+              const ccol = c.color || trunkCol;
+              const c1x = branch.x + (isLeftNode ? -off : off);
+              const c2x = to.x + (isLeftNode ? off : -off);
+              const d = `M${branch.x},${branch.y} C${c1x},${branch.y + bulge} ${c2x},${to.y} ${to.x},${to.y}`;
+              paths.push(`<path d="${d}" stroke="${ccol}" stroke-width="${lw}" fill="none" stroke-linecap="round" opacity=".85"/>`);
+            });
+
+            const dotR = Math.max(2, 6 * sc);
+            dots.push(`<circle class="mm-branch-dot" data-id="${n.id}" cx="${branch.x}" cy="${branch.y}" r="${dotR}" fill="${n.collapsed ? trunkCol : '#ffffff'}" stroke="${trunkCol}" stroke-width="${lw}" pointer-events="auto" style="cursor:pointer"/>`);
+          } else {
+            const rootCenter = { x: pan.x + (n.x + n.w / 2) * sc, y: pan.y + (n.y + NODE_H / 2) * sc };
+            kids.forEach(c => {
+              const isKidLeft = c.x < 0;
+              const from = rootCenter;
+              const to = anchor(c, isKidLeft ? 'r' : 'l');
+              const ccol = c.color || trunkCol;
+
+              const offX = Math.abs(to.x - from.x);
+              const offY = Math.abs(to.y - from.y);
+              const curvePower = Math.max(offX * 0.5, offY * 0.35);
+
+              const c1 = from.x + (isKidLeft ? -curvePower : curvePower);
+              const c2 = to.x + (isKidLeft ? curvePower : -curvePower);
+              const d = `M${from.x},${from.y} C${c1},${from.y} ${c2},${to.y} ${to.x},${to.y}`;
+              paths.push(`<path d="${d}" stroke="${ccol}" stroke-width="${lw}" fill="none" stroke-linecap="round" opacity=".85"/>`);
+            });
+          }
+        });
+        svg.innerHTML = paths.join('') + dots.join('');
+        if (!svg._mmClick) { svg._mmClick = true; svg.addEventListener('click', e => { const t = e.target.closest ? e.target.closest('.mm-branch-dot') : null; if (t) { e.stopPropagation(); mmToggleCollapse(t.dataset.id); } }); }
+        const existing = {}; stage.querySelectorAll('.mm-node').forEach(el => existing[el.dataset.id] = el); const seen = {};
+        vis.forEach(n => {
+          seen[n.id] = true; const isRoot = n.id === 'root'; const isSel = n.id === M.sel; let el = existing[n.id];
+          if (!el) { el = document.createElement('div'); el.className = 'mm-node'; el.dataset.id = n.id; stage.appendChild(el); el.addEventListener('mousedown', e => { if (e.target.tagName === 'INPUT') return; e.stopPropagation(); startDragNode(e, n.id); }); el.addEventListener('click', e => { e.stopPropagation(); if (M.sel !== n.id) selectNode(n.id); else startEdit(n.id); }); }
+          const txtColor = '#181818';
+          const fs = (isRoot ? 13 : 11) * sc, padV = Math.max(1, 3 * sc), padH = Math.max(2, 6 * sc), rad = 6 * sc, bw = Math.max(1, 1.5 * sc);
+          const isLeftNode = n.x < 0;
+          let jc = isRoot ? 'center' : (isLeftNode ? 'flex-end' : 'flex-start');
+          let ta = isRoot ? 'center' : (isLeftNode ? 'right' : 'left');
+          const wrapStyle = `position:absolute;left:${n.x * sc}px;top:${n.y * sc}px;width:${n.w * sc}px;min-height:${NODE_H * sc}px;display:flex;align-items:center;justify-content:${jc};text-align:${ta};padding:${padV}px ${padH}px;border-radius:${rad}px;background:${isRoot ? '#ffffff' : (isSel ? hexA(n.color || '#000000', .1) : 'transparent')};box-shadow:${isSel ? `0 0 0 ${bw}px ` + (n.color || '#000000') : 'none'};color:${txtColor};font-size:${fs}px;font-weight:${isRoot ? 700 : 500};font-family:'Exo 2',sans-serif;letter-spacing:${isRoot ? '-.3px' : '-.1px'};cursor:pointer;transition:background .12s,box-shadow .12s;white-space:nowrap;line-height:1.35;user-select:none;z-index:${isRoot ? 20 : 10};`;
+          if (el.dataset.wrapSig !== wrapStyle) { el.style.cssText = wrapStyle; el.dataset.wrapSig = wrapStyle; }
+          if (M.editing === n.id) {
+            let inp = el.querySelector('input');
+            const inpStyle = `width:100%;background:#fff;border:none;outline:none;color:${txtColor};font-size:${fs}px;font-weight:${isRoot ? 700 : 500};font-family:'Exo 2',sans-serif;text-align:center;padding:0;box-shadow:0 0 0 ${bw}px ${n.color || '#000000'};border-radius:${Math.max(3, 6 * sc)}px`;
+            if (!inp) {
+              el.innerHTML = ''; inp = document.createElement('input'); inp.style.cssText = inpStyle; inp.value = n.text; inp.maxLength = 52;
+              inp.addEventListener('mousedown', e => e.stopPropagation());
+              inp.addEventListener('blur', () => commitEdit(n.id, inp.value));
+              inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commitEdit(n.id, inp.value); setTimeout(() => mmAddSibling(), 10); } if (e.key === 'Tab') { e.preventDefault(); commitEdit(n.id, inp.value); setTimeout(() => mmAddChild(), 10); } if (e.key === 'Escape') { M.editing = null; render(); } });
+              inp.addEventListener('input', () => { n.text = inp.value; doLayout(map); render({ skipLayout: true }); });
+              el.appendChild(inp); requestAnimationFrame(() => { inp.focus(); inp.select(); });
+            } else if (inp.dataset.inpSig !== inpStyle) {
+              inp.style.cssText = inpStyle;
+            }
+            inp.dataset.inpSig = inpStyle;
+          } else {
+            const txt = `<span style="flex:1;pointer-events:none">${escHtml(n.text || '?')}</span>`;
+            if (el.dataset.txtSig !== txt || el.querySelector('input')) { el.innerHTML = txt; el.dataset.txtSig = txt; }
+          }
+        });
+        Object.keys(existing).forEach(id => { if (!seen[id]) existing[id].remove(); });
+        if (hint) hint.style.opacity = map.nodes.length <= 1 ? '0.35' : '0';
+        updateNodeActions();
+        if (typeof window.mmUpdateCursorState === 'function') window.mmUpdateCursorState();
+      }
+
+      function selectNode(id) { if (M.editing && M.editing !== id) commitEdit(M.editing, document.querySelector('#mmStage input')?.value || gnode(M.editing)?.text || ''); clearMultiSel(); M.sel = id; render(); }
+      function startEdit(id) { M.editing = id; M.sel = id; render(); }
+      function commitEdit(id, val) {
+        const map = activeMap(); if (!map) return;
+        const n = map.nodes.find(x => x.id === id);
+        if (n) {
+          const tVal = (val || '').trim();
+          if (tVal.length < 3 || tVal.length > 52) {
+            if (typeof toast === 'function') toast('O badge deve ter entre 3 e 52 caracteres.', 'erro');
+          } else if (!/^[a-zA-Z0-9\sÀ-ÿ]+$/.test(tVal)) {
+            if (typeof toast === 'function') toast('O badge não pode conter caracteres especiais.', 'erro');
+          } else {
+            n.text = tVal;
+          }
+        }
+        M.editing = null; dbSave(); render();
+      }
+      function updateNodeActions() {
+        const bar = document.getElementById('mmNodeActions');
+        if (!bar) return;
+        if (!M.sel) {
+          bar.style.display = 'none';
+          return;
+        }
+        bar.style.display = 'flex';
+        const n = gnode(M.sel);
+        if (!n) return;
+      }
+
+      window.mmAddChild = function () { const map = activeMap(); if (!map || !M.sel) return; if (map.nodes.length >= 150) { if (typeof toast === 'function') toast('Limite máximo de 150 nós atingido.', 'erro'); return; } const par = map.nodes.find(x => x.id === M.sel); if (!par) return; par.collapsed = false; const child = { id: gid(), parentId: M.sel, text: 'Nova ideia', color: par.color || '#000000', collapsed: false, x: 0, y: 0 }; map.nodes.push(child); M.sel = child.id; M.editing = child.id; dbSave(); render(); };
+      window.mmAddSibling = function () { const map = activeMap(); if (!map || !M.sel) return; if (map.nodes.length >= 150) { if (typeof toast === 'function') toast('Limite máximo de 150 nós atingido.', 'erro'); return; } const n = map.nodes.find(x => x.id === M.sel); if (!n || !n.parentId) return; const sib = { id: gid(), parentId: n.parentId, text: 'Nova ideia', color: n.color, collapsed: false, x: 0, y: 0 }; const idx = map.nodes.indexOf(n); map.nodes.splice(idx + 1, 0, sib); M.sel = sib.id; M.editing = sib.id; dbSave(); render(); };
+      window.mmToggleCollapse = function (id) { const map = activeMap(); if (!map) return; const nid = id || M.sel; if (!nid) return; const n = map.nodes.find(x => x.id === nid); if (!n) return; n.collapsed = !n.collapsed; dbSave(); render(); };
+      window.mmDeleteNode = function () { const map = activeMap(); if (!map || !M.sel || M.sel === 'root') return; const parentId = map.nodes.find(x => x.id === M.sel)?.parentId; const toRemove = [M.sel, ...allDescendants(M.sel)]; map.nodes = map.nodes.filter(n => !toRemove.includes(n.id)); M.sel = parentId || 'root'; M.editing = null; dbSave(); render(); };
+      window.mmColorNode = function (el) { const map = activeMap(); if (!map || !M.sel) return; const n = map.nodes.find(x => x.id === M.sel); if (!n) return; n.color = el.dataset.c; dbSave(); render(); };
+      window.activeMapIdPublic = function () { return activeMapId; };
+      window.mmSetLayout = function (lay, silent) { const map = activeMap(); if (!map) return; map.layout = 'horizontal'; if (!silent) { dbSave(); mmCenterView(); } };
+      window.mmCenterView = function () {
+        const map = activeMap(); const wrap = document.getElementById('mmWrap'); if (!map || !wrap) return;
+        if (wrap.clientWidth === 0 || wrap.clientHeight === 0) {
+          setTimeout(window.mmCenterView, 30);
+          return;
+        }
+        doLayout(map);
+        const byId = {}; map.nodes.forEach(n => byId[n.id] = n);
+        const reachable = {}; const stack = ['root'];
+        while (stack.length) { const id = stack.pop(); if (reachable[id]) continue; reachable[id] = true; map.nodes.filter(x => x.parentId === id).forEach(c => stack.push(c.id)); }
+        const vis = map.nodes.filter(n => reachable[n.id] && !isHidden(n.id, map));
+        if (!vis.length) return;
+        let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+        vis.forEach(n => { minX = Math.min(minX, n.x); minY = Math.min(minY, n.y); maxX = Math.max(maxX, n.x + n.w); maxY = Math.max(maxY, n.y + NODE_H); });
+        const cw = wrap.clientWidth, ch = wrap.clientHeight, tw = maxX - minX, th = maxY - minY, pad = 80;
+        let sc = Math.min(1.2, (cw - pad) / (tw || 1), (ch - pad) / (th || 1));
+        if (!isFinite(sc) || sc <= 0) sc = 1;
+        sc = Math.max(0.3, Math.min(1.2, sc));
+        map.scale = sc;
+        map.pan.x = (cw - tw * map.scale) / 2 - minX * map.scale; map.pan.y = (ch - th * map.scale) / 2 - minY * map.scale;
+        render();
+      };
+
+      function startDragNode(e, id) { if (M.editing) return; const map = activeMap(); if (!map) return; selectNode(id); const n = map.nodes.find(x => x.id === id); if (!n) return; const sc = map.scale; const sx = e.clientX, sy = e.clientY, ox = n.x, oy = n.y; let moved = false; const onMove = ev => { const dx = (ev.clientX - sx) / sc, dy = (ev.clientY - sy) / sc; if (Math.abs(dx) + Math.abs(dy) > 3) moved = true; if (!moved) return; n.x = ox + dx; n.y = oy + dy; render(); }; const onUp = () => { if (moved) dbSave(); document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); }; document.addEventListener('mousemove', onMove); document.addEventListener('mouseup', onUp); }
+
+      function initPan() {
+        const wrap = document.getElementById('mmWrap'); if (!wrap || wrap._mmPan) return; wrap._mmPan = true; wrap.addEventListener('mousedown', e => { if (e.target.closest('.mm-node')) return; if (e.ctrlKey || e.metaKey) { startBoxSelect(e); return; } M.panning = true; const map = activeMap(); if (!map) return; M.panStart = { mx: e.clientX, my: e.clientY, px: map.pan.x, py: map.pan.y }; wrap.style.cursor = 'none'; }); document.addEventListener('mousemove', e => { if (!M.panning) return; const map = activeMap(); if (!map) return; map.pan.x = M.panStart.px + (e.clientX - M.panStart.mx); map.pan.y = M.panStart.py + (e.clientY - M.panStart.my); render({ skipLayout: true }); }); document.addEventListener('mouseup', e => { if (M.panning) { M.panning = false; const w = document.getElementById('mmWrap'); if (w) w.style.cursor = (e.ctrlKey || e.metaKey) ? 'crosshair' : 'default'; } }); wrap.addEventListener('wheel', e => { e.preventDefault(); const map = activeMap(); if (!map) return; const factor = e.deltaY < 0 ? 1.035 : 0.965; const newSc = Math.max(0.7, Math.min(1.5, map.scale * factor)); const rect = wrap.getBoundingClientRect(); const mx = e.clientX - rect.left, my = e.clientY - rect.top; map.pan.x = mx - (mx - map.pan.x) * (newSc / map.scale); map.pan.y = my - (my - map.pan.y) * (newSc / map.scale); map.scale = newSc; render(); }, { passive: false }); wrap.addEventListener('click', e => { if (M.suppressNextClick) { M.suppressNextClick = false; return; } if (!e.target.closest('.mm-node')) { clearMultiSel(); M.sel = null; M.editing = null; render(); } });
+        let touchMode = null, touchStart = null;
+        function touchDist(t0, t1) { return Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY); }
+        function touchMid(t0, t1, rect) { return { x: (t0.clientX + t1.clientX) / 2 - rect.left, y: (t0.clientY + t1.clientY) / 2 - rect.top }; }
+        wrap.addEventListener('touchstart', e => {
+          if (e.target.closest('.mm-node')) return;
+          const map = activeMap(); if (!map) return;
+          if (e.touches.length === 1) {
+            touchMode = 'pan'; const t = e.touches[0]; touchStart = { mx: t.clientX, my: t.clientY, px: map.pan.x, py: map.pan.y };
+          } else if (e.touches.length === 2) {
+            e.preventDefault();
+            const rect = wrap.getBoundingClientRect();
+            touchMode = 'pinch';
+            touchStart = { dist: touchDist(e.touches[0], e.touches[1]), scale: map.scale, mid: touchMid(e.touches[0], e.touches[1], rect), panX: map.pan.x, panY: map.pan.y };
+          }
+        }, { passive: false });
+        wrap.addEventListener('touchmove', e => {
+          const map = activeMap(); if (!map || !touchMode) return;
+          if (touchMode === 'pan' && e.touches.length === 1) {
+            e.preventDefault(); const t = e.touches[0];
+            map.pan.x = touchStart.px + (t.clientX - touchStart.mx); map.pan.y = touchStart.py + (t.clientY - touchStart.my); render();
+          } else if (touchMode === 'pinch' && e.touches.length === 2) {
+            e.preventDefault();
+            const newDist = touchDist(e.touches[0], e.touches[1]);
+            const newSc = Math.max(0.2, Math.min(1.5, touchStart.scale * (newDist / touchStart.dist)));
+            const mx = touchStart.mid.x, my = touchStart.mid.y;
+            map.pan.x = mx - (mx - touchStart.panX) * (newSc / touchStart.scale);
+            map.pan.y = my - (my - touchStart.panY) * (newSc / touchStart.scale);
+            map.scale = newSc; render();
+          }
+        }, { passive: false });
+        wrap.addEventListener('touchend', e => { if (e.touches.length === 0) touchMode = null; else if (e.touches.length === 1) { const map = activeMap(); if (!map) return; touchMode = 'pan'; const t = e.touches[0]; touchStart = { mx: t.clientX, my: t.clientY, px: map.pan.x, py: map.pan.y }; } });
+      }
+
+      function initKeyboard() {
+        document.addEventListener('keydown', e => {
+          const previewOverlay = document.getElementById('mmPreviewOverlay');
+          if (previewOverlay && previewOverlay.classList.contains('open') && e.key === 'Escape') { mmClosePlanPreview(); return; }
+          const overlay = document.getElementById('mmOverlay'); if (!overlay || overlay.style.display === 'none') return; if (M.editing) return;
+          if (e.key === 'Escape') { clearMultiSel(); mmCloseModal(); return; }
+          if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'C') && M.multiSel && M.multiSel.size) {
+            e.preventDefault();
+            const map = activeMap(); if (!map) return;
+            const nodes = Array.from(M.multiSel).map(id => map.nodes.find(n => n.id === id)).filter(Boolean);
+            nodes.sort((a, b) => (a.y - b.y));
+            const text = nodes.map(n => '* ' + (n.text || '')).join('\n');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(() => { if (typeof toast === 'function') toast(nodes.length + ' nó(s) copiados'); }).catch(() => { if (typeof toast === 'function') toast('Não foi possível copiar', 'erro'); });
+            }
+            return;
+          }
+          if (!M.sel) return; if (e.key === 'Tab') { e.preventDefault(); mmAddChild(); } if (e.key === 'Enter') { e.preventDefault(); mmAddSibling(); } if ((e.key === 'Delete' || e.key === 'Backspace') && M.sel !== 'root') { e.preventDefault(); mmDeleteNode(); } if (e.key === 'F2' || e.key === ' ') { e.preventDefault(); startEdit(M.sel); }
+        });
+      }
+
+      async function init() {
+        await dbLoad();
+        initPan();
+        initKeyboard();
+        initCtrlCursor();
+        renderTable();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const mapId = urlParams.get('map');
+        if (mapId && typeof window.mmOpenMap === 'function') {
+          window.mmOpenMap(mapId);
+        }
+      }
+      document.addEventListener('DOMContentLoaded', () => { setTimeout(init, 150); });
+    })();
+
+    // ══════════════════════════════════════
+    // CONTROLE DE VÍCIOS
+    // ══════════════════════════════════════
+    (function () {
+      const MILESTONES = [1, 3, 6, 12, 24, 48, 72, 168, 336, 720];
+      let vicios = [];
+
+      async function loadVicios() {
+        try {
+          const res = await window.api.getAddictions();
+          vicios = (res || []).map(a => ({
+            id: a.addiction_id,
+            nome: a.nome,
+            desc: a.desc_text,
+            startedAt: new Date(a.started_at).getTime()
+          }));
+        } catch (e) {
+          console.error("Erro ao carregar vícios:", e);
+        }
+      }
+
+      function elapsedMs(v) { return Date.now() - v.startedAt; }
+      function formatTimer(ms) { const totalSec = Math.floor(ms / 1000); const totalH = Math.floor(totalSec / 3600); const d = Math.floor(totalH / 24); const hRest = totalH % 24; const m = Math.floor((totalSec % 3600) / 60); const s = totalSec % 60; const dStr = d > 0 ? d + 'D ' : ''; const hStr = d > 0 ? String(hRest).padStart(2, '0') : String(totalH).padStart(2, '0'); return { d: dStr, h: hStr, m: String(m).padStart(2, '0'), s: String(s).padStart(2, '0'), totalH: totalH }; }
+      function nextMilestone(totalH) { for (const m of MILESTONES) if (m > totalH) return m; return null; }
+      function milestoneLabel(h) { if (h < 24) return h + 'h'; const d = Math.round(h / 24); return d + ' dia' + (d > 1 ? 's' : ''); }
+      function motivMsg(totalH) { if (totalH < 1) return { icon: '🌱', msg: 'Cada minuto é uma vitória. Você começou!' }; if (totalH < 6) return { icon: '💪', msg: 'Você está resistindo! O desejo passa em breve.' }; if (totalH < 12) return { icon: '🔥', msg: 'Meio dia de força! Seu cérebro está se adaptando.' }; if (totalH < 24) return { icon: '⚡', msg: 'Quase 24h! Você está quebrando o ciclo.' }; if (totalH < 48) return { icon: '🏆', msg: '1 dia completo! A neuroplasticidade está agindo.' }; if (totalH < 72) return { icon: '💎', msg: '2 dias! Os receptores de dopamina estão se recuperando.' }; if (totalH < 168) return { icon: '🚀', msg: 'Mais de 3 dias! O hábito novo está se formando.' }; if (totalH < 336) return { icon: '🌟', msg: 'Uma semana inteira! Você está redefinindo quem é.' }; return { icon: '👑', msg: 'Lendário. Você provou que é maior que qualquer vício.' }; }
+      function arcColor(totalH) { if (totalH < 6) return '#e06060'; if (totalH < 24) return '#e09040'; if (totalH < 72) return '#c9a94a'; if (totalH < 168) return '#5ca05c'; return '#4a90d9'; }
+
+      function renderAddictions() {
+        const list = document.getElementById('addictionList'); if (!list) return;
+        const btn = document.getElementById('addVicioBtn');
+        if (btn) btn.style.display = '';
+        if (!vicios.length) { list.innerHTML = `<div style="padding:32px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center"><svg width="26" height="26" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="rgba(200,100,100,.18)" stroke-width="1.4"/><path d="M10 6v5l3 2" stroke="rgba(200,100,100,.16)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="1.2" fill="rgba(200,100,100,.22)"/></svg><div><div style="font-size:12px;font-weight:500;color:rgba(255,255,255,.3)">Nenhum vício monitorado</div><div style="font-size:10px;color:rgba(255,255,255,.15);font-family:var(--mono);margin-top:4px;letter-spacing:.2px">Registre e acompanhe quanto tempo ficou livre</div></div></div>`; return; }
+        list.innerHTML = vicios.map((v, idx) => {
+          const ms = elapsedMs(v); const t = formatTimer(ms); const mo = motivMsg(t.totalH); const next = nextMilestone(t.totalH); const color = arcColor(t.totalH); const hexToRgb = h => { const r = parseInt(h.slice(1, 3), 16), g = parseInt(h.slice(3, 5), 16), b = parseInt(h.slice(5, 7), 16); return `${r},${g},${b}`; }; const cRgb = color.startsWith('#') ? hexToRgb(color) : '180,180,180'; const pct = next ? Math.min(100, Math.round((t.totalH / next) * 100)) : 100; const last = idx === vicios.length - 1;
+          return `<div id="vicio-card-${v.id}" style="position:relative;padding:14px 16px;${last ? '' : 'border-bottom:1px solid rgba(255,255,255,.06);'}transition:background .15s" onmouseover="this.style.background='rgba(255,255,255,.02)'" onmouseout="this.style.background='transparent'">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+        <div style="flex:1;min-width:0;padding-right:8px"><div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px">${v.nome}</div>${v.desc ? `<div style="font-size:9px;color:rgba(255,255,255,.22);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px">${v.desc}</div>` : ''}</div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          <button onclick="resetVicio('${v.id}')" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:rgba(224,96,96,.06);border:1px solid rgba(224,96,96,.16);color:rgba(224,96,96,.65);cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(224,96,96,.16)';this.style.color='#e06060'" onmouseout="this.style.background='rgba(224,96,96,.06)';this.style.color='rgba(224,96,96,.65)'"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 8a5 5 0 1 0 1-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M3 4.5V8h3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button onclick="deleteVicio('${v.id}')" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.55)'" onmouseout="this.style.background='rgba(255,255,255,.03)';this.style.color='rgba(255,255,255,.3)'"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2h4v2M5 4l.5 9h5L11 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:5px;margin-bottom:8px"><span id="vicio-timer-${v.id}" style="font-size:26px;font-weight:300;color:var(--t1);letter-spacing:-1.3px;font-family:var(--fm);line-height:1">${t.d}${t.h}h ${t.m}m ${t.s}s</span><span style="font-size:10px;font-family:var(--mono);color:rgba(255,255,255,.22);margin-left:auto">${pct}%</span></div>
+      <div style="height:2px;background:rgba(255,255,255,.06);overflow:hidden;margin-bottom:8px"><div style="height:100%;width:${pct}%;background:${color};opacity:.55;transition:width .6s ease"></div></div>
+      <div>${next ? `<div style="font-size:9px;font-family:var(--mono);color:rgba(255,255,255,.22)">próxima marca: <span style="color:${color};font-weight:600">${milestoneLabel(next)}</span> · ${mo.msg}</div>` : `<div style="font-size:9px;font-family:var(--mono);color:#6aabdb;font-weight:600">Todas as marcas atingidas! ${mo.msg}</div>`}</div>
+    </div>`;
+        }).join('');
+      }
+
+      let _timerInterval = null;
+      function startTimers() { if (_timerInterval) clearInterval(_timerInterval); _timerInterval = setInterval(() => { vicios.forEach(v => { const el = document.getElementById('vicio-timer-' + v.id); if (!el) return; const t = formatTimer(elapsedMs(v)); el.textContent = `${t.d}${t.h}h ${t.m}m ${t.s}s`; }); }, 1000); }
+
+      window.openAddictionModal = function () {
+        const bodyHtml = `
+          <div class="fr">
+            <label>Nome do vício</label>
+            <input type="text" id="addictionName" placeholder="Ex: Redes sociais, Cigarro…" maxlength="38"
+              oninput="var c=this.value.length;var el=document.getElementById('addictionNameCount');if(el){el.textContent=c+'/38';el.style.color=c>=35?'var(--warn)':'var(--t4)';}">
+            <div style="display:flex;justify-content:flex-end;margin-top:3px"><span id="addictionNameCount" style="font-size:9px;font-family:var(--mono);color:var(--t4)">0/38</span></div>
+          </div>
+          <div class="fr">
+            <label>Descrição <span style="color:var(--t4);font-size:9px">(opcional)</span></label>
+            <input type="text" id="addictionDesc" placeholder="Ex: Uso excessivo antes de dormir…" maxlength="80"
+              oninput="var c=this.value.length;var el=document.getElementById('addictionDescCount');if(el){el.textContent=c+'/80';el.style.color=c>=72?'var(--warn)':'var(--t4)';}">
+            <div style="display:flex;justify-content:flex-end;margin-top:3px"><span id="addictionDescCount" style="font-size:9px;font-family:var(--mono);color:var(--t4)">0/80</span></div>
+          </div>
+        `;
+        openModal('Registrar Vício', 'O timer começa a contar a partir de agora', bodyHtml, '+ Adicionar');
+        document.getElementById('mSave').onclick = () => window.saveAddiction();
+        setTimeout(() => { const inp = document.getElementById('addictionName'); if (inp) inp.focus(); }, 120);
+      };
+      window.closeAddictionModal = function () { closeModal(); };
+
+      window.saveAddiction = async function () {
+        const nome = document.getElementById('addictionName').value.trim();
+        const desc = document.getElementById('addictionDesc').value.trim();
+        const err = document.getElementById('modalErr');
+        if (!nome) { err.textContent = 'Dê um nome para o vício'; return; }
+        if (nome.length < 4 || nome.length > 38) { err.textContent = 'Nome: entre 4 e 38 caracteres'; return; }
+        if (!/^[a-zA-Z0-9\sÀ-ÿ]+$/.test(nome)) { err.textContent = 'O nome não pode conter caracteres especiais.'; return; }
+
+        if (desc && desc.length > 80) { err.textContent = 'Descrição: no máximo 80 caracteres'; return; }
+        if (desc && !/^[a-zA-Z0-9\sÀ-ÿ]+$/.test(desc)) { err.textContent = 'A descrição não pode conter caracteres especiais.'; return; }
+
+        document.getElementById('mSave').disabled = true;
+        const startedAt = Date.now();
+        const addiction_id = 'vicio_' + Date.now();
+        try {
+          const res = await window.api.createAddiction({
+            addiction_id,
+            nome,
+            desc_text: desc,
+            started_at: new Date(startedAt).toISOString()
+          });
+          vicios.push({
+            id: res.addiction.addiction_id,
+            nome: res.addiction.nome,
+            desc: res.addiction.desc_text,
+            startedAt: new Date(res.addiction.started_at).getTime()
+          });
+          closeModal();
+          renderAddictions();
+          startTimers();
+          if (typeof toast === 'function') toast('Monitoramento iniciado! Cada hora conta 💪');
+        } catch (e) {
+          err.textContent = 'Erro ao salvar no banco: ' + e.message;
+        } finally {
+          const btn = document.getElementById('mSave');
+          if (btn) btn.disabled = false;
+        }
+      };
+
+      window.resetVicio = function (id) {
+        const v = vicios.find(x => x.id === id); if (!v) return;
+        const t = formatTimer(elapsedMs(v));
+        mohiConfirm('tem certeza que deseja resetar o timer', '', 'resetar', 'cancelar').then(async function (ok) {
+          if (!ok) return;
+          const newStarted = Date.now();
+          try {
+            await window.api.updateAddiction(id, {
+              nome: v.nome,
+              desc_text: v.desc,
+              started_at: new Date(newStarted).toISOString()
+            });
+            v.startedAt = newStarted;
+            renderAddictions();
+            startTimers();
+            if (typeof toast === 'function') toast('timer resetado');
+          } catch (e) {
+            if (typeof toast === 'function') toast('Erro ao reiniciar: ' + e.message, 'err');
+          }
+        });
+      };
+
+      window.deleteVicio = function (id) {
+        const v = vicios.find(x => x.id === id); if (!v) return;
+        const t = formatTimer(elapsedMs(v));
+        mohiConfirm('tem certeza que deseja apagar este vicio', '', 'apagar', 'cancelar').then(async function (ok) {
+          if (!ok) return;
+          try {
+            await window.api.deleteAddiction(id);
+            vicios = vicios.filter(x => x.id !== id);
+            renderAddictions();
+            if (typeof toast === 'function') toast('vicio apagado');
+          } catch (e) {
+            if (typeof toast === 'function') toast('Erro ao excluir: ' + e.message, 'err');
+          }
+        });
+      };
+
+      document.getElementById('addictionModal')?.addEventListener('click', function (e) { if (e.target === this) closeAddictionModal(); });
+      async function initAddictions() {
+        await loadVicios();
+        renderAddictions();
+        startTimers();
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initAddictions); } else { setTimeout(initAddictions, 300); }
+    })();
+
+    // ══════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', async function () {
+      try {
+        await loadAllData();
+      } catch (err) {
+        console.error('Error loading metas data:', err);
+      } finally {
+        rebuildGoalsGrid();
+        renderGoals();
+        document.body.style.opacity = "1";
+        if (typeof window.hideMhLoader === 'function') {
+          window.hideMhLoader();
+        }
+      }
+    });
+  </script>
+  <script>
+    /* ============================================
+       CUSTOMIZATION — BG + GLASS + SIDEBAR
+       Visual prefs are persisted in users.customization_json via the API.
+       dc_sb_pref stays in localStorage for cross-page sidebar sync (shared.js?v=1788736543501).
+    ============================================ */
+    (function () {
+
+      // ── Glass morphism e estilos agora controlados por shared.js ────────────────────────
+
+      // ── Background Customizer Handlers ────────
+      window.dashBgLoad = async function (inp) {
+        var file = inp.files && inp.files[0];
+        if (!file) return;
+        if (typeof toast === 'function') toast('Enviando imagem de fundo...');
+        try {
+          var res = await window.api.uploadFile(file, 'backgrounds');
+          window.globalSaveSetting('bgImage', res.url);
+          window.globalApplyBg(res.url);
+          _dashBgPanelSync();
+          if (typeof toast === 'function') toast('✓ Imagem de fundo aplicada');
+        } catch (err) {
+          console.error(err);
+          if (typeof toast === 'function') toast(err.message || '⚠️ Erro ao enviar imagem.', 'erro');
+        }
+        inp.value = '';
+      };
+
+      window.dashBgRemove = function () {
+        window.globalSaveSetting('bgImage', '');
+        window.globalApplyBg('');
+        _dashBgPanelSync();
+        if (typeof toast === 'function') toast('✓ Fundo removido');
+      };
+
+      window.dashBgUpdateOpacity = function (val) {
+        var opacity = val / 100;
+        window.globalSaveSetting('bgOpacity', opacity);
+        var label = document.getElementById('dashBgOpacityLabel');
+        if (label) label.textContent = val + '%';
+        var layer = window.globalGetOrCreateBgLayer();
+        if (layer && localStorage.getItem('goalsBgImage')) {
+          layer.style.opacity = opacity;
+        }
+      };
+
+      function _dashBgPanelSync() {
+        var src = localStorage.getItem('goalsBgImage') || '';
+        var opVal = Math.round(parseFloat(localStorage.getItem('goalsBgOpacity') || '0.55') * 100);
+        var cardImg = document.getElementById('dashBgCardImg');
+        var empty = document.getElementById('dashBgEmpty');
+        var rmBtn = document.getElementById('dashBgRemoveBtn');
+        var range = document.getElementById('dashBgOpacity');
+        var label = document.getElementById('dashBgOpacityLabel');
+        if (range) range.value = opVal;
+        if (label) label.textContent = opVal + '%';
+        if (src) {
+          if (cardImg) { cardImg.style.backgroundImage = 'url(' + src + ')'; cardImg.style.display = 'block'; }
+          if (empty) empty.style.display = 'none';
+          if (rmBtn) rmBtn.style.display = 'flex';
+        } else {
+          if (cardImg) { cardImg.style.backgroundImage = ''; cardImg.style.display = 'none'; }
+          if (empty) empty.style.display = 'flex';
+          if (rmBtn) rmBtn.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        // metasGlassLoad removed
+      });
+
+    })();
+  </script>
+  <script src="api-client.js?v=3"></script>
+  <script src="shared.js?v=1788736543501"></script>
+
+  <!-- ═══ ABRIR MODAL DO PLANO AUTOMATICAMENTE (?plan=ID NA URL) ═══
+       Bloco isolado de propósito: não depende de loadAllData(), loadCategories()
+       nem de nenhum outro script da página. Se algum outro init quebrar,
+       essa automação continua funcionando, porque ela busca os dados por
+       conta própria em vez de confiar em variáveis internas de outro escopo. -->
+  <script>
+    (function () {
+      function getPlanIdFromUrl() {
+        var params = new URLSearchParams(window.location.search);
+        return params.get('plan') || params.get('preview');
+      }
+
+      function getPendingPlanId() {
+        // 1) Preferência: sessionStorage (não depende de querystring sobreviver
+        //    à navegação — algumas rotas/segurança podem limpar a URL).
+        try {
+          var fromStorage = sessionStorage.getItem('minsq_pending_open_plan');
+          if (fromStorage) {
+            sessionStorage.removeItem('minsq_pending_open_plan');
+            return fromStorage;
+          }
+        } catch (e) { }
+        // 2) Fallback: querystring, caso algum outro lugar do app ainda use ?plan=
+        return getPlanIdFromUrl();
+      }
+
+      async function openPlanModal(planId) {
+        // 1) Tenta achar o card já carregado na memória (mais rápido).
+        if (typeof window.catGetCard === 'function') {
+          var cached = window.catGetCard(planId);
+          if (cached && typeof window.mmOpenPlanPreview === 'function') {
+            window.mmOpenPlanPreview(planId);
+            return true;
+          }
+        }
+        // 2) Fallback: busca direto na API, sem depender de nenhum estado
+        //    interno de outro script (funciona mesmo se loadCategories()
+        //    ainda não rodou ou falhou).
+        try {
+          if (window.api && typeof window.api.getPlansAction === 'function') {
+            var list = await window.api.getPlansAction();
+            var found = (list || []).some(function (c) { return c.cat_id === planId; });
+            if (found && typeof window.mmOpenPlanPreview === 'function') {
+              window.mmOpenPlanPreview(planId);
+              return true;
+            }
+          }
+        } catch (e) {
+          console.error('[plano-auto-open] falha ao buscar planos da API:', e);
+        }
+        return false;
+      }
+
+      function initAutoOpen() {
+        var planId = getPendingPlanId();
+        if (!planId) return;
+
+        var attempts = 0;
+        var maxAttempts = 40; // ~8s no total (40 x 200ms)
+
+        (function poll() {
+          attempts++;
+          if (typeof window.mmOpenPlanPreview !== 'function') {
+            // A função de abrir o modal ainda nem existe no escopo global.
+            if (attempts < maxAttempts) return setTimeout(poll, 200);
+            console.warn('[plano-auto-open] mmOpenPlanPreview nunca ficou disponível.');
+            return;
+          }
+          openPlanModal(planId).then(function (opened) {
+            if (opened) return;
+            if (attempts < maxAttempts) {
+              setTimeout(poll, 200);
+            } else {
+              console.warn('[plano-auto-open] desisti após', maxAttempts, 'tentativas. planId =', planId, '— o card não foi encontrado nem via API.');
+            }
+          });
+        })();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAutoOpen);
+      } else {
+        initAutoOpen();
+      }
+    })();
+  </script>
+</body>
+
+</html>
