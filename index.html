@@ -234,8 +234,18 @@
       var hashParam = window.location.hash.replace(/^#\/?/, '');
       var params = new URLSearchParams(window.location.search);
 
+      var host = window.location.hostname.toLowerCase();
+      var isStatusHost = host.startsWith('status.') || host.startsWith('status-') || host === 'status.mohi.com.br';
+      var isMaintHost = host.startsWith('maintenance.') || host.startsWith('maintenance-') || host === 'maintenance.mohi.com.br';
+
       var targetPage = null;
-      if (pathname && pathname !== 'index.html') {
+      if (isStatusHost) {
+        document.title = 'Minsq · Status';
+        targetPage = 'status';
+      } else if (isMaintHost) {
+        document.title = 'Minsq · Em manutenção';
+        targetPage = 'maintenance';
+      } else if (pathname && pathname !== 'index.html') {
         if (pathname.startsWith('@')) {
           targetPage = 'profile/' + pathname;
         } else {

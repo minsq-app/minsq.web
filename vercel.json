@@ -1,11 +1,11 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/",
       "has": [
         {
           "type": "host",
-          "value": "(?<host>status\\.mohi\\.com\\.br)"
+          "value": "status.mohi.com.br"
         }
       ],
       "destination": "/pages/api/status.html"
@@ -19,13 +19,33 @@
       "has": [
         {
           "type": "host",
-          "value": "(?<host>maintenance\\.mohi\\.com\\.br)"
+          "value": "status.mohi.com.br"
+        }
+      ],
+      "destination": "/pages/api/status.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "maintenance.mohi.com.br"
         }
       ],
       "destination": "/pages/api/maintenance.html"
     },
     {
       "source": "/maintenance",
+      "destination": "/pages/api/maintenance.html"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "maintenance.mohi.com.br"
+        }
+      ],
       "destination": "/pages/api/maintenance.html"
     },
     {

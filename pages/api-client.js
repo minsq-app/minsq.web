@@ -203,7 +203,7 @@
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
           window.top.location.replace('/pages/api/maintenance.html');
         } else {
-          window.top.location.replace('https://maintenance.minsq.app');
+          window.top.location.replace('https://maintenance.mohi.com.br');
         }
         return Promise.reject(new Error('Sistema em manutenção.'));
       }
