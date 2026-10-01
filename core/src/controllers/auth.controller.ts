@@ -465,24 +465,37 @@ export class AuthController {
     }
   }
   static async googleCallback(req: Request, res: Response) {
+    const frontendUrl = process.env.FRONTEND_URL || 'https://www.mohi.com.br';
     try {
       const user = req.user as any;
       if (!user) {
         console.error('[Google Callback] req.user vazio — autenticação falhou.');
-        return res.send(`<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="background:#070707"><script>window.close();</script></body></html>`);
+        return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=auth_failed`);
       }
       if (!user._isPending && user.banido) {
-          const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-          return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=banned`);
+        return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=banned`);
       }
       if (!user._isPending && user.ativo === false) {
-          const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-          return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=deactivated`);
+        return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=deactivated`);
       }
 
-      // Sem o nonce deste navegador não adianta criar sessão/OTC (evita sessão órfã no banco).
-      const nonce = req.cookies?.g_nonce;
-      if (!nonce) return res.status(400).send('Sessão de login expirada. Feche esta janela e tente de novo.');
+      // Recupera o nonce do cookie OU do req.gNonce (restaurado da assinatura segura do state)
+      const nonce = req.cookies?.g_nonce || (req as any).gNonce;
+      if (!nonce) {
+        console.error('[Google Callback] Nonce ausente no cookie e no req.gNonce.');
+        return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=session_expired`);
+      }
+
+      // Garante que o cookie g_nonce esteja gravado para a troca do OTC
+      const host = (req.headers['x-forwarded-host'] || req.headers.host || '') as string;
+      const cookieOpts: any = {
+        httpOnly: true, secure: !isDev,
+        sameSite: 'lax', path: '/', maxAge: 10 * 60 * 1000,
+      };
+      if (!isDev && host.includes('mohi.com.br')) {
+        cookieOpts.domain = '.mohi.com.br';
+      }
+      res.cookie('g_nonce', nonce, cookieOpts);
 
       let token = '';
       if (user._isPending) {
@@ -498,7 +511,7 @@ export class AuthController {
       googleOtcStore.set(otc, { 
         token, 
         refreshToken: '', 
-        expiresAt: Date.now() + 30_000, 
+        expiresAt: Date.now() + 60_000, 
         nonceHash: fingerprint(nonce),
         user: { 
           id: user.id, 
@@ -511,11 +524,9 @@ export class AuthController {
       });
       console.log(`[Google Callback] OTC criado. Store size: ${googleOtcStore.size}. Redirecionando...`);
 
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-      return res.redirect(`${frontendUrl}/pages/auth/google-close.html#otc=${otc}`);
+      return res.redirect(`${frontendUrl}/pages/auth/google-close.html?otc=${otc}#otc=${otc}`);
     } catch (err: any) {
       console.error('[Google Callback Error]', err);
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
       return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=auth_failed`);
     }
   }
@@ -525,7 +536,7 @@ export class AuthController {
     const nonce = req.cookies?.g_nonce;
     console.log(`[OTC Exchange] Requisição recebida. Store size: ${googleOtcStore.size}`);
     
-    if (!otc || !nonce) return res.status(400).json({ error: 'Requisição inválida.' });
+    if (!otc) return res.status(400).json({ error: 'Requisição inválida.' });
 
     const entry = googleOtcStore.get(otc);
     if (!entry || entry.expiresAt < Date.now()) {
@@ -534,15 +545,18 @@ export class AuthController {
       return res.status(401).json({ error: 'Código expirado ou inválido.' });
     }
 
-    const a = Buffer.from(fingerprint(nonce));
-    const b = Buffer.from(entry.nonceHash || '');
-    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-      return res.status(401).json({ error: 'Código expirado ou inválido.' }); // NÃO consome o OTC
+    if (entry.nonceHash && nonce) {
+      const a = Buffer.from(fingerprint(nonce));
+      const b = Buffer.from(entry.nonceHash || '');
+      if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
+        return res.status(401).json({ error: 'Código expirado ou inválido.' }); // NÃO consome o OTC
+      }
     }
 
     googleOtcStore.delete(otc);
-    const clearOpts: any = { path: '/api/auth' };
-    if (!isDev) clearOpts.domain = '.mohi.com.br';
+    const host = (req.headers['x-forwarded-host'] || req.headers.host || '') as string;
+    const clearOpts: any = { path: '/' };
+    if (!isDev && host.includes('mohi.com.br')) clearOpts.domain = '.mohi.com.br';
     res.clearCookie('g_nonce', clearOpts);
     console.log(`[OTC Exchange] Sucesso! Token retornado.`);
 

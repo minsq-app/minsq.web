@@ -29,11 +29,12 @@ router.get('/google', googleAuthLimiter, (req, res, next) => {
   // O nonce amarra o OTC ao navegador e também gera o `state` do OAuth (ver config/oauthState.ts).
   const nonce = crypto.randomBytes(32).toString('hex');
   (req as any).gNonce = nonce;
+  const host = (req.headers['x-forwarded-host'] || req.headers.host || '') as string;
   const cookieOpts: any = {
     httpOnly: true, secure: !isDev,
-    sameSite: 'lax', path: '/api/auth', maxAge: 5 * 60 * 1000,
+    sameSite: 'lax', path: '/', maxAge: 10 * 60 * 1000,
   };
-  if (!isDev) {
+  if (!isDev && host.includes('mohi.com.br')) {
     cookieOpts.domain = '.mohi.com.br';
   }
   res.cookie('g_nonce', nonce, cookieOpts);
@@ -43,7 +44,7 @@ router.get('/google/callback', googleAuthLimiter, (req, res, next) => {
   passport.authenticate('google', { session: false }, (err: any, user: any) => {
     if (err || !user) {
       console.error('[Google Callback] Erro de autenticação:', err?.message || 'sem usuário');
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const frontendUrl = process.env.FRONTEND_URL || 'https://www.mohi.com.br';
       return res.redirect(`${frontendUrl}/pages/auth/google-close.html?error=auth_failed`);
     }
     req.user = user;

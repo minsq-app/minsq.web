@@ -3,37 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <title>Autenticando...</title>
-  <style>body { margin: 0; background: #070707; }</style>
+  <style>
+    body { 
+      margin: 0; 
+      background: #070707; 
+      color: #fff; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .box {
+      max-width: 380px;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 30px 24px;
+    }
+    h3 { margin-top: 0; font-size: 1.25rem; font-weight: 600; }
+    p { color: #888; font-size: 0.9rem; line-height: 1.5; margin: 12px 0 20px; }
+    button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    button:hover { background: #1d4ed8; }
+    .error-title { color: #ef4444; }
+  </style>
 </head>
 <body>
-  <script>
-    const otc = new URLSearchParams(location.hash.slice(1)).get('otc');
-    history.replaceState(null, '', location.pathname);
+  <div class="box" id="msg-box">
+    <h3>Processando autenticação...</h3>
+    <p>Aguarde um momento enquanto conectamos sua conta.</p>
+  </div>
 
-    if (otc) {
-      // Passa o OTC ao shell/opener via postMessage e localStorage
-      if (window.opener && window.opener !== window) {
-        try { window.opener.postMessage({ type: 'GOOGLE_OTC', otc }, window.location.origin); } catch(e) {}
-        try { window.opener.top.postMessage({ type: 'GOOGLE_OTC', otc }, window.location.origin); } catch(e) {}
-      }
-      // Fallback: localStorage (mesma origem localhost:3000)
-      localStorage.setItem('minsq_google_otc', otc);
-      // Tenta fechar a janela automaticamente
-      window.close();
+  <script>
+    (function() {
+      const searchParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       
-      // Se não fechar em 1 segundo, mostra uma mensagem pro usuário
-      setTimeout(() => {
-        document.body.innerHTML = `
-          <div style="color:white; font-family:sans-serif; text-align:center; margin-top:40px;">
-            <h3>Autenticação concluída!</h3>
-            <p>Você já pode fechar esta janela manualmente.</p>
-            <button onclick="window.close()" style="padding:10px 20px; cursor:pointer;">Fechar</button>
-          </div>
+      const otc = hashParams.get('otc') || searchParams.get('otc');
+      const error = searchParams.get('error') || hashParams.get('error');
+
+      // Limpa os parâmetros sensíveis da URL
+      try { history.replaceState(null, '', location.pathname); } catch(e) {}
+
+      if (error) {
+        let errorMsg = 'Falha na autenticação com o Google. Tente novamente.';
+        if (error === 'banned') errorMsg = 'Esta conta foi suspensa por violação dos termos.';
+        if (error === 'deactivated') errorMsg = 'Esta conta está desativada.';
+        if (error === 'session_expired') errorMsg = 'A sessão de login expirou. Tente novamente.';
+
+        document.getElementById('msg-box').innerHTML = `
+          <h3 class="error-title">Falha no Login</h3>
+          <p>${errorMsg}</p>
+          <button onclick="window.close()">Fechar janela</button>
         `;
-      }, 1000);
-    } else {
-      document.body.innerHTML = '<h3 style="color:red; text-align:center; margin-top:40px;">Erro: OTC não recebido</h3>';
-    }
+
+        if (window.opener && window.opener !== window) {
+          try { window.opener.postMessage({ type: 'GOOGLE_AUTH_ERROR', error: errorMsg }, '*'); } catch(e) {}
+        }
+        return;
+      }
+
+      if (otc) {
+        // Envia o OTC via postMessage para o opener com targetOrigin '*' para garantir entrega independente de subdomínio
+        if (window.opener && window.opener !== window) {
+          try { window.opener.postMessage({ type: 'GOOGLE_OTC', otc: otc }, '*'); } catch(e) {}
+          try { window.opener.top.postMessage({ type: 'GOOGLE_OTC', otc: otc }, '*'); } catch(e) {}
+        }
+
+        // Fallback localStorage (mesma origem)
+        try {
+          localStorage.setItem('minsq_google_otc', otc);
+        } catch(e) {}
+
+        // Tenta fechar a janela do popup
+        window.close();
+
+        // Se não fechar em 800ms, mostra botão de confirmação
+        setTimeout(function() {
+          document.getElementById('msg-box').innerHTML = `
+            <h3>Autenticação Concluída</h3>
+            <p>Sua conta foi conectada com sucesso. Você já pode fechar esta janela.</p>
+            <button onclick="window.close()">Fechar janela</button>
+          `;
+        }, 800);
+      } else {
+        document.getElementById('msg-box').innerHTML = `
+          <h3 class="error-title">Erro de Autenticação</h3>
+          <p>Não foi possível concluir a autenticação. Feche esta janela e tente novamente.</p>
+          <button onclick="window.close()">Fechar janela</button>
+        `;
+      }
+    })();
   </script>
 </body>
 </html>
