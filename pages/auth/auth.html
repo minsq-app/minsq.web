@@ -263,138 +263,206 @@
     padding: 24px;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
-    background: rgba(0, 0, 0, 0.4);
+    transition: opacity 0.4s ease, backdrop-filter 0.4s ease;
+    background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(0px);
   }
   .legal-modal.show {
     opacity: 1;
     pointer-events: auto;
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(4px);
   }
   .legal-modal-content {
-    background: #18181b;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 650px;
-    max-height: 85vh;
+    background: #09090b;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    width: 95%;
+    max-width: 960px;
+    height: 55vh;
     display: flex;
     flex-direction: column;
-    transform: translateY(20px);
-    transition: transform 0.3s ease;
-    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+    transform: translateY(20px) scale(0.99);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8);
+    overflow: hidden;
   }
   .legal-modal.show .legal-modal-content {
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
   .legal-modal-header {
     display: flex;
-    justify-content: flex-end;
-    padding: 12px 16px 0;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px 8px;
+    background: transparent;
+    position: relative;
+    z-index: 10;
+  }
+  .legal-modal-header-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #71717a;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
   }
   .legal-modal-close {
     background: transparent;
     border: none;
-    color: #888;
-    font-size: 24px;
+    color: #52525b;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     cursor: pointer;
-    line-height: 1;
     transition: color 0.2s ease;
   }
   .legal-modal-close:hover {
     color: #fafafa;
+    transform: none;
   }
   .legal-modal-layout {
     display: flex;
     flex: 1;
     overflow: hidden;
+    position: relative;
   }
   .legal-modal-body {
     flex: 1;
-    padding: 0 24px 24px;
+    padding: 12px 32px 40px 32px;
     overflow-y: auto;
-    color: #d1d5db;
-    font-family: 'Quicksand', sans-serif;
+    color: #a1a1aa;
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
-    line-height: 1.6;
-    scrollbar-width: none;
+    line-height: 1.7;
+    position: relative;
   }
   .legal-modal-body::-webkit-scrollbar {
-    display: none;
+    width: 4px;
   }
-  .legal-modal-body h3, .legal-modal-body h4 {
-    color: #fafafa;
-    margin-top: 1.5em;
+  .legal-modal-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .legal-modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+  .legal-modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+  .legal-modal-body h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+    margin-top: 2.5em;
+    margin-bottom: 0.8em;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .legal-modal-body h3:first-child {
+    margin-top: 0;
+  }
+  .legal-modal-body h4 {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #e4e4e7;
+    margin-top: 2em;
+    margin-bottom: 0.6em;
+  }
+  .legal-modal-body p, .legal-modal-body ul, .legal-modal-body ol {
+    margin-bottom: 1.2em;
+  }
+  .legal-modal-body ul, .legal-modal-body ol {
+    padding-left: 20px;
+  }
+  .legal-modal-body li {
     margin-bottom: 0.5em;
   }
-  .legal-modal-body p {
-    margin-bottom: 1em;
+  .legal-modal-body strong {
+    color: #e4e4e7;
+    font-weight: 500;
   }
-  .legal-modal-body hr {
-    border: none;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    margin: 1.5em 0;
-  }
-
-  /* Spy styles */
   .legal-modal-spy {
-    width: 32px;
-    padding: 24px 12px 24px 0;
+    width: 180px;
+    padding: 24px 24px 24px 0;
+    background: transparent; 
+    border-left: none; 
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    transition: width 0.3s ease;
-    scrollbar-width: none;
   }
   .spy-inner {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin: auto 0;
+    gap: 12px; 
+    border-left: 1px solid rgba(255,255,255,0.03); 
+    padding-left: 16px;
   }
   .legal-modal-spy::-webkit-scrollbar {
     display: none;
   }
-  .legal-modal-spy:hover {
-    width: 240px;
-  }
   .spy-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    color: #666;
+    color: #52525b; 
     cursor: pointer;
-    font-family: 'Quicksand', sans-serif;
-    font-size: 11.5px;
-    transition: color 0.2s;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    transition: all 0.2s ease;
     white-space: nowrap;
     overflow: hidden;
+    padding: 2px 0;
+    position: relative;
   }
-  .spy-item:hover, .spy-item.active {
+  .spy-item:hover {
+    color: #a1a1aa;
+  }
+  .spy-item.active {
     color: #fafafa;
   }
   .spy-dash {
-    flex-shrink: 0;
-    width: 4px;
-    height: 4px;
-    background: currentColor;
-    border-radius: 50%;
-    transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease, border-radius 0.3s ease;
+    position: absolute;
+    left: -17px; 
+    width: 2px;
+    height: 0;
+    background: transparent;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .spy-item.active .spy-dash {
-    width: 18px;
-    border-radius: 2px;
-    background: #fafafa;
+    background: #fff; 
+    height: 14px;
+    top: 50%;
+    transform: translateY(-50%);
   }
   .spy-label {
-    opacity: 0;
-    transform: translateX(-8px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
-  .legal-modal-spy:hover .spy-label {
-    opacity: 1;
-    transform: translateX(0);
+
+  @media (max-width: 640px) {
+    .legal-modal-spy {
+      display: none;
+    }
+    .legal-modal-body {
+      padding: 24px 20px;
+    }
+    .legal-modal-content {
+      max-width: 100%;
+      height: 90vh;
+      border-radius: 16px 16px 0 0;
+      transform: translateY(100%);
+    }
+    .legal-modal.show .legal-modal-content {
+      transform: translateY(0);
+    }
+    .legal-modal {
+      padding: 0;
+      align-items: flex-end;
+    }
   }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -432,7 +500,7 @@
         </button>
 
         <div class="auth-terms">
-          Ao continuar, você concorda com os <a href="termos.html">Termos de Uso</a> e a <a href="privacidade.html">Política de Privacidade</a>.
+          Ao continuar, você concorda com os <a data-modal="termos" style="cursor: pointer;">Termos de Uso</a> e a <a data-modal="privacidade" style="cursor: pointer;">Política de Privacidade</a>.
         </div>
 
       </div>
@@ -1304,7 +1372,12 @@
       modal.innerHTML = `
         <div class="legal-modal-content">
           <div class="legal-modal-header">
-            <button class="legal-modal-close">&times;</button>
+            <h3 class="legal-modal-header-title">Documento</h3>
+            <button class="legal-modal-close" title="Fechar">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M13 1L1 13M1 1L13 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </div>
           <div class="legal-modal-layout">
             <div class="legal-modal-body">Carregando...</div>
@@ -1354,7 +1427,8 @@
           let currentActive = 0;
           for (let i = 0; i < headings.length; i++) {
             const h = headings[i];
-            if (h.offsetTop - modalBody.offsetTop <= modalBody.scrollTop + 60) {
+            // Matemática consertada: como a box tem position:relative, h.offsetTop já é exato!
+            if (h.offsetTop <= modalBody.scrollTop + 100) {
               currentActive = i;
             }
           }
@@ -1366,8 +1440,15 @@
           
           const spyItems = spyContainer.querySelectorAll('.spy-item');
           spyItems.forEach((item, idx) => {
-            if (idx === currentActive) item.classList.add('active');
-            else item.classList.remove('active');
+            if (idx === currentActive) {
+              if (!item.classList.contains('active')) {
+                item.classList.add('active');
+                // Faz a barra lateral rolar sozinha para acompanhar a bolinha branca
+                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }
+            } else {
+              item.classList.remove('active');
+            }
           });
         };
         
@@ -1378,6 +1459,12 @@
 
       async function openModal(type) {
         modal.classList.add('show');
+        
+        const titleEl = modal.querySelector('.legal-modal-header-title');
+        if (titleEl) {
+          titleEl.innerText = type === 'termos' ? 'Termos de Serviço' : 'Política de Privacidade';
+        }
+
         if (!settingsDoc) {
           try {
             modalBody.innerHTML = 'Carregando...';
@@ -1403,12 +1490,12 @@
         }
       }
 
-      document.querySelector('a[href="termos.html"]').addEventListener('click', (e) => {
+      document.querySelector('[data-modal="termos"]').addEventListener('click', (e) => {
         e.preventDefault();
         openModal('termos');
       });
 
-      document.querySelector('a[href="privacidade.html"]').addEventListener('click', (e) => {
+      document.querySelector('[data-modal="privacidade"]').addEventListener('click', (e) => {
         e.preventDefault();
         openModal('privacidade');
       });

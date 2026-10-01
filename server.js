@@ -9,23 +9,42 @@ const app = express();
 // Trust proxy for rate limit headers (Vercel/NGINX)
 app.set('trust proxy', process.env.TRUST_PROXY || 1);
 
-// Apply helmet with relaxed CSP for the CDN assets we still use
+// Proxy /api requests to the backend
+const apiTarget = process.env.API_URL || 'http://localhost:3001';
+
+// Permissões de conexão estritas (evita exfiltração de dados via XSS)
+const connectSrc = [
+  "'self'",
+  "http://localhost:*",
+  "http://127.0.0.1:*",
+  "https://challenges.cloudflare.com"
+];
+if (process.env.API_URL && !connectSrc.includes(process.env.API_URL)) {
+  connectSrc.push(process.env.API_URL);
+}
+
+// Apply helmet with hardened CSP for the CDN assets and Turnstile we use
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "https://cdnjs.cloudflare.com",
+        "https://cdn.jsdelivr.net",
+        "https://challenges.cloudflare.com"
+      ],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https://*"],
-      connectSrc: ["'self'", "http://localhost:*", "https://*"]
+      connectSrc: connectSrc,
+      frameSrc: ["'self'", "https://challenges.cloudflare.com"]
     }
   }
 }));
-
-// Proxy /api requests to the backend
-const apiTarget = process.env.API_URL || 'http://localhost:3001';
 
 app.use('/api', createProxyMiddleware({
   target: apiTarget,

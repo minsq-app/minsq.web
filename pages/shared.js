@@ -124,6 +124,25 @@
         if (!el.hasAttribute('autocapitalize') || el.getAttribute('autocapitalize') !== 'off') el.setAttribute('autocapitalize', 'off');
       }
 
+      if (el.tagName === 'A' && el.hasAttribute('href')) {
+        var href = el.getAttribute('href');
+        // Ignora âncoras falsas, scripts e os links dinâmicos do modal (termos e privacidade)
+        if (href && href !== '#' && href.indexOf('javascript:') !== 0 && href !== 'termos.html' && href !== 'privacidade.html') {
+          el.setAttribute('data-href', href);
+          el.removeAttribute('href');
+          el.style.cursor = 'pointer';
+          el.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = el.getAttribute('target');
+            if (target === '_blank') {
+              window.open(href, '_blank');
+            } else {
+              window.location.href = href;
+            }
+          });
+        }
+      }
+
       if (el.children && el.children.length > 0) {
         for (var i = 0; i < el.children.length; i++) {
           applyGlobalRules(el.children[i]);
