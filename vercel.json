@@ -5,7 +5,7 @@
       "has": [
         {
           "type": "host",
-          "value": "status.minsq.app"
+          "value": "status.minsq-five.vercel.app"
         }
       ],
       "destination": "/pages/api/status.html"
@@ -15,7 +15,7 @@
       "has": [
         {
           "type": "host",
-          "value": "maintenance.minsq.app"
+          "value": "maintenance.minsq-five.vercel.app"
         }
       ],
       "destination": "/pages/api/maintenance.html"
