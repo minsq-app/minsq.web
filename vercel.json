@@ -50,7 +50,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "https://minsq-api.onrender.com/api/:path*"
+      "destination": "https://minsq-web.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
