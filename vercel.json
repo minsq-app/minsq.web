@@ -1,11 +1,23 @@
 {
   "rewrites": [
     {
-      "source": "/status",
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "status.minsq-five.vercel.app"
+        }
+      ],
       "destination": "/pages/api/status.html"
     },
     {
-      "source": "/maintenance",
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "maintenance.minsq-five.vercel.app"
+        }
+      ],
       "destination": "/pages/api/maintenance.html"
     },
     {
