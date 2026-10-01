@@ -11,6 +11,10 @@
       "destination": "/pages/api/status.html"
     },
     {
+      "source": "/status",
+      "destination": "/pages/api/status.html"
+    },
+    {
       "source": "/(.*)",
       "has": [
         {
@@ -18,6 +22,10 @@
           "value": "(?<host>maintenance\\.mohi\\.com\\.br)"
         }
       ],
+      "destination": "/pages/api/maintenance.html"
+    },
+    {
+      "source": "/maintenance",
       "destination": "/pages/api/maintenance.html"
     },
     {
