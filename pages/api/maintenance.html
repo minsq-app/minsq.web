@@ -197,7 +197,7 @@
 
         <div class="mnt-actions">
           <button class="continue-btn btn-primary" id="btnAtualizar" onclick="checkMaintenance()">Atualizar página</button>
-          <button class="continue-btn btn-secondary" onclick="window.location.href='status.html'">Verificar status</button>
+          <button class="continue-btn btn-secondary" onclick="window.location.href='https://status.mohi.com.br'">Verificar status</button>
         </div>
 
         <div id="mntETA"></div>
@@ -254,7 +254,7 @@
             }
           } else {
             localStorage.removeItem('minsq_is_maintenance');
-            window.location.href = '/index.html';
+            window.location.href = 'https://mohi.com.br';
             return;
           }
         }
@@ -283,7 +283,7 @@
             }, 2000);
           } else {
             localStorage.removeItem('minsq_is_maintenance');
-            window.location.href = '/pages/dashboard.html';
+            window.location.href = 'https://mohi.com.br';
           }
         }
       } catch (e) {
