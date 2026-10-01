@@ -272,9 +272,15 @@
       var hashParam = window.location.hash.replace(/^#\/?/, '');
       var params = new URLSearchParams(window.location.search);
 
+      var host = window.location.hostname.toLowerCase();
       var isStatusHost = host.startsWith('status.') || host.startsWith('status-') || host === 'status.mohi.com.br';
       var isMaintHost = host.startsWith('maintenance.') || host.startsWith('maintenance-') || host === 'maintenance.mohi.com.br';
       var isWebHost = host.startsWith('web.') || host.startsWith('web-') || host === 'web.mohi.com.br';
+
+      // Impede injeção de sidebar e chamadas de perfil do app principal em subdomínios públicos
+      if (isStatusHost || isMaintHost || isWebHost) {
+        window.MINSQ_HAS_SIDEBAR = true;
+      }
 
       var targetPage = null;
       if (isStatusHost) {
@@ -356,13 +362,22 @@
         var curtain = document.getElementById('mh-curtain');
         if (curtain) curtain.classList.remove('hide');
 
-        iframe.addEventListener('load', function onLoad() {
-          iframe.removeEventListener('load', onLoad);
+        var safetyTimer = setTimeout(function () {
+          if (curtain) curtain.classList.add('hide');
+        }, 1200);
+
+        function doHide() {
+          clearTimeout(safetyTimer);
           requestAnimationFrame(function () {
             requestAnimationFrame(function () {
               if (curtain) curtain.classList.add('hide');
             });
           });
+        }
+
+        iframe.addEventListener('load', function onLoad() {
+          iframe.removeEventListener('load', onLoad);
+          doHide();
         });
 
         try {
