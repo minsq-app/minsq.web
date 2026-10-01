@@ -147,10 +147,34 @@
           return;
         }
 
+        function handleUserLogin(user, token) {
+          if (token) auth.setToken(token);
+          if (user) {
+            var currentUserId = user.id || user.email || '';
+            var lastUserId = '';
+            try { lastUserId = localStorage.getItem('minsq_last_user_id') || ''; } catch (e) { }
+            if (currentUserId && lastUserId && String(lastUserId) !== String(currentUserId)) {
+              var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+              _pages.forEach(function (k) {
+                try {
+                  localStorage.removeItem(k + 'BgImage');
+                  localStorage.removeItem(k + 'BgOpacity');
+                  localStorage.removeItem(k + 'Font');
+                  localStorage.removeItem('dc_layout_' + k);
+                } catch (e) { }
+              });
+              try { localStorage.removeItem('dc_sb_pref'); } catch (e) { }
+            }
+            if (currentUserId) {
+              try { localStorage.setItem('minsq_last_user_id', String(currentUserId)); } catch (e) { }
+            }
+            try { localStorage.setItem('minsq_auth_user', JSON.stringify(user)); } catch (e) { }
+          }
+        }
+
         /* Iframe informou novo token após login */
         if (msg.type === 'MINSQ_SET_TOKEN') {
-          auth.setToken(msg.token);
-          if (msg.user) localStorage.setItem('minsq_auth_user', JSON.stringify(msg.user));
+          handleUserLogin(msg.user, msg.token);
           return;
         }
 
@@ -172,8 +196,7 @@
                 return;
               }
               if (data.token) {
-                auth.setToken(data.token);
-                if (data.user) localStorage.setItem('minsq_auth_user', JSON.stringify(data.user));
+                handleUserLogin(data.user, data.token);
                 if (data.isNewUser) {
                   sessionStorage.setItem('minsq_force_onboarding', 'true');
                 } else {
@@ -188,8 +211,7 @@
 
         /* Token já resolvido pelo iframe (auth.html trocou o OTC) */
         if (msg.type === 'GOOGLE_SET_TOKEN' && msg.token) {
-          auth.setToken(msg.token);
-          if (msg.user) localStorage.setItem('minsq_auth_user', JSON.stringify(msg.user));
+          handleUserLogin(msg.user, msg.token);
           if (msg.isNewUser) {
             sessionStorage.setItem('minsq_force_onboarding', 'true');
           } else {
@@ -210,6 +232,22 @@
         /* Iframe pediu logout / invalidação */
         if (msg.type === 'MINSQ_INVALIDATE') {
           auth.invalidate();
+          var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+          _pages.forEach(function (k) {
+            try {
+              localStorage.removeItem(k + 'BgImage');
+              localStorage.removeItem(k + 'BgOpacity');
+              localStorage.removeItem(k + 'Font');
+              localStorage.removeItem('dc_layout_' + k);
+            } catch (e) { }
+          });
+          try {
+            localStorage.removeItem('dc_sb_pref');
+            localStorage.removeItem('minsq_auth_user');
+            localStorage.removeItem('minsq_last_user_id');
+            localStorage.removeItem('minsq_token');
+            localStorage.removeItem('mh_custom_sync_lock');
+          } catch (e) { }
           return;
         }
 

@@ -41,9 +41,17 @@ export function requireTurnstile(expectedAction: string) {
           return res.status(403).json({ error: 'Validação de segurança falhou. Tente novamente.' });
         }
 
-        const expectedHost = process.env.FRONTEND_URL ? new URL(process.env.FRONTEND_URL).hostname : null;
-        if (!isDev && expectedHost && verifyData.hostname && verifyData.hostname !== expectedHost) {
-          console.warn(`[Turnstile Hostname Mismatch] Esperado: ${expectedHost}, Recebido: ${verifyData.hostname}`);
+        const isAllowedHostname = (hostname: string) => {
+          if (!hostname) return false;
+          return hostname === 'mohi.com.br' || 
+                 hostname === 'www.mohi.com.br' || 
+                 hostname.endsWith('.mohi.com.br') || 
+                 hostname.endsWith('.vercel.app') || 
+                 hostname.endsWith('.onrender.com');
+        };
+
+        if (!isDev && verifyData.hostname && !isAllowedHostname(verifyData.hostname)) {
+          console.warn(`[Turnstile Hostname Mismatch] Recebido: ${verifyData.hostname}`);
           return res.status(403).json({ error: 'Origem da requisição inválida.' });
         }
 

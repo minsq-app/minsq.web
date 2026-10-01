@@ -5436,7 +5436,26 @@
 
         fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
           .then(() => {
-            localStorage.removeItem('minsq_auth_user');
+            if (typeof window.clearUserCustomizationStorage === 'function') {
+              window.clearUserCustomizationStorage();
+            } else {
+              const _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+              _pages.forEach(k => {
+                try {
+                  localStorage.removeItem(k + 'BgImage');
+                  localStorage.removeItem(k + 'BgOpacity');
+                  localStorage.removeItem(k + 'Font');
+                  localStorage.removeItem('dc_layout_' + k);
+                } catch (e) { }
+              });
+              try {
+                localStorage.removeItem('dc_sb_pref');
+                localStorage.removeItem('minsq_auth_user');
+                localStorage.removeItem('minsq_last_user_id');
+                localStorage.removeItem('minsq_token');
+                localStorage.removeItem('mh_custom_sync_lock');
+              } catch (e) { }
+            }
             if (window.parent && window.parent.postMessage) {
               window.parent.postMessage({ type: 'MINSQ_INVALIDATE' }, '*');
               window.parent.postMessage({ type: 'MINSQ_UPDATE_URL', url: '/' }, '*');

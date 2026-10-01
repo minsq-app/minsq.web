@@ -809,8 +809,8 @@
       sidebarElement.addEventListener('click', function(e) {
         var el = e.target.closest('[data-mhkey]');
         if (el) {
-          if (el.classList.contains('on') || (el.parentElement && el.parentElement.classList.contains('on'))) return;
           var key = el.getAttribute('data-mhkey');
+          if (el.classList.contains('on') || key === ACTIVE_KEY) return;
           if (typeof window.go === 'function') window.go(key);
         }
       });
@@ -1780,6 +1780,25 @@
       }
     };
 
+    window.clearUserCustomizationStorage = function () {
+      var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+      _pages.forEach(function (k) {
+        try {
+          localStorage.removeItem(k + 'BgImage');
+          localStorage.removeItem(k + 'BgOpacity');
+          localStorage.removeItem(k + 'Font');
+          localStorage.removeItem('dc_layout_' + k);
+        } catch (e) { }
+      });
+      try {
+        localStorage.removeItem('dc_sb_pref');
+        localStorage.removeItem('minsq_auth_user');
+        localStorage.removeItem('minsq_last_user_id');
+        localStorage.removeItem('minsq_token');
+        localStorage.removeItem('mh_custom_sync_lock');
+      } catch (e) { }
+    };
+
     window.globalRemoveBg = function () {
       window.globalSaveSetting('bgImage', '');
       window.globalApplyBg('');
@@ -1926,13 +1945,7 @@
         var s = {}; try { s = JSON.parse(localStorage.getItem('dc_layout_' + k) || '{}'); } catch (e) { }
         var c = userCust[k] || {};
 
-        var oldBg = localStorage.getItem(k + 'BgImage') || '';
-        var bgImg = c.bgImage !== undefined ? c.bgImage : (s.bgImage !== undefined ? s.bgImage : oldBg);
-
-        // Force restore migration: if it was accidentally wiped by the previous bug (bgImg === ''), but oldBg exists
-        if (bgImg === '' && oldBg !== '') {
-          bgImg = oldBg;
-        }
+        var bgImg = c.bgImage !== undefined ? c.bgImage : (s.bgImage !== undefined ? s.bgImage : '');
 
         var oldOp = localStorage.getItem(k + 'BgOpacity');
         var defaultOp = 80;
@@ -2439,6 +2452,25 @@
         user = JSON.parse(localStorage.getItem('minsq_auth_user')) || {};
       } catch (e) { }
 
+      var currentUserId = user ? (user.id || user.email || '') : '';
+      var lastUserId = '';
+      try { lastUserId = localStorage.getItem('minsq_last_user_id') || ''; } catch (e) { }
+      if (currentUserId && lastUserId && String(lastUserId) !== String(currentUserId)) {
+        var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+        _pages.forEach(function (k) {
+          try {
+            localStorage.removeItem(k + 'BgImage');
+            localStorage.removeItem(k + 'BgOpacity');
+            localStorage.removeItem(k + 'Font');
+            localStorage.removeItem('dc_layout_' + k);
+          } catch (e) { }
+        });
+        try { localStorage.removeItem('dc_sb_pref'); } catch (e) { }
+      }
+      if (currentUserId) {
+        try { localStorage.setItem('minsq_last_user_id', String(currentUserId)); } catch (e) { }
+      }
+
       var cust = {};
       try {
         cust = typeof user.customization_json === 'string' ? JSON.parse(user.customization_json) : (user.customization_json || {});
@@ -2455,13 +2487,7 @@
       // para não vazar o fundo de outras páginas na topbar e no layout do settings.
       if (CURRENT_FILE === 'settings.html') return;
 
-      var oldBg = localStorage.getItem(ACTIVE_KEY + 'BgImage') || '';
-      var bgImg = pageSettings.bgImage !== undefined ? pageSettings.bgImage : (globalSettings.bgImage !== undefined ? globalSettings.bgImage : oldBg);
-
-      // Force restore migration
-      if (bgImg === '' && oldBg !== '') {
-        bgImg = oldBg;
-      }
+      var bgImg = pageSettings.bgImage !== undefined ? pageSettings.bgImage : (globalSettings.bgImage !== undefined ? globalSettings.bgImage : '');
 
       var oldOp = localStorage.getItem(ACTIVE_KEY + 'BgOpacity');
       var defaultOp = 80;

@@ -238,11 +238,33 @@
     setTimeout(() => dotsEl.classList.add('show'), 100);
 
     // Lógica de Manutenção
+    async function fetchStatusWithFallback() {
+      const endpoints = [
+        '/api/status',
+        'https://mohi.com.br/api/status',
+        'https://minsq-web.onrender.com/api/status'
+      ];
+      for (const url of endpoints) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (res.ok) {
+            const contentType = res.headers.get('content-type') || '';
+            if (contentType.includes('application/json')) {
+              const data = await res.json();
+              if (data && typeof data.isMaintenanceMode === 'boolean') {
+                return data;
+              }
+            }
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
     async function loadMaintenanceInfo() {
       try {
-        const res = await fetch('/api/status');
-        if (res.ok) {
-          const data = await res.json();
+        const data = await fetchStatusWithFallback();
+        if (data) {
           if (data.isMaintenanceMode) {
             if (data.maintMessage) {
               document.getElementById('mntMessage').innerText = data.maintMessage;
@@ -271,9 +293,8 @@
       btn.style.pointerEvents = 'none';
 
       try {
-        const res = await fetch('/api/status');
-        if (res.ok) {
-          const data = await res.json();
+        const data = await fetchStatusWithFallback();
+        if (data) {
           if (data.isMaintenanceMode) {
             btn.textContent = 'Ainda em manutenção';
             setTimeout(() => {
@@ -285,6 +306,13 @@
             localStorage.removeItem('minsq_is_maintenance');
             window.top.location.href = 'https://mohi.com.br';
           }
+        } else {
+          btn.textContent = 'Servidor offline';
+          setTimeout(() => {
+            btn.textContent = 'Atualizar página';
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto';
+          }, 2000);
         }
       } catch (e) {
         btn.textContent = 'Servidor offline';

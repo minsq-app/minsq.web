@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://minsq-web.onrender.com/api/:path*"
+    },
+    {
       "source": "/",
       "has": [
         {
@@ -47,10 +51,6 @@
         }
       ],
       "destination": "/pages/api/maintenance.html"
-    },
-    {
-      "source": "/api/:path*",
-      "destination": "https://minsq-web.onrender.com/api/:path*"
     },
     {
       "source": "/(.*)",
