@@ -9,6 +9,40 @@
       "has": [
         {
           "type": "host",
+          "value": "web.mohi.com.br"
+        }
+      ],
+      "destination": "/pages/web/index.html"
+    },
+    {
+      "source": "/web",
+      "destination": "/pages/web/index.html"
+    },
+    {
+      "source": "/assets/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "web.mohi.com.br"
+        }
+      ],
+      "destination": "/pages/web/assets/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "web.mohi.com.br"
+        }
+      ],
+      "destination": "/pages/web/index.html"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
           "value": "status.mohi.com.br"
         }
       ],
@@ -61,7 +95,7 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self'" },
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://mohi.com.br https://*.mohi.com.br" },
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
       ]
     }

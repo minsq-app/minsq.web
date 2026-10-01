@@ -272,9 +272,9 @@
       var hashParam = window.location.hash.replace(/^#\/?/, '');
       var params = new URLSearchParams(window.location.search);
 
-      var host = window.location.hostname.toLowerCase();
       var isStatusHost = host.startsWith('status.') || host.startsWith('status-') || host === 'status.mohi.com.br';
       var isMaintHost = host.startsWith('maintenance.') || host.startsWith('maintenance-') || host === 'maintenance.mohi.com.br';
+      var isWebHost = host.startsWith('web.') || host.startsWith('web-') || host === 'web.mohi.com.br';
 
       var targetPage = null;
       if (isStatusHost) {
@@ -283,6 +283,9 @@
       } else if (isMaintHost) {
         document.title = 'Minsq · Em manutenção';
         targetPage = 'maintenance';
+      } else if (isWebHost) {
+        document.title = 'Minsq';
+        targetPage = 'web';
       } else if (pathname && pathname !== 'index.html') {
         if (pathname.startsWith('@')) {
           targetPage = 'profile/' + pathname;
@@ -331,6 +334,9 @@
           prefix = '/pages/auth/';
         } else if (API_PAGES.indexOf(pageKey) !== -1) {
           prefix = '/pages/api/';
+        } else if (pageKey === 'web') {
+          prefix = '/pages/web/';
+          clean = 'index.html';
         }
 
         var p = new URLSearchParams(window.location.search);
@@ -442,8 +448,8 @@
 
       /* auth.html detecta popup fechado via poll e sinaliza POLL_COMPLETE */
 
-      /* PREVENIR MÚLTIPLAS GUIAS ABERTAS (Apenas no app principal, não em status ou manutenção) */
-      if (!isStatusHost && !isMaintHost) {
+      /* PREVENIR MÚLTIPLAS GUIAS ABERTAS (Apenas no app principal, não em status, manutenção ou web landing) */
+      if (!isStatusHost && !isMaintHost && !isWebHost) {
         var tabChannel = new BroadcastChannel('minsq_tab_sync');
         var tabId = Math.random().toString(36).substring(2);
         

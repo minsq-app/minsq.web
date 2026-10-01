@@ -40,6 +40,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https://*"],
+      mediaSrc: ["'self'", "data:", "blob:", "https://*"],
       connectSrc: connectSrc,
       frameSrc: ["'self'", "https://challenges.cloudflare.com"]
     }
@@ -66,9 +67,34 @@ app.use('/api', createProxyMiddleware({
 // Serve specific public folders
 app.use('/pages', express.static(path.join(__dirname, 'pages')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
+app.use('/assets', express.static(path.join(__dirname, 'pages', 'web', 'assets')));
 
-// Fallback for SPA
+// Route and Subdomain resolution (replicates vercel.json rewrites)
 app.use((req, res, next) => {
+  const host = (req.hostname || req.headers.host || '').toLowerCase();
+  const isWebHost = host.startsWith('web.') || host.startsWith('web-') || host === 'web.mohi.com.br';
+  const isStatusHost = host.startsWith('status.') || host.startsWith('status-') || host === 'status.mohi.com.br';
+  const isMaintHost = host.startsWith('maintenance.') || host.startsWith('maintenance-') || host === 'maintenance.mohi.com.br';
+
+  if (isWebHost || req.path === '/web') {
+    if (req.path === '/' || req.path === '/web' || !req.path.includes('.')) {
+      return res.sendFile(path.join(__dirname, 'pages', 'web', 'index.html'));
+    }
+  }
+
+  if (isStatusHost || req.path === '/status') {
+    if (req.path === '/' || req.path === '/status' || !req.path.includes('.')) {
+      return res.sendFile(path.join(__dirname, 'pages', 'api', 'status.html'));
+    }
+  }
+
+  if (isMaintHost || req.path === '/maintenance') {
+    if (req.path === '/' || req.path === '/maintenance' || !req.path.includes('.')) {
+      return res.sendFile(path.join(__dirname, 'pages', 'api', 'maintenance.html'));
+    }
+  }
+
+  // Fallback for SPA
   if (req.path === '/' || req.path === '/index.html' || !req.path.includes('.')) {
     return res.sendFile(path.join(__dirname, 'index.html'));
   }
