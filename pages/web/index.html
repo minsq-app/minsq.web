@@ -1672,8 +1672,8 @@
   </div>
   <section class="hero">
     <div class="hero-video">
-      <video autoplay muted loop playsinline preload="auto">
-        <source src="./assets/1.mp4" type="video/mp4">
+      <video id="heroVideo" muted loop playsinline preload="none">
+        <source data-src="./assets/1.mp4" type="video/mp4">
       </video>
     </div>
     <div>
@@ -1704,11 +1704,11 @@
         </div>
         <div class="mark-panel mh-locked" id="markPanelContent">
           <div class="minsq-embed">
-            <div id="bgLayer"></div>
+            <div id="bgLayer" class="lazy-bg" data-bg="./assets/1.jpg"></div>
 
             <div id="mh-sidebar-wrapper">
               <div class="mh-sidebar" id="mh-sidebar">
-                <div class="mh-logo" style="cursor:default;"><img src="./assets/1.svg" alt="logo"
+                <div class="mh-logo" style="cursor:default;"><img src="./assets/1.svg" alt="logo" loading="lazy" decoding="async"
                     style="width:34px;height:34px;object-fit:contain;display:block;-webkit-user-drag:none;pointer-events:none">
                 </div>
                 <div class="mh-search">
@@ -1922,7 +1922,7 @@
                   </div>
                   <div class="mm-plan-grid">
                     <div class="mm-plan-card">
-                      <div class="mm-plan-photo" style="background-image:url('./assets/2.jpg')"></div>
+                      <div class="mm-plan-photo lazy-bg" data-bg="./assets/2.jpg"></div>
                       <div class="mm-plan-info">
                         <div class="mm-plan-name">Viagens</div>
                       </div>
@@ -2144,7 +2144,7 @@
                   </div>
                   <div class="catcard-grid">
                     <div class="catcard">
-                      <div class="catcard-photo" style="background-image:url('./assets/2.jpg')"></div>
+                      <div class="catcard-photo lazy-bg" data-bg="./assets/2.jpg"></div>
                       <div class="catcard-info">
                         <div class="catcard-name">Viagens</div>
                       </div>
@@ -2446,13 +2446,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('./assets/1.jpg');
       background-size: cover;
       background-position: center center;
       background-repeat: no-repeat;
       opacity: .9;
       pointer-events: none;
       z-index: 0;
+      transition: background-image .3s ease;
     }
 
     .minsq-embed {
@@ -4409,7 +4409,7 @@
       <div class="journey-slider" id="journeySlider">
 
         <div class="journey-photo">
-          <img src="./assets/logo.png" alt="Minsq" loading="lazy">
+          <img src="./assets/logo.png" alt="Minsq" loading="lazy" decoding="async">
         </div>
 
         <div class="journey-track">
@@ -6552,6 +6552,62 @@
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onScroll);
       update();
+    })();
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════
+     LAZY LOADER & UNLOADER (Carrega quando visível, descarrega/pausa ao sair)
+════════════════════════════════════════════════════════ -->
+  <script>
+    (function initSmartLazyLoader() {
+      if (!("IntersectionObserver" in window)) return;
+
+      // 1. VÍDEO HERO (50MB) - Carrega só ao ver, pausa e suspende ao sair da viewport
+      const heroVideo = document.getElementById("heroVideo");
+      const heroSection = document.querySelector(".hero");
+
+      if (heroVideo && heroSection) {
+        let isLoaded = false;
+        const videoObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            const source = heroVideo.querySelector("source");
+            if (entry.isIntersecting) {
+              if (!isLoaded && source && source.dataset.src) {
+                source.src = source.dataset.src;
+                heroVideo.load();
+                isLoaded = true;
+              }
+              heroVideo.play().catch(() => {});
+            } else {
+              // Pausa imediatamente ao rolar para fora da tela
+              heroVideo.pause();
+            }
+          });
+        }, { threshold: 0.05 });
+
+        videoObserver.observe(heroSection);
+      }
+
+      // 2. BACKGROUND IMAGES PESADAS (1.jpg, 2.jpg) - Carrega na viewport, descarrega ao sair
+      const lazyBgs = document.querySelectorAll(".lazy-bg");
+      if (lazyBgs.length > 0) {
+        const bgObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            const el = entry.target;
+            const bgUrl = el.dataset.bg;
+            if (!bgUrl) return;
+
+            if (entry.isIntersecting) {
+              el.style.backgroundImage = `url('${bgUrl}')`;
+            } else {
+              // Descarrega a imagem da camada ao sair da tela para liberar memória de textura
+              el.style.backgroundImage = "none";
+            }
+          });
+        }, { rootMargin: "300px 0px" });
+
+        lazyBgs.forEach((el) => bgObserver.observe(el));
+      }
     })();
   </script>
 
