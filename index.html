@@ -118,6 +118,17 @@
 
       window.__mohiAuth = auth;
 
+      var host = window.location.hostname.toLowerCase();
+      var isStatusHost = host.startsWith('status.') || host.startsWith('status-') || host === 'status.mohi.com.br';
+      var isMaintHost = host.startsWith('maintenance.') || host.startsWith('maintenance-') || host === 'maintenance.mohi.com.br';
+      var isWebHost = host.startsWith('web.') || host.startsWith('web-') || host === 'web.mohi.com.br';
+      var isSubdomainHost = isStatusHost || isMaintHost || isWebHost;
+
+      // Impede injeção de sidebar e chamadas de perfil do app principal em subdomínios públicos
+      if (isSubdomainHost) {
+        window.MINSQ_HAS_SIDEBAR = true;
+      }
+
       /* ---- Listener postMessage: atende iframes ---- */
       window.addEventListener('message', function (event) {
         if (event.origin !== window.location.origin) return;
@@ -254,6 +265,10 @@
         /* Iframe pediu para navegar mostrando a cortina */
         if (msg.type === 'MINSQ_NAVIGATE') {
           var safePath = (msg.url && typeof msg.url === 'string' && msg.url.startsWith('/')) ? msg.url : '/';
+          if (isSubdomainHost) {
+            window.top.location.href = 'https://mohi.com.br' + safePath;
+            return;
+          }
           navigateIframe(safePath);
           return;
         }
@@ -261,6 +276,13 @@
         /* Iframe pediu atualização da URL no shell */
         if (msg.type === 'MINSQ_UPDATE_URL') {
           if (msg.url) {
+            if (isSubdomainHost) {
+              var u = String(msg.url).toLowerCase();
+              if (u !== '/' && !u.startsWith('/web') && !u.startsWith('/status') && !u.startsWith('/maintenance')) {
+                window.top.location.href = 'https://mohi.com.br' + msg.url;
+                return;
+              }
+            }
             window.history.replaceState({}, '', msg.url);
           }
           return;
@@ -271,16 +293,6 @@
       var pathname = window.location.pathname.replace(/^\/+/, '');
       var hashParam = window.location.hash.replace(/^#\/?/, '');
       var params = new URLSearchParams(window.location.search);
-
-      var host = window.location.hostname.toLowerCase();
-      var isStatusHost = host.startsWith('status.') || host.startsWith('status-') || host === 'status.mohi.com.br';
-      var isMaintHost = host.startsWith('maintenance.') || host.startsWith('maintenance-') || host === 'maintenance.mohi.com.br';
-      var isWebHost = host.startsWith('web.') || host.startsWith('web-') || host === 'web.mohi.com.br';
-
-      // Impede injeção de sidebar e chamadas de perfil do app principal em subdomínios públicos
-      if (isStatusHost || isMaintHost || isWebHost) {
-        window.MINSQ_HAS_SIDEBAR = true;
-      }
 
       var targetPage = null;
       if (isStatusHost) {

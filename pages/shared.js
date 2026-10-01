@@ -337,6 +337,12 @@
 
   // Redirecionamento se acessar diretamente a página interna fora do iframe
   if (!IS_IN_IFRAME && !IS_ROOT && !IS_PUBLIC) {
+    var _sh = window.location.hostname.toLowerCase();
+    var _isSub = _sh.startsWith('web.') || _sh.startsWith('status.') || _sh.startsWith('maintenance.');
+    if (_isSub) {
+      window.location.replace('https://mohi.com.br/' + CURRENT_FILE.replace(/\.html$/, '') + window.location.search);
+      return;
+    }
     window.location.replace('/' + CURRENT_FILE.replace(/\.html$/, '') + window.location.search);
     return;
   }
@@ -450,10 +456,13 @@
      AUTH GUARD (só em páginas internas)
   ════════════════════════════════════════════ */
   if (!IS_PUBLIC) {
+    var _sh = window.location.hostname.toLowerCase();
+    var _isSub = _sh.startsWith('web.') || _sh.startsWith('status.') || _sh.startsWith('maintenance.');
+    var _authUrl = _isSub ? 'https://mohi.com.br/auth' : '/pages/auth/auth.html';
     try {
       var _u = JSON.parse(localStorage.getItem('minsq_auth_user'));
-      if (!_u || !_u.id) { window.location.replace('/pages/auth/auth.html'); return; }
-    } catch (e) { window.location.replace('/pages/auth/auth.html'); return; }
+      if (!_u || !_u.id) { (window.top || window).location.replace(_authUrl); return; }
+    } catch (e) { (window.top || window).location.replace(_authUrl); return; }
   }
 
 
