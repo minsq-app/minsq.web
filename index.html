@@ -404,71 +404,73 @@
 
       /* auth.html detecta popup fechado via poll e sinaliza POLL_COMPLETE */
 
-      /* PREVENIR MÚLTIPLAS GUIAS ABERTAS */
-      var tabChannel = new BroadcastChannel('minsq_tab_sync');
-      var tabId = Math.random().toString(36).substring(2);
-      
-      tabChannel.postMessage({ type: 'NEW_TAB_OPENED', tabId: tabId });
+      /* PREVENIR MÚLTIPLAS GUIAS ABERTAS (Apenas no app principal, não em status ou manutenção) */
+      if (!isStatusHost && !isMaintHost) {
+        var tabChannel = new BroadcastChannel('minsq_tab_sync');
+        var tabId = Math.random().toString(36).substring(2);
+        
+        tabChannel.postMessage({ type: 'NEW_TAB_OPENED', tabId: tabId });
 
-      tabChannel.onmessage = function (event) {
-        if (event.data.type === 'NEW_TAB_OPENED' && event.data.tabId !== tabId) {
-          tabChannel.postMessage({ type: 'ALREADY_OPEN' });
-        }
-        if (event.data.type === 'ALREADY_OPEN') {
-          // Rederiza a tela completa de bloqueio
-          var html = [
-            '<!DOCTYPE html>',
-            '<html lang="pt-BR">',
-            '<head>',
-            '<meta charset="UTF-8">',
-            '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
-            '<link rel="preconnect" href="https://fonts.googleapis.com">',
-            '<link href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">',
-            '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>',
-            '<style>',
-            '* { margin: 0; padding: 0; box-sizing: border-box; }',
-            'html, body { height: 100%; background: #0a0a0a; overflow: hidden; }',
-            '.hero-bg { position: relative; width: 100%; height: 100vh; overflow: hidden; background: #0a0a0a; display: flex; align-items: center; justify-content: center; }',
-            '#heroDots { position: absolute; inset: 0; z-index: 0; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%); }',
-            '.tab-card { position: relative; z-index: 1; width: 100%; max-width: 260px; text-align: center; opacity: 0; transform: translateY(8px); animation: fadeInUp 0.9s ease 0.3s forwards; }',
-            '.tab-card::before { content: \'\'; position: absolute; inset: -28px -22px -24px; background: #0a0a0a; border-radius: 18px; z-index: -1; }',
-            '@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }',
-            '.tab-title { font-family: \'Exo\', sans-serif; font-weight: 500; font-size: 18px; letter-spacing: -0.01em; color: #fafafa; margin-bottom: 6px; }',
-            '.tab-subtitle { font-family: \'Quicksand\', sans-serif; font-weight: 500; font-size: 10.5px; color: #838383; margin-bottom: 24px; line-height: 1.5; }',
-            '.tab-btn { width: 100%; padding: 9px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.035); backdrop-filter: blur(6px); cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: \'Quicksand\', sans-serif; font-weight: 600; font-size: 11.5px; color: #fafafa; letter-spacing: 0.01em; transition: border-color 0.25s ease, background 0.25s ease; }',
-            '.tab-btn:hover { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.055); }',
-            '</style>',
-            '</head>',
-            '<body>',
-            '<section class="hero-bg">',
-            '<div id="heroDots"></div>',
-            '<div class="tab-card">',
-            '<div class="tab-title">Minsq já está aberto</div>',
-            '<div class="tab-subtitle">Você já tem o aplicativo aberto em outra guia. Para evitar conflitos de dados, feche esta aba.</div>',
-            '<button class="tab-btn" onclick="var w=window.open(\'\',\'_self\');w.close();setTimeout(function(){if(!window.closed)window.location.href=\'about:blank\'},100);">Fechar esta guia</button>',
-            '<div style="margin-top:14px;font-family:\'Quicksand\',sans-serif;font-size:9.5px;color:#444;letter-spacing:0.05em;">ou pressione <kbd style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;font-size:9px;color:#666;">Ctrl+W</kbd></div>',
-            '</div>',
-            '</section>',
-            '</body>',
-            '</html>'
-          ].join('\n');
+        tabChannel.onmessage = function (event) {
+          if (event.data.type === 'NEW_TAB_OPENED' && event.data.tabId !== tabId) {
+            tabChannel.postMessage({ type: 'ALREADY_OPEN' });
+          }
+          if (event.data.type === 'ALREADY_OPEN') {
+            // Rederiza a tela completa de bloqueio
+            var html = [
+              '<!DOCTYPE html>',
+              '<html lang="pt-BR">',
+              '<head>',
+              '<meta charset="UTF-8">',
+              '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+              '<link rel="preconnect" href="https://fonts.googleapis.com">',
+              '<link href="https://fonts.googleapis.com/css2?family=Exo:wght@300;500;600&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">',
+              '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>',
+              '<style>',
+              '* { margin: 0; padding: 0; box-sizing: border-box; }',
+              'html, body { height: 100%; background: #0a0a0a; overflow: hidden; }',
+              '.hero-bg { position: relative; width: 100%; height: 100vh; overflow: hidden; background: #0a0a0a; display: flex; align-items: center; justify-content: center; }',
+              '#heroDots { position: absolute; inset: 0; z-index: 0; pointer-events: none; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 78%, transparent 100%); }',
+              '.tab-card { position: relative; z-index: 1; width: 100%; max-width: 260px; text-align: center; opacity: 0; transform: translateY(8px); animation: fadeInUp 0.9s ease 0.3s forwards; }',
+              '.tab-card::before { content: \'\'; position: absolute; inset: -28px -22px -24px; background: #0a0a0a; border-radius: 18px; z-index: -1; }',
+              '@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }',
+              '.tab-title { font-family: \'Exo\', sans-serif; font-weight: 500; font-size: 18px; letter-spacing: -0.01em; color: #fafafa; margin-bottom: 6px; }',
+              '.tab-subtitle { font-family: \'Quicksand\', sans-serif; font-weight: 500; font-size: 10.5px; color: #838383; margin-bottom: 24px; line-height: 1.5; }',
+              '.tab-btn { width: 100%; padding: 9px 0; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.035); backdrop-filter: blur(6px); cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: \'Quicksand\', sans-serif; font-weight: 600; font-size: 11.5px; color: #fafafa; letter-spacing: 0.01em; transition: border-color 0.25s ease, background 0.25s ease; }',
+              '.tab-btn:hover { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.055); }',
+              '</style>',
+              '</head>',
+              '<body>',
+              '<section class="hero-bg">',
+              '<div id="heroDots"></div>',
+              '<div class="tab-card">',
+              '<div class="tab-title">Minsq já está aberto</div>',
+              '<div class="tab-subtitle">Você já tem o aplicativo aberto em outra guia. Para evitar conflitos de dados, feche esta aba.</div>',
+              '<button class="tab-btn" onclick="var w=window.open(\'\',\'_self\');w.close();setTimeout(function(){if(!window.closed)window.location.href=\'about:blank\'},100);">Fechar esta guia</button>',
+              '<div style="margin-top:14px;font-family:\'Quicksand\',sans-serif;font-size:9.5px;color:#444;letter-spacing:0.05em;">ou pressione <kbd style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;font-size:9px;color:#666;">Ctrl+W</kbd></div>',
+              '</div>',
+              '</section>',
+              '</body>',
+              '</html>'
+            ].join('\n');
 
-          var newDoc = document.open('text/html', 'replace');
-          newDoc.write(html);
-          newDoc.close();
+            var newDoc = document.open('text/html', 'replace');
+            newDoc.write(html);
+            newDoc.close();
 
-          // Injeta o script das particulas depois do Three.js carregar
-          setTimeout(function() {
-            var w = document.defaultView || window;
-            if (!w || typeof w.THREE === 'undefined') return;
-            var s = w.document.createElement('script');
-            s.src = '/pages/particles-init.js';
-            w.document.body.appendChild(s);
-          }, 800);
+            // Injeta o script das particulas depois do Three.js carregar
+            setTimeout(function() {
+              var w = document.defaultView || window;
+              if (!w || typeof w.THREE === 'undefined') return;
+              var s = w.document.createElement('script');
+              s.src = '/pages/particles-init.js';
+              w.document.body.appendChild(s);
+            }, 800);
 
-          tabChannel.close();
-        }
-      };
+            tabChannel.close();
+          }
+        };
+      }
     })();
   </script>
 
