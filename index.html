@@ -60,6 +60,26 @@
        eliminando a corrida shell-vs-iframe que causava revogação de sessão.
        ========================================================================== */
     (function () {
+      // ── Limpeza e sincronização de modo de manutenção ──
+      try {
+        var _search = new URLSearchParams(window.location.search);
+        if (_search.get('maintenance') === 'off' || _search.get('maint') === '0') {
+          localStorage.removeItem('minsq_is_maintenance');
+          localStorage.removeItem('minsq_maint_ts');
+          sessionStorage.removeItem('minsq_is_maintenance');
+          sessionStorage.removeItem('minsq_maint_redirect_attempt');
+          var _past = '=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+          document.cookie = 'minsq_is_maintenance' + _past;
+          document.cookie = 'minsq_is_maintenance' + _past + '; domain=.mohi.com.br';
+          document.cookie = 'minsq_is_maintenance' + _past + '; domain=mohi.com.br';
+
+          _search.delete('maintenance');
+          _search.delete('maint');
+          var _cleanQs = _search.toString();
+          window.history.replaceState({}, '', window.location.pathname + (_cleanQs ? '?' + _cleanQs : '') + window.location.hash);
+        }
+      } catch (e) { }
+
       var BASE_URL = '/api';
 
       /* ---- Estado centralizado de auth ---- */
@@ -89,9 +109,26 @@
             credentials: 'include'
           })
             .then(function (res) {
-              return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+              return res.json().then(function (data) { return { ok: res.ok, status: res.status, data: data }; });
             })
             .then(function (r) {
+              if (r.status === 503 && r.data && r.data.code === 'MAINTENANCE_MODE') {
+                localStorage.setItem('minsq_is_maintenance', 'true');
+                localStorage.setItem('minsq_maint_ts', String(Date.now()));
+                var _h = (window.location.hostname || '').toLowerCase();
+                if (!_h.startsWith('maintenance') && !_h.startsWith('status') && !_h.startsWith('web')) {
+                  if (_h === 'localhost' || _h === '127.0.0.1') {
+                    window.location.replace('/pages/api/maintenance.html');
+                  } else {
+                    window.location.replace('https://maintenance.mohi.com.br');
+                  }
+                  return null;
+                }
+              }
+              if (r.ok) {
+                localStorage.removeItem('minsq_is_maintenance');
+                localStorage.removeItem('minsq_maint_ts');
+              }
               var token = (r.ok && r.data.token) ? r.data.token : null;
               self.token = token;
               self._notify(token);

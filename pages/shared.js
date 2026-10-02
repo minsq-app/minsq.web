@@ -185,6 +185,26 @@
     const _host = window.location.hostname.toLowerCase();
     const _path = window.location.pathname.toLowerCase();
 
+    // Limpa estado de manutenção se a URL atual ou o top window trouxer flag de saída
+    try {
+      const _ownSearch = new URLSearchParams(window.location.search);
+      let _topSearch = null;
+      try { _topSearch = new URLSearchParams(window.top.location.search); } catch (_) {}
+      const hasMaintOff = _ownSearch.get('maintenance') === 'off' || _ownSearch.get('maint') === '0' ||
+                          (_topSearch && (_topSearch.get('maintenance') === 'off' || _topSearch.get('maint') === '0'));
+
+      if (hasMaintOff) {
+        localStorage.removeItem('minsq_is_maintenance');
+        localStorage.removeItem('minsq_maint_ts');
+        sessionStorage.removeItem('minsq_is_maintenance');
+        sessionStorage.removeItem('minsq_maint_redirect_attempt');
+        const _past = '=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        document.cookie = 'minsq_is_maintenance' + _past;
+        document.cookie = 'minsq_is_maintenance' + _past + '; domain=.mohi.com.br';
+        document.cookie = 'minsq_is_maintenance' + _past + '; domain=mohi.com.br';
+      }
+    } catch (_) {}
+
     const isMaintenancePage = _host.startsWith('maintenance.') || _host.startsWith('maintenance-') || _host === 'maintenance.mohi.com.br' || _path.endsWith('/maintenance.html') || _path === '/maintenance';
     const isStatusPage = _host.startsWith('status.') || _host.startsWith('status-') || _host === 'status.mohi.com.br' || _path.endsWith('/status.html') || _path === '/status' || _path.includes('/api/status.html');
     const isWebPage = _host.startsWith('web.') || _host.startsWith('web-') || _host === 'web.mohi.com.br' || _path.endsWith('/web/index.html') || _path === '/web';
@@ -200,21 +220,31 @@
     }
 
     if (!isExemptFromMaintenance) {
-      // 1. Redirecionamento instantâneo se já estiver no cache
-      if (localStorage.getItem('minsq_is_maintenance') === 'true') {
+      // 1. Redirecionamento rápido apenas se houver flag recente (TTL de 15 segundos)
+      const isMaintFlag = localStorage.getItem('minsq_is_maintenance') === 'true';
+      const maintTs = parseInt(localStorage.getItem('minsq_maint_ts') || '0', 10);
+      const isRecent = maintTs > 0 && (Date.now() - maintTs) < 15000;
+
+      if (isMaintFlag && isRecent) {
         redirectToMaintenance();
-        return; // Stop execution of shared.js
       }
 
-      // 2. Ping silencioso em todas as páginas para garantir o bloqueio global
-      fetch('/api/status')
+      // 2. Ping em tempo real em todas as páginas para garantir sincronização real e auto-cura
+      fetch('/api/status', { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
           if (data && data.isMaintenanceMode) {
             localStorage.setItem('minsq_is_maintenance', 'true');
+            localStorage.setItem('minsq_maint_ts', String(Date.now()));
             redirectToMaintenance();
           } else if (data && data.isMaintenanceMode === false) {
             localStorage.removeItem('minsq_is_maintenance');
+            localStorage.removeItem('minsq_maint_ts');
+            sessionStorage.removeItem('minsq_is_maintenance');
+            const _past = '=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            document.cookie = 'minsq_is_maintenance' + _past;
+            document.cookie = 'minsq_is_maintenance' + _past + '; domain=.mohi.com.br';
+            document.cookie = 'minsq_is_maintenance' + _past + '; domain=mohi.com.br';
           }
         })
         .catch(() => { });

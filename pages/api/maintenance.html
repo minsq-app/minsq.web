@@ -269,11 +269,31 @@
       }
     }
 
+    function clearMaintenanceState() {
+      try {
+        localStorage.removeItem('minsq_is_maintenance');
+        localStorage.removeItem('minsq_maint_ts');
+        sessionStorage.removeItem('minsq_is_maintenance');
+        const _past = '=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        document.cookie = 'minsq_is_maintenance' + _past;
+        document.cookie = 'minsq_is_maintenance' + _past + '; domain=.mohi.com.br';
+        document.cookie = 'minsq_is_maintenance' + _past + '; domain=mohi.com.br';
+      } catch (_) {}
+    }
+
+    function returnToApp() {
+      clearMaintenanceState();
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const target = isLocal ? '/?maintenance=off' : 'https://mohi.com.br/?maintenance=off';
+      window.top.location.href = target;
+    }
+
     async function loadMaintenanceInfo() {
       try {
         const data = await fetchStatusWithFallback();
         if (data) {
           if (data.isMaintenanceMode) {
+            sessionStorage.removeItem('minsq_maint_redirect_attempt');
             if (data.maintMessage) {
               document.getElementById('mntMessage').innerText = data.maintMessage;
             }
@@ -283,13 +303,22 @@
               document.getElementById('mntETA').innerHTML = `Início: ${startStr}<br>Retorno previsto: ${etaStr}`;
             }
           } else {
-            localStorage.removeItem('minsq_is_maintenance');
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-              window.top.location.href = '/';
-            } else {
-              window.top.location.href = 'https://mohi.com.br';
+            const attempts = parseInt(sessionStorage.getItem('minsq_maint_redirect_attempt') || '0', 10);
+            if (attempts >= 2) {
+              clearMaintenanceState();
+              const btn = document.getElementById('btnAtualizar');
+              if (btn) {
+                btn.textContent = 'Manutenção encerrada — Entrar no site';
+                btn.onclick = returnToApp;
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+              }
+              const msg = document.getElementById('mntMessage');
+              if (msg) msg.innerText = 'A manutenção foi concluída com sucesso. Clique abaixo para entrar no site.';
+              return;
             }
-            return;
+            sessionStorage.setItem('minsq_maint_redirect_attempt', String(attempts + 1));
+            returnToApp();
           }
         }
       } catch (e) {
@@ -315,12 +344,10 @@
               btn.style.pointerEvents = 'auto';
             }, 2000);
           } else {
-            localStorage.removeItem('minsq_is_maintenance');
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-              window.top.location.href = '/';
-            } else {
-              window.top.location.href = 'https://mohi.com.br';
-            }
+            btn.textContent = 'Manutenção finalizada! Redirecionando...';
+            btn.style.opacity = '1';
+            sessionStorage.removeItem('minsq_maint_redirect_attempt');
+            returnToApp();
           }
         } else {
           btn.textContent = 'Servidor offline';
