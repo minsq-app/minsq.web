@@ -327,20 +327,7 @@
           </div>
 
           <!-- Finanças -->
-          <div class="card">
-            <div class="sh">
-              <div class="st">Finanças</div>
-              <span style="font-size:9px;font-family:var(--mono);color:var(--t4)">saldo · 12 meses</span>
-            </div>
-            <div style="display:flex;align-items:baseline;gap:6px">
-              <span
-                style="font-size:36px;font-weight:300;color:var(--t1);letter-spacing:-2px;font-family:var(--fm);line-height:1"
-                id="azFinNum">—</span>
-              <span style="font-size:11px;font-family:var(--mono);color:var(--t4)">este mês</span>
-              <span class="delta" id="azFinTrend" style="margin-left:auto;margin-top:0"></span>
-            </div>
-            <canvas class="az-chart" id="azChartFinancas"></canvas>
-          </div>
+
 
           <!-- Treino -->
           <div class="card">
@@ -435,7 +422,7 @@
     const S = {
       healthLogs: [],
       goals: [],
-      finances: [],
+
       studySessions: [],
       tasks: [],
       profile: null,
@@ -448,7 +435,6 @@
 
     function renderAnalytics() {
       azDrawCard('azChartEstudos', 'azEstudoNum', 'azEstudoTrend', azDataEstudos());
-      azDrawCard('azChartFinancas', 'azFinNum', 'azFinTrend', azDataFinancas(), { money: true });
       azDrawCard('azChartTreino', 'azTreinoNum', 'azTreinoTrend', azDataTreino(), { emptyMessage: 'Disponível após a beta' });
       azDrawCard('azChartTasks', 'azTasksNum', 'azTasksTrend', azDataTasks());
       azDrawCard('azChartAgua', 'azAguaNum', 'azAguaTrend', azDataAgua());
@@ -491,19 +477,7 @@
       return { labels: weeks.map((_, i) => `S-${19 - i}`), data };
     }
 
-    function azDataFinancas() {
-      const months = [];
-      for (let i = 11; i >= 0; i--) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - i); months.push(d.toISOString().slice(0, 7)); }
-      const ns = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-      const labels = months.map(m => ns[parseInt(m.slice(5)) - 1]);
-      const data = months.map(m => {
-        const finMes = S.finances.filter(f => f.data && f.data.startsWith(m));
-        const entradas = finMes.filter(f => f.tipo === 'entrada' || f.tipo === 'receita').reduce((a, f) => a + parseFloat(f.valor || 0), 0);
-        const saidas = finMes.filter(f => f.tipo !== 'entrada' && f.tipo !== 'receita' && f.tipo !== 'investimento').reduce((a, f) => a + parseFloat(f.valor || 0), 0);
-        return Math.round(entradas - saidas);
-      });
-      return { labels, data };
-    }
+
 
     function azDataEstudos() {
       const weeks = [];
@@ -1028,11 +1002,10 @@
         const d12Months = new Date(); d12Months.setDate(1); d12Months.setMonth(d12Months.getMonth() - 12);
         const date12MonthsStr = d12Months.toISOString().split('T')[0];
 
-        const [healthLogs, goals, finances, studySessions, profile, rankingMe, tasks] = await Promise.all([
+        const [healthLogs, goals, studySessions, profile, rankingMe, tasks] = await Promise.all([
           // Health covers Water/Weight (20 days) and Treino (20 weeks). Fetch the longest window (20 weeks).
           window.api.getHealthLogs(date20WeeksStr).catch(err => { console.error('Error fetching health logs:', err); return []; }),
           window.api.getGoals().catch(err => { console.error('Error fetching goals:', err); return []; }),
-          window.api.getFinances(date12MonthsStr).catch(err => { console.error('Error fetching finances:', err); return []; }),
           window.api.getStudySessions(date20WeeksStr).catch(err => { console.error('Error fetching study sessions:', err); return []; }),
           window.api.getProfile().catch(err => { console.error('Error fetching profile:', err); return null; }),
           window.api.getRankingMe().catch(err => { console.error('Error fetching ranking:', err); return null; }),
@@ -1041,15 +1014,6 @@
 
         S.healthLogs = healthLogs || [];
         S.goals = goals || [];
-        S.finances = (finances || []).map(t => ({
-          id: t.id,
-          tipo: t.tipo,
-          valor: parseFloat(t.valor),
-          descricao: t.descricao,
-          categoria: t.categoria,
-          data: t.data,
-          criado_em: t.criado_em
-        }));
         S.studySessions = studySessions || [];
         S.profile = profile;
         S.rankingMe = rankingMe;
