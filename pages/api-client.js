@@ -200,10 +200,15 @@
     if (!res.ok) {
       if (res.status === 503 && data.code === 'MAINTENANCE_MODE') {
         localStorage.setItem('minsq_is_maintenance', 'true');
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-          window.top.location.replace('/pages/api/maintenance.html');
-        } else {
-          window.top.location.replace('https://maintenance.mohi.com.br');
+        const _h = (window.location.hostname || '').toLowerCase();
+        const _p = (window.location.pathname || '').toLowerCase();
+        const isExempt = _h.startsWith('maintenance') || _h.startsWith('status') || _h.startsWith('web') || _p.includes('status') || _p.includes('web') || _p.includes('maintenance');
+        if (!isExempt) {
+          if (_h === 'localhost' || _h === '127.0.0.1') {
+            window.top.location.replace('/pages/api/maintenance.html');
+          } else {
+            window.top.location.replace('https://maintenance.mohi.com.br');
+          }
         }
         return Promise.reject(new Error('Sistema em manutenção.'));
       }

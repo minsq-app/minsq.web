@@ -182,7 +182,14 @@
 
   // Immediate Maintenance Redirect to prevent black screen flash
   try {
-    const isMaintenancePage = window.location.hostname.startsWith('maintenance') || window.location.pathname.endsWith('/maintenance.html');
+    const _host = window.location.hostname.toLowerCase();
+    const _path = window.location.pathname.toLowerCase();
+
+    const isMaintenancePage = _host.startsWith('maintenance.') || _host.startsWith('maintenance-') || _host === 'maintenance.mohi.com.br' || _path.endsWith('/maintenance.html') || _path === '/maintenance';
+    const isStatusPage = _host.startsWith('status.') || _host.startsWith('status-') || _host === 'status.mohi.com.br' || _path.endsWith('/status.html') || _path === '/status' || _path.includes('/api/status.html');
+    const isWebPage = _host.startsWith('web.') || _host.startsWith('web-') || _host === 'web.mohi.com.br' || _path.endsWith('/web/index.html') || _path === '/web';
+
+    const isExemptFromMaintenance = isMaintenancePage || isStatusPage || isWebPage;
 
     function redirectToMaintenance() {
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
@@ -192,7 +199,7 @@
       }
     }
 
-    if (!isMaintenancePage) {
+    if (!isExemptFromMaintenance) {
       // 1. Redirecionamento instantâneo se já estiver no cache
       if (localStorage.getItem('minsq_is_maintenance') === 'true') {
         redirectToMaintenance();
@@ -206,6 +213,8 @@
           if (data && data.isMaintenanceMode) {
             localStorage.setItem('minsq_is_maintenance', 'true');
             redirectToMaintenance();
+          } else if (data && data.isMaintenanceMode === false) {
+            localStorage.removeItem('minsq_is_maintenance');
           }
         })
         .catch(() => { });

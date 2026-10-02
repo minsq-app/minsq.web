@@ -197,7 +197,7 @@
 
         <div class="mnt-actions">
           <button class="continue-btn btn-primary" id="btnAtualizar" onclick="checkMaintenance()">Atualizar página</button>
-          <button class="continue-btn btn-secondary" onclick="window.top.location.href='https://status.mohi.com.br'">Verificar status</button>
+          <button class="continue-btn btn-secondary" onclick="goToStatus()">Verificar status</button>
         </div>
 
         <div id="mntETA"></div>
@@ -261,6 +261,14 @@
       return null;
     }
 
+    function goToStatus() {
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        window.top.location.href = '/status';
+      } else {
+        window.top.location.href = 'https://status.mohi.com.br';
+      }
+    }
+
     async function loadMaintenanceInfo() {
       try {
         const data = await fetchStatusWithFallback();
@@ -276,7 +284,11 @@
             }
           } else {
             localStorage.removeItem('minsq_is_maintenance');
-            window.top.location.href = 'https://mohi.com.br';
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+              window.top.location.href = '/';
+            } else {
+              window.top.location.href = 'https://mohi.com.br';
+            }
             return;
           }
         }
@@ -304,7 +316,11 @@
             }, 2000);
           } else {
             localStorage.removeItem('minsq_is_maintenance');
-            window.top.location.href = 'https://mohi.com.br';
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+              window.top.location.href = '/';
+            } else {
+              window.top.location.href = 'https://mohi.com.br';
+            }
           }
         } else {
           btn.textContent = 'Servidor offline';
