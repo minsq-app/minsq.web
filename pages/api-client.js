@@ -200,6 +200,7 @@
     if (!res.ok) {
       if (res.status === 503 && data.code === 'MAINTENANCE_MODE') {
         localStorage.setItem('minsq_is_maintenance', 'true');
+        localStorage.setItem('minsq_maint_ts', String(Date.now()));
         const _h = (window.location.hostname || '').toLowerCase();
         const _p = (window.location.pathname || '').toLowerCase();
         const isExempt = _h.startsWith('maintenance') || _h.startsWith('status') || _h.startsWith('web') || _p.includes('status') || _p.includes('web') || _p.includes('maintenance');
@@ -215,6 +216,11 @@
       const err = new Error(data.error || 'Erro desconhecido na API.');
       Object.assign(err, data); // Anexa propriedades como `code` e `attemptsLeft`
       throw err;
+    }
+
+    if (localStorage.getItem('minsq_is_maintenance')) {
+      localStorage.removeItem('minsq_is_maintenance');
+      localStorage.removeItem('minsq_maint_ts');
     }
 
     return data;
