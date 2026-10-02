@@ -1,8 +1,0 @@
--- Migration 005: Adiciona colunas para controle de edição de perfil
-
-ALTER TABLE users 
-ADD COLUMN IF NOT EXISTS nome_count INTEGER DEFAULT 0,
-ADD COLUMN IF NOT EXISTS nome_week VARCHAR(20) DEFAULT '',
-ADD COLUMN IF NOT EXISTS handle_week VARCHAR(20) DEFAULT '',
-ADD COLUMN IF NOT EXISTS bio_count INTEGER DEFAULT 0,
-ADD COLUMN IF NOT EXISTS bio_day VARCHAR(20) DEFAULT '';
