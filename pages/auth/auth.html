@@ -1263,8 +1263,14 @@
       // Inicializa o Turnstile de forma dinâmica
       async function initTurnstile() {
         try {
-          const res = await fetch('/api/auth/turnstile-key');
-          const data = await res.json();
+          /* A site key é pública e fixa: cacheia na sessão para não buscar de novo em cada tela */
+          let data = null;
+          try { const _k = sessionStorage.getItem('minsq_turnstile_key'); if (_k) data = { siteKey: _k }; } catch (e) { }
+          if (!data) {
+            const res = await fetch('/api/auth/turnstile-key');
+            data = await res.json();
+            try { if (data && data.siteKey) sessionStorage.setItem('minsq_turnstile_key', data.siteKey); } catch (e) { }
+          }
           if (data.siteKey) {
             const script = document.createElement('script');
             script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";

@@ -250,7 +250,7 @@
                 } else {
                   sessionStorage.removeItem('minsq_force_onboarding');
                 }
-                window.location.reload();
+                goAfterLogin();
               }
             })
             .catch(function () { });
@@ -265,14 +265,14 @@
           } else {
             sessionStorage.removeItem('minsq_force_onboarding');
           }
-          window.location.reload();
+          goAfterLogin();
           return;
         }
 
         /* Popup sinaliza que fechou sem OTC (polling fallback) */
         if (msg.type === 'GOOGLE_AUTH_SUCCESS' || msg.type === 'GOOGLE_AUTH_POLL_COMPLETE') {
           auth.refresh().then(function (token) {
-            if (token) window.location.reload();
+            if (token) goAfterLogin();
           });
           return;
         }
@@ -407,6 +407,67 @@
         return prefix + clean + (qs ? '?' + qs : '');
       }
 
+      /* Pós-login: em vez de recarregar o shell inteiro (o que repetia o
+         /auth/refresh e baixava index.html + shared.js de novo), o token já
+         está em memória (auth.setToken), então navega direto no iframe. */
+      var _lastLoginNav = 0;
+
+      /* A sidebar do shell (montada por shared.js/_buildSidebar, só uma vez,
+         no load inicial) mostra "Usuário" e o ícone genérico até a página
+         recarregar. Sem o reload, isso nunca mais acontecia sozinho, então
+         aqui atualizamos nome, avatar, título e favicon manualmente a partir
+         do usuário que handleUserLogin acabou de gravar no localStorage —
+         mesma lógica de avatar/favicon que shared.js já usa (avatar_type
+         'photo' + avatar, senão avatar_url). Sem chamada de rede. */
+      function refreshShellUser() {
+        try {
+          var raw = null;
+          try { raw = localStorage.getItem('minsq_auth_user'); } catch (e) { }
+          if (!raw) return;
+          var u = null;
+          try { u = JSON.parse(raw); } catch (e) { }
+          if (!u || typeof u !== 'object') return;
+
+          var nome = String(u.nome || '').trim();
+          var nameEl = document.querySelector('.mh-account-name');
+          if (nome && nameEl) nameEl.textContent = nome;
+
+          var src = '';
+          if (u.avatar_type === 'photo' && u.avatar && String(u.avatar).indexOf('http') === 0) {
+            src = String(u.avatar);
+          } else if (u.avatar_url) {
+            src = String(u.avatar_url);
+          }
+          if (src) {
+            var avEl = document.querySelector('.mh-account-av');
+            if (avEl) {
+              var img = document.createElement('img');
+              img.alt = 'avatar';
+              img.src = src;
+              avEl.textContent = '';
+              avEl.appendChild(img);
+            }
+            var fav = document.getElementById('mh-favicon-root') || document.querySelector('link[rel~="icon"]');
+            if (fav) fav.href = src;
+          }
+
+          if (nome) document.title = nome.split(' ')[0] + ' | Minsq';
+        } catch (e) { }
+      }
+
+      function goAfterLogin() {
+        var now = Date.now();
+        if (now - _lastLoginNav < 3000) return; /* evita navegação dupla (postMessage + storage) */
+        _lastLoginNav = now;
+        refreshShellUser();
+        try { if (window.location.pathname !== '/') window.history.replaceState({}, '', '/'); } catch (e) { }
+        if (sessionStorage.getItem('minsq_force_onboarding') === 'true') {
+          navigateIframe('/pages/auth/onboarding.html');
+        } else {
+          navigateIframe('/pages/dashboard.html');
+        }
+      }
+
       function navigateIframe(url) {
         var curtain = document.getElementById('mh-curtain');
         if (curtain) curtain.classList.remove('hide');
@@ -497,14 +558,14 @@
                   } else {
                     sessionStorage.removeItem('minsq_force_onboarding');
                   }
-                  window.location.reload();
+                  goAfterLogin();
                 }
               })
               .catch(function () { });
           } else {
             // fallback sem OTC
             auth.refresh().then(function (token) {
-              if (token) window.location.reload();
+              if (token) goAfterLogin();
             });
           }
         }
