@@ -202,7 +202,7 @@
             var lastUserId = '';
             try { lastUserId = localStorage.getItem('minsq_last_user_id') || ''; } catch (e) { }
             if (currentUserId && lastUserId && String(lastUserId) !== String(currentUserId)) {
-              var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+              var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
               _pages.forEach(function (k) {
                 try {
                   localStorage.removeItem(k + 'BgImage');
@@ -280,7 +280,7 @@
         /* Iframe pediu logout / invalidação */
         if (msg.type === 'MINSQ_INVALIDATE') {
           auth.invalidate();
-          var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+          var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
           _pages.forEach(function (k) {
             try {
               localStorage.removeItem(k + 'BgImage');

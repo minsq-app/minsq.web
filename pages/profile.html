@@ -4402,7 +4402,7 @@
         tasks: [],
         studySessions: [],
         healthLogs: [],
-        finances: [],
+
       };
 
       const Store = {
@@ -4498,16 +4498,14 @@
           if (currentUser) {
             S.user = currentUser;
             try {
-              const [tasks, studySessions, healthLogs, finances] = await Promise.all([
+              const [tasks, studySessions, healthLogs] = await Promise.all([
                 window.api.getTasks().catch(() => []),
                 window.api.getStudySessions ? window.api.getStudySessions().catch(() => []) : [],
-                window.api.getHealthLogs ? window.api.getHealthLogs().catch(() => []) : [],
-                window.api.getFinances ? window.api.getFinances().catch(() => []) : []
+                window.api.getHealthLogs ? window.api.getHealthLogs().catch(() => []) : []
               ]);
               S.tasks = tasks;
               S.studySessions = studySessions;
               S.healthLogs = healthLogs;
-              S.finances = finances;
               S.streak = currentUser.streak || 0;
             } catch (e) {
               console.warn("Could not load tracking lists:", e);
@@ -4738,7 +4736,7 @@
           ...(S.tasks || []).filter(t => t.concluida).map(t => t.data),
           ...(S.studySessions || []).map(s => s.data),
           ...(S.healthLogs || []).map(h => h.data),
-          ...(S.finances || []).map(f => f.data),
+
         ].filter(Boolean));
         return dias.size;
       }
@@ -4750,7 +4748,7 @@
         (S.tasks || []).filter(t => t.concluida && t.data).forEach(t => addDia(t.data));
         (S.studySessions || []).filter(s => s.data).forEach(s => addDia(s.data, 2));
         (S.healthLogs || []).filter(h => h.data).forEach(h => addDia(h.data, 2));
-        (S.finances || []).filter(f => f.data).forEach(f => addDia(f.data));
+
         const today = new Date(); el.innerHTML = '';
         for (let i = 59; i >= 0; i--) {
           const d = new Date(today); d.setDate(d.getDate() - i);

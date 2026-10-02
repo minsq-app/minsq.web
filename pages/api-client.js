@@ -658,73 +658,7 @@
     },
 
 
-    // Finanças (Finance)
-    async getFinances(startDate) {
-      let url = '/finance';
-      if (startDate) url += `?startDate=${startDate}`;
-      return request(url);
-    },
 
-    async getFinanceSummary() {
-      return request('/finance/summary');
-    },
-
-    async createTransaction(transactionData) {
-      return request('/finance', {
-        method: 'POST',
-        body: JSON.stringify(transactionData),
-      });
-    },
-
-    async updateTransaction(id, transactionData) {
-      return request(`/finance/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify(transactionData),
-      });
-    },
-
-    async deleteTransaction(id) {
-      return request(`/finance/${id}`, {
-        method: 'DELETE',
-      });
-    },
-
-    // Configurações Financeiras (Finance Settings)
-    async getFinanceSettings() {
-      return request('/finance-settings');
-    },
-
-    async updateFinanceSettings(settingsData) {
-      return request('/finance-settings', {
-        method: 'POST',
-        body: JSON.stringify(settingsData),
-      });
-    },
-
-    // Contas Recorrentes (Recurring Bills)
-    async getRecurringBills() {
-      return request('/recurring-bills');
-    },
-
-    async createRecurringBill(billData) {
-      return request('/recurring-bills', {
-        method: 'POST',
-        body: JSON.stringify(billData),
-      });
-    },
-
-    async updateRecurringBill(billId, billData) {
-      return request(`/recurring-bills/${billId}`, {
-        method: 'PATCH',
-        body: JSON.stringify(billData),
-      });
-    },
-
-    async deleteRecurringBill(billId) {
-      return request(`/recurring-bills/${billId}`, {
-        method: 'DELETE',
-      });
-    },
 
     // Foco (Focus)
     async getFocusStats() {

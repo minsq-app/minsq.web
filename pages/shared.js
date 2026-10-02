@@ -411,7 +411,7 @@
     'dashboard.html': 'dashboard',
     'hoje.html': 'today',
     'metas.html': 'goals',
-    'financas.html': 'finance',
+
     'saude.html': 'health',
     'estudos.html': 'study',
     'foco.html': 'foco',
@@ -425,7 +425,7 @@
     dashboard: 'dashboard.html',
     today: 'hoje.html',
     goals: 'metas.html',
-    finance: 'financas.html',
+
     health: 'saude.html',
     study: 'estudos.html',
     foco: 'foco.html',
@@ -818,7 +818,7 @@
         + _nb('today', '<circle cx="12" cy="12" r="9"/><polyline points="12 6 12 12 16 14"/>', 'Hoje')
         + '<div class="mh-div"></div>'
         + _nb('goals', '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>', 'Metas')
-        + _nb('finance', '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6"/>', 'Finan&#231;as')
+
         + _nb('health', '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', 'Sa&#250;de')
         + _nb('study', '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>', 'Estudos')
         + _nb('foco', '<line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/><circle cx="12" cy="12" r="2"/>', 'Foco')
@@ -1088,9 +1088,9 @@
   ════════════════════════════════════════════ */
   if (IS_ROOT || !IS_PUBLIC) {
     var HK_MAP = {
-      '1': 'dashboard', '2': 'today', '3': 'goals', '4': 'finance',
-      '5': 'health', '6': 'study', '7': 'foco', '8': 'notes',
-      '9': 'profile', '0': 'settings'
+      '1': 'dashboard', '2': 'today', '3': 'goals',
+      '4': 'health', '5': 'study', '6': 'foco', '7': 'notes',
+      '8': 'profile', '9': 'settings'
     };
 
     function _hkIsTyping() {
@@ -1159,24 +1159,7 @@
       }
     }
 
-    function _handleF() {
-      if (CURRENT_FILE === 'financas.html') {
-        if (typeof window.openModal === 'function') {
-          window.openModal('finance');
-          setTimeout(function () {
-            var sub = document.getElementById('mS');
-            if (sub) sub.textContent = 'Lançamentos — registre entradas e saídas';
-            var inp = document.getElementById('finValor');
-            if (inp) inp.focus();
-          }, 60);
-        }
-      } else {
-        sessionStorage.setItem('mh_open_finance', 'true');
-        if (typeof window.go === 'function') {
-          window.go('finance');
-        }
-      }
-    }
+
 
     function _handleN() {
       if (CURRENT_FILE === 'notas.html') {
@@ -1230,15 +1213,11 @@
         _handleHJ(k);
         return;
       }
-      if (k === 'f' || k === 'F') {
-        if (e) e.preventDefault();
-        _handleF();
-        return;
-      }
+
 
       // Atalho K (nas páginas do core do Minsq)
       if (k === 'k' || k === 'K') {
-        var CORE_PAGES = ['dashboard.html', 'hoje.html', 'metas.html', 'financas.html', 'saude.html', 'estudos.html', 'foco.html', 'notas.html'];
+        var CORE_PAGES = ['dashboard.html', 'hoje.html', 'metas.html', 'saude.html', 'estudos.html', 'foco.html', 'notas.html'];
         if (CORE_PAGES.indexOf(CURRENT_FILE) !== -1) {
           if (e) e.preventDefault();
           if (typeof window.toggleKModal === 'function') {
@@ -1440,21 +1419,6 @@
             }
           }, 250);
         }
-      } else if (CURRENT_FILE === 'financas.html') {
-        if (sessionStorage.getItem('mh_open_finance') === 'true') {
-          sessionStorage.removeItem('mh_open_finance');
-          setTimeout(function () {
-            if (typeof window.openModal === 'function') {
-              window.openModal('finance');
-              setTimeout(function () {
-                var sub = document.getElementById('mS');
-                if (sub) sub.textContent = 'Lançamentos — registre entradas e saídas';
-                var inp = document.getElementById('finValor');
-                if (inp) inp.focus();
-              }, 60);
-            }
-          }, 250);
-        }
       } else if (CURRENT_FILE === 'notas.html') {
         if (sessionStorage.getItem('mh_open_notes_new') === 'true') {
           sessionStorage.removeItem('mh_open_notes_new');
@@ -1544,7 +1508,7 @@
 
   // ── CENTRALIZED K-HOTKEY MODAL & VISUAL CUSTOMIZER ──
   (function () {
-    var CORE_PAGES = ['dashboard.html', 'hoje.html', 'metas.html', 'financas.html', 'saude.html', 'estudos.html', 'foco.html', 'settings.html', 'notas.html'];
+    var CORE_PAGES = ['dashboard.html', 'hoje.html', 'metas.html', 'saude.html', 'estudos.html', 'foco.html', 'settings.html', 'notas.html'];
     if (IS_PUBLIC || CORE_PAGES.indexOf(CURRENT_FILE) === -1) {
       return;
     }
@@ -1829,7 +1793,7 @@
     };
 
     window.clearUserCustomizationStorage = function () {
-      var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+      var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
       _pages.forEach(function (k) {
         try {
           localStorage.removeItem(k + 'BgImage');
@@ -1959,7 +1923,7 @@
         dashboard: { label: 'Dashboard', glass: { mode: 'list', items: ['Card principal', 'Lista do dia', 'Minhas metas', 'Perspectiva de vida', 'Frases para viver'] } },
         today: { label: 'Hoje', glass: { mode: 'list', items: ['Lista do dia', 'Rotina diária'] } },
         goals: { label: 'Metas', glass: { mode: 'list', items: ['Metas', 'Mapa de ação', 'Controle de vício'] } },
-        finance: { label: 'Finanças', glass: { mode: 'list', items: ['Card saldo', 'Card saídas', 'Articulação de renda', 'Histórico de lançamento', 'Lançamentos recentes'] } },
+
         health: { label: 'Saúde', glass: { mode: 'list', items: ['Dieta', 'Peso corporal', 'Hidratação'] } },
         study: { label: 'Estudo', glass: { mode: 'list', items: ['Timer de foco', 'Sessões recentes', 'Anotações', 'Matérias'] } },
         foco: { label: 'Foco', glass: { mode: 'list', items: ['Rotinas', 'Calendário'] } }
@@ -1976,7 +1940,7 @@
         dashboard: [{ top: 3, left: 3, width: 46, height: 73 }, { top: 3, left: 51, width: 46, height: 73 }, { top: 79, left: 3, width: 94, height: 18 }],
         today: [{ top: 3, left: 3, width: 70, height: 94 }, { top: 3, left: 76, width: 21, height: 94 }],
         goals: [{ top: 3, left: 3, width: 94, height: 50 }, { top: 56, left: 3, width: 46, height: 41 }, { top: 56, left: 51, width: 46, height: 41 }],
-        finance: [{ top: 3, left: 3, width: 94, height: 40 }, { top: 46, left: 3, width: 23, height: 18 }, { top: 46, left: 27, width: 23, height: 18 }, { top: 46, left: 53, width: 44, height: 51 }, { top: 67, left: 3, width: 47, height: 30 }],
+
         health: [{ top: 3, left: 3, width: 58, height: 94 }, { top: 3, left: 64, width: 33, height: 45 }, { top: 52, left: 64, width: 33, height: 45 }],
         study: [{ top: 0, left: 0, width: 11, height: 100 }, { top: 3, left: 14, width: 83, height: 20 }, { top: 27, left: 14, width: 25.67, height: 70 }, { top: 27, left: 42.67, width: 25.67, height: 70 }, { top: 27, left: 71.34, width: 25.67, height: 70 }],
         foco: [{ top: 3, left: 3, width: 94, height: 70 }]
@@ -2504,7 +2468,7 @@
       var lastUserId = '';
       try { lastUserId = localStorage.getItem('minsq_last_user_id') || ''; } catch (e) { }
       if (currentUserId && lastUserId && String(lastUserId) !== String(currentUserId)) {
-        var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'finance', 'financas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
+        var _pages = ['dashboard', 'today', 'hoje', 'goals', 'metas', 'health', 'saude', 'study', 'estudos', 'foco', 'notes', 'notas', 'analytics', 'profile', 'settings', 'geral'];
         _pages.forEach(function (k) {
           try {
             localStorage.removeItem(k + 'BgImage');
@@ -2726,7 +2690,7 @@
                 <button class="filter-chip selected" type="button" data-filter="dashboard">Dashboard</button>
                 <button class="filter-chip" type="button" data-filter="today">Hoje</button>
                 <button class="filter-chip" type="button" data-filter="goals">Metas</button>
-                <button class="filter-chip" type="button" data-filter="finance">Finanças</button>
+
                 <button class="filter-chip" type="button" data-filter="health">Saúde</button>
                 <button class="filter-chip" type="button" data-filter="study">Estudo</button>
                 <button class="filter-chip" type="button" data-filter="foco">Foco</button>
@@ -2938,7 +2902,7 @@
             var legacyFilterMap = {
               'today': 'hoje',
               'goals': 'metas',
-              'finance': 'financas',
+
               'health': 'saude',
               'study': 'estudos',
               'notes': 'notas',
@@ -2964,7 +2928,7 @@
           'dashboard': "'Exo 2', sans-serif",
           'today': "'Fraunces', serif",
           'goals': "'Cinzel', serif",
-          'finance': "'Pixelify Sans', sans-serif",
+
           'health': "'Fraunces', serif",
           'study': "'Cinzel', serif",
           'foco': "'Exo 2', sans-serif"
@@ -3043,7 +3007,7 @@
           if (cust.pages) {
             Object.keys(cust.pages).forEach(function (k) { delete cust.pages[k].typography; });
           }
-          var legacyFilterMap = { 'today': 'hoje', 'goals': 'metas', 'finance': 'financas', 'health': 'saude', 'study': 'estudos', 'notes': 'notas', 'analytics': 'analitics' };
+          var legacyFilterMap = { 'today': 'hoje', 'goals': 'metas', 'health': 'saude', 'study': 'estudos', 'notes': 'notas', 'analytics': 'analitics' };
           Object.keys(legacyFilterMap).forEach(function (k) {
             var lK = legacyFilterMap[k];
             if (cust[lK]) delete cust[lK].font;

@@ -2859,7 +2859,7 @@
       user: null,
       tasks: [],
       goals: [],
-      finances: [],
+
       studySessions: [],
       healthLogs: [],
       routines: [],
@@ -2907,7 +2907,7 @@
           ativa: g.ativa !== undefined ? g.ativa : !g.concluida,
           criado_em: g.criado_em
         }));
-        S.finances = summary.finances ? (summary.finances.transactions || []) : [];
+
         S.studySessions = summary.studySessions || [];
         S.healthLogs = (summary.healthLogs || []).map(h => {
           return {
@@ -2923,7 +2923,7 @@
         console.error('Erro ao carregar dados do core:', err);
         S.tasks = [];
         S.goals = [];
-        S.finances = [];
+
         S.studySessions = [];
         S.healthLogs = [];
         S.routines = [];

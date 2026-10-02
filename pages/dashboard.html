@@ -2664,22 +2664,7 @@
         </div>
       </div>
     </div>
-    <div class="page" id="page-finance">
-      <div class="topbar">
-        <div class="tb-path">
-          <span class="tb-root">Minsq</span>
-          <span class="tb-sep">/</span>
-          <span class="tb-cur">Finanças</span>
-        </div>
-        <div class="tb-r"></div>
-      </div>
-      <div class="content">
-        <div class="empty-state">
-          <div class="empty-t">Módulo Finanças</div>
-          <div class="empty-s">Disponível no arquivo completo do Minsq</div>
-        </div>
-      </div>
-    </div>
+
     <div class="page" id="page-study">
       <div class="topbar">
         <div class="tb-path">
@@ -3089,7 +3074,7 @@
     const PAGE_URLS = {
       today: 'hoje.html',
       goals: 'metas.html',
-      finance: 'financas.html',
+
       study: 'estudos.html',
       health: 'saude.html',
       foco: 'foco.html',
@@ -4569,7 +4554,7 @@
       'ir': [
         { key: 'hoje', hint: 'Ir para Hoje' },
         { key: 'metas', hint: 'Ir para Metas' },
-        { key: 'financas', hint: 'Ir para Finanças' },
+
         { key: 'estudos', hint: 'Ir para Estudos' },
         { key: 'saude', hint: 'Ir para Saúde' },
         { key: 'foco', hint: 'Ir para Foco/Rotinas' },
@@ -4984,7 +4969,7 @@
         if (!target) throw new Error('Uso: ir/<modulo>');
         const map = {
           hoje: 'today', today: 'today',
-          metas: 'goals', goals: 'goals', financas: 'finance', finance: 'finance',
+          metas: 'goals', goals: 'goals',
           estudos: 'study', study: 'study', saude: 'health', health: 'health',
           foco: 'foco', notas: 'notes', notes: 'notes',
           analytics: 'analytics', perfil: 'profile', profile: 'profile'
