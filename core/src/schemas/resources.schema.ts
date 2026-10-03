@@ -38,9 +38,19 @@ export const noteSchema = z.object({
   updated: z.number().optional().nullable()
 });
 
+// workout_weeks e diet_config são estruturas aninhadas (arrays/objetos/números), então
+// z.record(string, string) rejeitava QUALQUER save. A validação detalhada (nomes, limites,
+// macros) fica no HealthController.saveSettings; aqui só garantimos forma e tamanho.
+const MAX_JSON_BYTES = 200_000;
+const withinSize = (v: unknown) => JSON.stringify(v ?? null).length <= MAX_JSON_BYTES;
+
 export const healthSettingsSchema = z.object({
-  workout_weeks: z.array(z.record(z.string().max(20), z.string().max(50))).max(6, "Máximo de 6 semanas").optional(),
-  diet_config: z.record(z.string().max(20), z.string().max(50)).optional(),
+  workout_weeks: z.array(z.object({}).passthrough()).max(6, "Máximo de 6 semanas")
+    .refine(withinSize, "Dados de treino grandes demais").optional(),
+  diet_config: z.object({
+    days: z.array(z.object({}).passthrough()).max(7, "Máximo de 7 dietas").optional(),
+    refeicoesPorDia: z.number().int().min(0).max(8).optional()
+  }).passthrough().refine(withinSize, "Dados de dieta grandes demais").optional(),
   water_goal: z.number().min(0.5).max(10000).optional(),
   weight_goal: z.number().min(40.0).max(140.0).optional().nullable()
 });
