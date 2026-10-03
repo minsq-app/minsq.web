@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 
+// Hora HH:MM válida (00:00–23:59): minutos só de 00 a 59.
+const HORA_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
 
 // Helper to get or create a mock user
 
@@ -16,7 +19,7 @@ export class TasksController {
         .eq('user_id', userId)
         .order('data', { ascending: true })
         .order('criado_em', { ascending: true });
-        
+
       if (startDate) {
         query = query.gte('data', startDate as string);
       }
@@ -36,7 +39,7 @@ export class TasksController {
     try {
       const userId = (req as any).userId;
       if (!userId) { return res.status(401).json({ error: 'Não autorizado.' }); }
-      
+
       if (!titulo) {
         return res.status(400).json({ error: 'O título da tarefa é obrigatório.' });
       }
@@ -53,17 +56,25 @@ export class TasksController {
         }
       }
 
+      // Valida a hora ANTES de qualquer outra regra: nunca aceita minutos > 59 / horas > 23
+      // (e rejeita tipos não-string, ex.: ["07:00"], que passariam por String()).
+      if (hora !== undefined && hora !== null && hora !== '') {
+        if (typeof hora !== 'string' || !HORA_REGEX.test(hora)) {
+          return res.status(400).json({ error: 'Hora inválida. Use HH:MM (horas 00-23, minutos 00-59).' });
+        }
+      }
+
       const targetDate = data || new Date().toISOString().split('T')[0];
-      
+
       const now = new Date();
-      const tzOffset = now.getTimezoneOffset() * 60000; 
+      const tzOffset = now.getTimezoneOffset() * 60000;
       const localNow = new Date(Date.now() - tzOffset);
       const hojeStr = localNow.toISOString().split('T')[0];
       const dayOfWeek = localNow.getDay() === 0 ? 6 : localNow.getDay() - 1;
       const maxDate = new Date(localNow);
       maxDate.setDate(localNow.getDate() - dayOfWeek + 13);
       const maxDateStr = maxDate.toISOString().split('T')[0];
-      
+
       const maxYearDate = new Date(localNow);
       maxYearDate.setFullYear(localNow.getFullYear() + 1);
       const maxYearStr = maxYearDate.toISOString().split('T')[0];
@@ -75,20 +86,17 @@ export class TasksController {
       } else if (categoria !== 'planejamento' && targetDate > maxDateStr) {
         return res.status(400).json({ error: 'Só é possível agendar tarefas normais para a semana atual e a próxima.' });
       } else if (hora) {
-        if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(String(hora))) {
-          return res.status(400).json({ error: 'Formato de hora inválido. Use HH:MM.' });
-        }
         if (targetDate === hojeStr) {
           const currentTotal = now.getHours() * 60 + now.getMinutes();
           const [shh, smm] = String(hora).split(':').map(Number);
           const startTotal = shh * 60 + smm;
           if (startTotal < currentTotal) {
-             return res.status(400).json({ error: 'Não é possível agendar em horário que já passou hoje.' });
+            return res.status(400).json({ error: 'Não é possível agendar em horário que já passou hoje.' });
           }
         }
       }
 
-      
+
       const { count } = await supabase
         .from('tasks')
         .select('*', { count: 'exact', head: true })
@@ -134,7 +142,7 @@ export class TasksController {
       const userId = (req as any).userId;
       if (!userId) { return res.status(401).json({ error: 'Não autorizado.' }); }
       const { titulo, descricao, categoria, data, prioridade, concluida, hora, duracao } = req.body;
-      
+
       const updateData: any = {};
       if (titulo !== undefined) {
         if (titulo.length < 4 || titulo.length > 48) {
@@ -150,7 +158,14 @@ export class TasksController {
       if (data !== undefined) updateData.data = data;
       if (prioridade !== undefined) updateData.prioridade = prioridade;
       if (concluida !== undefined) updateData.concluida = !!concluida;
-      if (hora !== undefined) updateData.hora = hora;
+      if (hora !== undefined) {
+        if (hora !== null && hora !== '') {
+          if (typeof hora !== 'string' || !HORA_REGEX.test(hora)) {
+            return res.status(400).json({ error: 'Hora inválida. Use HH:MM (horas 00-23, minutos 00-59).' });
+          }
+        }
+        updateData.hora = hora === '' ? null : hora;
+      }
       if (duracao !== undefined) updateData.duracao = duracao;
 
       if (Object.keys(updateData).length === 0) {
@@ -161,7 +176,7 @@ export class TasksController {
       if (!existingTask) {
         return res.status(404).json({ error: 'Tarefa não encontrada.' });
       }
-      
+
       if (updateData.data !== undefined && updateData.data !== existingTask.data) {
         const { count, error: countErr } = await supabase.from('tasks').select('id', { count: 'exact', head: true }).eq('user_id', userId).eq('data', updateData.data);
         if (count && count >= 14) {
@@ -171,26 +186,26 @@ export class TasksController {
 
       if (updateData.concluida === true) {
         const checkDate = updateData.data || existingTask.data;
-          if (checkDate) {
-            const now = new Date();
-            const tzOffset = now.getTimezoneOffset() * 60000;
-            const localNow = new Date(Date.now() - tzOffset);
-            const dayOfWeek = localNow.getDay() === 0 ? 6 : localNow.getDay() - 1;
-            const maxDate = new Date(localNow);
-            maxDate.setDate(localNow.getDate() - dayOfWeek + 13);
-            const maxDateStr = maxDate.toISOString().split('T')[0];
-            if (checkDate > maxDateStr) {
-              return res.status(400).json({ error: 'Tarefas de planejamento futuro não podem ser concluídas.' });
-            }
+        if (checkDate) {
+          const now = new Date();
+          const tzOffset = now.getTimezoneOffset() * 60000;
+          const localNow = new Date(Date.now() - tzOffset);
+          const dayOfWeek = localNow.getDay() === 0 ? 6 : localNow.getDay() - 1;
+          const maxDate = new Date(localNow);
+          maxDate.setDate(localNow.getDate() - dayOfWeek + 13);
+          const maxDateStr = maxDate.toISOString().split('T')[0];
+          if (checkDate > maxDateStr) {
+            return res.status(400).json({ error: 'Tarefas de planejamento futuro não podem ser concluídas.' });
           }
+        }
       }
 
       if (updateData.data || updateData.hora) {
         const now = new Date();
-        const tzOffset = now.getTimezoneOffset() * 60000; 
+        const tzOffset = now.getTimezoneOffset() * 60000;
         const localNow = new Date(Date.now() - tzOffset);
         const hojeStr = localNow.toISOString().split('T')[0];
-        
+
         const dayOfWeek = localNow.getDay() === 0 ? 6 : localNow.getDay() - 1;
         const maxDate = new Date(localNow);
         maxDate.setDate(localNow.getDate() - dayOfWeek + 13);
@@ -215,17 +230,14 @@ export class TasksController {
             return res.status(400).json({ error: 'Só é possível agendar tarefas normais para a semana atual e a próxima.' });
           }
         }
-        
+
         if (updateData.hora) {
-          if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(String(updateData.hora))) {
-            return res.status(400).json({ error: 'Formato de hora inválido. Use HH:MM.' });
-          }
           if (targetDate === hojeStr) {
             const currentTotal = now.getHours() * 60 + now.getMinutes();
             const [shh, smm] = String(updateData.hora).split(':').map(Number);
             const startTotal = shh * 60 + smm;
             if (startTotal < currentTotal) {
-               return res.status(400).json({ error: 'Não é possível agendar em horário que já passou hoje.' });
+              return res.status(400).json({ error: 'Não é possível agendar em horário que já passou hoje.' });
             }
           }
         }
@@ -275,7 +287,7 @@ export class TasksController {
     try {
       const userId = (req as any).userId;
       if (!userId) { return res.status(401).json({ error: 'Não autorizado.' }); }
-      
+
       const { data: existingTask } = await supabase
         .from('tasks')
         .select('concluida, data')

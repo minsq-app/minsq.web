@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { supabase } from '../config/supabase';
 
+// Hora HH:MM válida (00:00–23:59): minutos só de 00 a 59.
+const HORA_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
 export class RoutinesController {
   static async list(req: Request, res: Response) {
     try {
@@ -51,8 +54,8 @@ export class RoutinesController {
         return res.status(400).json({ error: 'A rotina não pode conter caracteres especiais.' });
       }
 
-      if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(hora)) {
-        return res.status(400).json({ error: 'A hora deve estar no formato HH:MM.' });
+      if (typeof hora !== 'string' || !HORA_REGEX.test(hora)) {
+        return res.status(400).json({ error: 'Hora inválida. Use HH:MM (horas 00-23, minutos 00-59).' });
       }
 
       if (dias_semana.length < 1 || dias_semana.length > 7 || dias_semana.some((d: any) => typeof d !== 'number' || d < 1 || d > 7)) {

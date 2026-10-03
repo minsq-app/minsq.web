@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Hora no formato HH:MM (00:00–23:59). Minutos só de 00 a 59.
+export const HORA_REGEX = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
 export const taskSchema = z.object({
   titulo: z.string().min(1, "Título é obrigatório").max(100, "Máximo de 100 caracteres"),
   descricao: z.string().max(500, "Máximo de 500 caracteres").optional().nullable(),
@@ -7,7 +10,7 @@ export const taskSchema = z.object({
   data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de data inválido (YYYY-MM-DD)").optional().nullable(),
   prioridade: z.enum(['nenhuma', 'muito_alta', 'alta', 'media', 'pouca', 'opcional', 'baixa']).optional().nullable(),
   concluida: z.boolean().optional().nullable(),
-  hora: z.string().optional().nullable(),
+  hora: z.union([z.string().regex(HORA_REGEX, "Hora inválida. Use HH:MM (horas 00-23, minutos 00-59)."), z.literal('')]).optional().nullable(),
   duracao: z.string().optional().nullable()
 });
 

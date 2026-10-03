@@ -63,7 +63,7 @@ export const supportTicketSchema = z.object({
 });
 
 export const routineSchema = z.object({
-  hora: z.string().regex(/^\d{2}:\d{2}$/, "Formato inválido (HH:MM)"),
+  hora: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Hora inválida. Use HH:MM (horas 00-23, minutos 00-59)."),
   titulo: z.string().min(3, "Mínimo de 3 caracteres").max(40, "Máximo de 40 caracteres"),
   dias_semana: z.array(z.number().int().min(1).max(7)).min(1).max(7),
   preset: z.number().int().min(1).max(4).optional().nullable()

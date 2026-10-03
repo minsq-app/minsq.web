@@ -3397,3 +3397,85 @@ function _injectSpotlightHTML() {
   });
 }
 
+
+
+/* ══════════════════════════════════════════════════════════════
+   MÁSCARA DE HORA (HH:MM) — impede minutos > 59 e horas > 23
+   Uso: <input type="text" data-time-mask inputmode="numeric" maxlength="5" placeholder="HH:MM">
+   · .value sempre devolve "HH:MM" válido ou "" (compatível com input[type=time])
+   · Delegação de eventos: funciona em modais criados dinamicamente.
+   · window.horaValida(v) / window.horaCompleta(v) para validar antes de enviar.
+══════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+  if (window.__timeMaskInit) return;
+  window.__timeMaskInit = true;
+
+  var HORA_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  window.horaValida = function (v) { return typeof v === 'string' && HORA_RE.test(v); };
+
+  // Converte qualquer texto em dígitos válidos posição a posição (nunca gera hora/minuto inválido)
+  function parseDigits(raw) {
+    var out = [];
+    var ds = String(raw || '').replace(/\D/g, '');
+    for (var i = 0; i < ds.length && out.length < 4; i++) {
+      var c = ds.charAt(i), n = out.length;
+      if (n === 0) {
+        if (c > '2') { out.push('0', c); } else { out.push(c); }       // "7" -> "07"
+      } else if (n === 1) {
+        if (out[0] === '2' && c > '3') continue;                         // "24".."29" ignorados
+        out.push(c);
+      } else if (n === 2) {
+        if (c > '5') { out.push('0', c); } else { out.push(c); }       // minuto "7" -> "07"
+      } else {
+        out.push(c);
+      }
+    }
+    return out.slice(0, 4);
+  }
+
+  function format(d) {
+    return d.length <= 2 ? d.join('') : d.slice(0, 2).join('') + ':' + d.slice(2).join('');
+  }
+
+  // Completa entrada parcial: "07" -> "07:00", "07:3" -> "07:30", "0" -> "00:00"
+  window.horaCompleta = function (raw) {
+    var d = parseDigits(raw);
+    if (!d.length) return '';
+    while (d.length < 4) d.push('0');
+    return format(d);
+  };
+
+  function isMask(el) { return el && el.tagName === 'INPUT' && el.hasAttribute('data-time-mask'); }
+
+  document.addEventListener('input', function (e) {
+    var el = e.target;
+    if (!isMask(el)) return;
+    if (e.inputType && e.inputType.indexOf('delete') === 0) {
+      // Apagando: só reformata (sem forçar ":" ao voltar para 2 dígitos)
+      el.value = format(parseDigits(el.value));
+      return;
+    }
+    el.value = format(parseDigits(el.value));
+  }, true);
+
+  document.addEventListener('focusout', function (e) {
+    var el = e.target;
+    if (!isMask(el)) return;
+    el.value = window.horaCompleta(el.value);
+  }, true);
+
+  // Setas ↑/↓ ajustam de 15 em 15 min (como o step=900 do campo nativo)
+  document.addEventListener('keydown', function (e) {
+    var el = e.target;
+    if (!isMask(el)) return;
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+    e.preventDefault();
+    var cur = window.horaCompleta(el.value);
+    var total = 0;
+    if (cur) { total = parseInt(cur.slice(0, 2), 10) * 60 + parseInt(cur.slice(3), 10); }
+    total = (total + (e.key === 'ArrowUp' ? 15 : -15) + 1440) % 1440;
+    el.value = ('0' + Math.floor(total / 60)).slice(-2) + ':' + ('0' + (total % 60)).slice(-2);
+  }, true);
+})();
+
