@@ -777,22 +777,30 @@
         try { if (f && f.contentWindow) f.contentWindow.postMessage({ type: 'MINSQ_DASH_READY' }, window.location.origin); } catch (e) { }
       }
 
-      /* Espera o loading do dashboard (#mh-loader) sumir para liberar o X do modal */
+      /* Espera o dashboard carregar 100% (loading do shell E do iframe sumirem) e só então mostra o modal */
+      function loaderBusy(doc) {
+        try {
+          var l = doc.getElementById('mh-loader');
+          return !!(l && !l.classList.contains('fade-out'));
+        } catch (e) { return false; }
+      }
+
       function watchDashboard() {
         stopPoll();
         dashReady = false;
         var frame = document.getElementById('mh-content-frame');
         var started = Date.now();
+        var idleSince = 0;
         pollTimer = setInterval(function () {
-          var done = false;
-          try {
-            var l = frame.contentDocument.getElementById('mh-loader');
-            done = !l || l.classList.contains('fade-out');
-          } catch (e) { done = true; }
-          if (Date.now() - started > 12000) done = true; /* segurança */
-          if (!done) return;
+          var busy = loaderBusy(document);
+          try { if (loaderBusy(frame.contentDocument)) busy = true; } catch (e) { }
+          var timeout = Date.now() - started > 12000; /* segurança */
+          if (busy && !timeout) { idleSince = 0; return; }
+          /* exige alguns ciclos seguidos sem loading para evitar falso positivo */
+          if (!idleSince) idleSince = Date.now();
+          if (Date.now() - idleSince < 400 && !timeout) return;
           stopPoll();
-          setTimeout(function () { dashReady = true; sendReady(); }, 260); /* espera o fade do loader terminar */
+          setTimeout(function () { dashReady = true; show(); }, 300); /* deixa o fade do loader terminar */
         }, 100);
       }
 
@@ -817,7 +825,6 @@
         overlay.appendChild(f);
         overlay.classList.add('show');
         overlay.setAttribute('aria-hidden', 'false');
-        watchDashboard();
       }
 
       window.__minsqUpdate = {
@@ -827,7 +834,7 @@
         onLoaded: function (url) {
           if (!pending) return;
           pending = false;
-          if (typeof url === 'string' && DASH_RE.test(url)) show();
+          if (typeof url === 'string' && DASH_RE.test(url)) watchDashboard();
         },
         /* Navegando para outra tela: nunca deixa o modal aberto */
         onNavigate: function (url) {
