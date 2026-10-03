@@ -552,7 +552,7 @@
   if (!IS_PUBLIC) {
     var _sh = window.location.hostname.toLowerCase();
     var _isSub = _sh.startsWith('web.') || _sh.startsWith('status.') || _sh.startsWith('maintenance.');
-    var _authUrl = _isSub ? 'https://mohi.com.br/auth' : '/pages/auth/auth.html';
+    var _authUrl = _isSub ? 'https://mohi.com.br/auth' : '/auth';
     try {
       var _u = JSON.parse(localStorage.getItem('minsq_auth_user'));
       if (!_u || !_u.id) { (window.top || window).location.replace(_authUrl); return; }

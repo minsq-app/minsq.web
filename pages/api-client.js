@@ -127,7 +127,9 @@
   function redirectToLogin() {
     if (isInIframe) {
       window.top.postMessage({ type: 'MINSQ_INVALIDATE' }, '*');
-      window.top.location.replace('/pages/auth/auth.html');
+      // '/auth' é a rota do shell: abre o login dentro do iframe e mantém a URL limpa
+      // (antes ia para /pages/auth/auth.html e a URL completa aparecia na barra).
+      window.top.location.replace('/auth');
     } else {
       if (document.getElementById('mh-content-frame')) {
         // It's the shell. Tell it to invalidate.
