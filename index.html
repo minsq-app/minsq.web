@@ -32,6 +32,7 @@
       border: none;
       background: #070707;
     }
+
     #mh-curtain {
       position: absolute;
       inset: 0;
@@ -41,8 +42,30 @@
       transition: opacity .15s ease;
       pointer-events: none;
     }
+
     #mh-curtain.hide {
       opacity: 0;
+    }
+
+    /* Modal de atualização (aparece por cima do dashboard apenas após login) */
+    #mh-update-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      background: transparent;
+    }
+
+    #mh-update-overlay.show {
+      display: block;
+    }
+
+    #mh-update-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      color-scheme: dark;
     }
   </style>
 </head>
@@ -51,6 +74,7 @@
 
   <div id="mh-curtain"></div>
   <iframe id="mh-content-frame" name="mh-content-frame" src="about:blank"></iframe>
+  <div id="mh-update-overlay" aria-hidden="true"></div>
 
   <script>
     /* ==========================================================================
@@ -309,6 +333,13 @@
             window.top.location.href = 'https://mohi.com.br' + safePath;
             return;
           }
+          /* Login concluído: veio da tela de auth/confirmação e está indo ao dashboard */
+          try {
+            var _curPath = iframe.contentWindow.location.pathname;
+            if (/^\/pages\/auth\/(auth|confirm-account)\.html/.test(_curPath) && /^\/pages\/dashboard\.html/.test(safePath)) {
+              if (window.__minsqUpdate) window.__minsqUpdate.arm();
+            }
+          } catch (e) { }
           navigateIframe(safePath);
           return;
         }
@@ -380,7 +411,7 @@
 
         var clean = rawPage.replace(/[^a-zA-Z0-9.\-_]/g, '');
         if (!clean) return null;
-        
+
         var pageKey = clean.replace(/\.html$/, '');
         if (clean.indexOf('.') === -1) clean += '.html';
 
@@ -541,11 +572,13 @@
         if (sessionStorage.getItem('minsq_force_onboarding') === 'true') {
           navigateIframe('/pages/auth/onboarding.html');
         } else {
+          if (window.__minsqUpdate) window.__minsqUpdate.arm();
           navigateIframe('/pages/dashboard.html');
         }
       }
 
       function navigateIframe(url) {
+        if (window.__minsqUpdate) window.__minsqUpdate.onNavigate(url);
         /* Ao ir para login/logout o usuário não está mais logado: limpa foto/nome/favicon */
         if (typeof url === 'string' && /\/pages\/auth\/(auth|logout)\.html/.test(url)) resetShellUser();
         var curtain = document.getElementById('mh-curtain');
@@ -567,6 +600,7 @@
         iframe.addEventListener('load', function onLoad() {
           iframe.removeEventListener('load', onLoad);
           doHide();
+          if (window.__minsqUpdate) window.__minsqUpdate.onLoaded(url);
         });
 
         try {
@@ -656,7 +690,7 @@
       if (!isStatusHost && !isMaintHost && !isWebHost) {
         var tabChannel = new BroadcastChannel('minsq_tab_sync');
         var tabId = Math.random().toString(36).substring(2);
-        
+
         tabChannel.postMessage({ type: 'NEW_TAB_OPENED', tabId: tabId });
 
         tabChannel.onmessage = function (event) {
@@ -707,7 +741,7 @@
             newDoc.close();
 
             // Injeta o script das particulas depois do Three.js carregar
-            setTimeout(function() {
+            setTimeout(function () {
               var w = document.defaultView || window;
               if (!w || typeof w.THREE === 'undefined') return;
               var s = w.document.createElement('script');
@@ -719,6 +753,62 @@
           }
         };
       }
+    })();
+  </script>
+
+  <script>
+    /* ==========================================================================
+       MODAL DE ATUALIZAÇÃO — só aparece logo após um LOGIN, por cima do dashboard.
+       Recarregar a página (sessão já ativa) NÃO mostra o modal.
+       ========================================================================== */
+    (function () {
+      var MODAL_URL = '/pages/addictional/modalUpdate.html';
+      var DASH_RE = /^\/pages\/dashboard\.html/;
+      var pending = false;
+      var overlay = document.getElementById('mh-update-overlay');
+
+      function hide() {
+        if (!overlay) return;
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden', 'true');
+        overlay.innerHTML = '';
+      }
+
+      function show() {
+        if (!overlay) return;
+        overlay.innerHTML = '';
+        var f = document.createElement('iframe');
+        f.id = 'mh-update-frame';
+        f.title = 'Novidades da atualização';
+        f.setAttribute('allowtransparency', 'true');
+        f.src = MODAL_URL;
+        f.addEventListener('load', function () { try { f.focus(); } catch (e) { } });
+        overlay.appendChild(f);
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden', 'false');
+      }
+
+      window.__minsqUpdate = {
+        /* Marca que o próximo dashboard carregado veio de um login */
+        arm: function () { pending = true; },
+        /* Chamado quando o iframe principal termina de carregar `url` */
+        onLoaded: function (url) {
+          if (!pending) return;
+          pending = false;
+          if (typeof url === 'string' && DASH_RE.test(url)) show();
+        },
+        /* Navegando para outra tela: nunca deixa o modal aberto */
+        onNavigate: function (url) {
+          hide();
+          if (pending && !(typeof url === 'string' && DASH_RE.test(url))) pending = false;
+        },
+        hide: hide
+      };
+
+      window.addEventListener('message', function (e) {
+        if (e.origin !== window.location.origin) return;
+        if (e.data && e.data.type === 'MINSQ_CLOSE_UPDATE_MODAL') hide();
+      });
     })();
   </script>
 
