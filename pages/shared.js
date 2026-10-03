@@ -131,7 +131,7 @@
           el.setAttribute('data-href', href);
           el.removeAttribute('href');
           el.style.cursor = 'pointer';
-          el.addEventListener('click', function(e) {
+          el.addEventListener('click', function (e) {
             e.preventDefault();
             var target = el.getAttribute('target');
             if (target === '_blank') {
@@ -189,9 +189,9 @@
     try {
       const _ownSearch = new URLSearchParams(window.location.search);
       let _topSearch = null;
-      try { _topSearch = new URLSearchParams(window.top.location.search); } catch (_) {}
+      try { _topSearch = new URLSearchParams(window.top.location.search); } catch (_) { }
       const hasMaintOff = _ownSearch.get('maintenance') === 'off' || _ownSearch.get('maint') === '0' ||
-                          (_topSearch && (_topSearch.get('maintenance') === 'off' || _topSearch.get('maint') === '0'));
+        (_topSearch && (_topSearch.get('maintenance') === 'off' || _topSearch.get('maint') === '0'));
 
       if (hasMaintOff) {
         localStorage.removeItem('minsq_is_maintenance');
@@ -203,7 +203,7 @@
         document.cookie = 'minsq_is_maintenance' + _past + '; domain=.mohi.com.br';
         document.cookie = 'minsq_is_maintenance' + _past + '; domain=mohi.com.br';
       }
-    } catch (_) {}
+    } catch (_) { }
 
     const isMaintenancePage = _host.startsWith('maintenance.') || _host.startsWith('maintenance-') || _host === 'maintenance.mohi.com.br' || _path.endsWith('/maintenance.html') || _path === '/maintenance';
     const isStatusPage = _host.startsWith('status.') || _host.startsWith('status-') || _host === 'status.mohi.com.br' || _path.endsWith('/status.html') || _path === '/status' || _path.includes('/api/status.html');
@@ -438,6 +438,31 @@
   var ACTIVE_KEY = window.ACTIVE_KEY || FILE_TO_KEY[CURRENT_FILE] || '';
 
   /* ════════════════════════════════════════════
+     PERFIL DE OUTRA PESSOA
+     profile.html?u=... / ?id=... NÃO é "Meu perfil":
+     não destaca a sidebar e não trava o clique em "Meu perfil".
+  ════════════════════════════════════════════ */
+  function _mhSearchHasProfileTarget(search) {
+    try {
+      var p = new URLSearchParams(search || '');
+      return !!(p.get('u') || p.get('id'));
+    } catch (e) { return false; }
+  }
+  function _mhIsForeignProfile(file, search) {
+    if (file !== 'profile.html') return false;
+    if (window._mhProfileOwn === true) return false; // ?u= apontando pro próprio usuário
+    return _mhSearchHasProfileTarget(search);
+  }
+  function _mhFrameIsForeignProfile() {
+    var f = document.getElementById('mh-content-frame');
+    if (!f) return _mhIsForeignProfile(CURRENT_FILE, window.location.search);
+    try {
+      var loc = f.contentWindow.location;
+      return _mhIsForeignProfile((loc.pathname.split('/').pop() || ''), loc.search);
+    } catch (e) { return false; }
+  }
+
+  /* ════════════════════════════════════════════
      FAVICON — injeta em todas as páginas
   ════════════════════════════════════════════ */
   (function () {
@@ -573,7 +598,9 @@
         try {
           var currentPath = iframe.contentWindow.location.pathname || '';
           var currentFile = currentPath.split('/').pop() || '';
-          if (currentFile === targetFile) {
+          // Exceção: está no perfil de outra pessoa e quer ir pro próprio (profile.html sem ?u=)
+          var _leavingForeignProfile = (targetFile === 'profile.html' && !_mhSearchHasProfileTarget(safe.split('?')[1] || '') && _mhFrameIsForeignProfile());
+          if (currentFile === targetFile && !_leavingForeignProfile) {
             return;
           }
         } catch (e) {
@@ -639,7 +666,7 @@
     window.go = function (p) {
       if (IS_IN_IFRAME) {
         // Guard no iframe: não navega se já está na página destino
-        if (ACTIVE_KEY && ACTIVE_KEY === p) return;
+        if (ACTIVE_KEY && ACTIVE_KEY === p && !(p === 'profile' && _mhIsForeignProfile(CURRENT_FILE, window.location.search))) return;
 
         try {
           parent.postMessage({ type: 'mh-go', page: p }, window.location.origin);
@@ -653,7 +680,7 @@
       if (_iframe) {
         try {
           var _cur = _iframe.contentWindow.location.pathname.split('/').pop().split('?')[0];
-          if (_cur === PAGE_MAP[p]) return;
+          if (_cur === PAGE_MAP[p] && !(p === 'profile' && _mhFrameIsForeignProfile())) return;
         } catch (e) {
           // fallback: compara iframe.src
           var _src = (_iframe.src || '').split('/').pop().split('?')[0];
@@ -797,7 +824,7 @@
         + '<button class="mh-plan-upgrade" data-mhkey="upgrade">Upgrade</button>'
         + '</div>';
 
-      var isProfileOn = (typeof ACTIVE_KEY !== 'undefined' && ACTIVE_KEY === 'profile');
+      var isProfileOn = (typeof ACTIVE_KEY !== 'undefined' && ACTIVE_KEY === 'profile') && !_mhIsForeignProfile('profile.html', window.location.search);
       var isSettingsOn = (typeof ACTIVE_KEY !== 'undefined' && ACTIVE_KEY === 'settings');
 
       var accountHTML = '<div class="mh-account' + (isProfileOn ? ' on' : '') + '">'
@@ -854,11 +881,12 @@
       var sidebarElement = wrap.firstChild;
       document.body.insertBefore(sidebarElement, document.body.firstChild);
 
-      sidebarElement.addEventListener('click', function(e) {
+      sidebarElement.addEventListener('click', function (e) {
         var el = e.target.closest('[data-mhkey]');
         if (el) {
           var key = el.getAttribute('data-mhkey');
-          if (el.classList.contains('on') || key === ACTIVE_KEY) return;
+          if (el.classList.contains('on')) return;
+          if (key === ACTIVE_KEY && !(key === 'profile' && _mhFrameIsForeignProfile())) return;
           if (typeof window.go === 'function') window.go(key);
         }
       });
@@ -948,11 +976,16 @@
             try {
               var curFile = iframe.contentWindow.location.pathname.split('/').pop().split('?')[0];
               var targetFile = PAGE_MAP[data.page] || '';
-              if (curFile === targetFile) return;
+              if (curFile === targetFile && !(data.page === 'profile' && _mhFrameIsForeignProfile())) return;
             } catch (e) { }
           }
           window.go(data.page);
         }
+      } else if (data.type === 'mh-profile-view') {
+        // profile.html informa se o perfil exibido é o do próprio usuário
+        window._mhProfileOwn = !!data.own;
+        var _acc = document.querySelector('.mh-sidebar .mh-account');
+        if (_acc) _acc.classList.toggle('on', !!data.own);
       } else if (data.type === 'mh-frame-loaded') {
         window._mhIsNavigating = false;
         document.body.classList.remove('mh-k-active-parent');
@@ -972,7 +1005,11 @@
 
         var isChildPublic = PUBLIC_PAGES.indexOf(childUrl) !== -1;
 
+        // Nova página carregada: zera o aviso de "?u= é o próprio usuário" (profile.html reenvia)
+        window._mhProfileOwn = undefined;
         var routeKey = FILE_TO_KEY[childUrl];
+        // Perfil de outra pessoa não conta como "Meu perfil"
+        if (_mhIsForeignProfile(childUrl, search)) routeKey = '';
         var navButtons = document.querySelectorAll('.mh-sidebar .mh-nb');
         navButtons.forEach(function (btn) {
           btn.classList.toggle('on', !!routeKey && btn.getAttribute('data-mhkey') === routeKey);
@@ -1468,11 +1505,14 @@
             var isChildPublic = PUBLIC_PAGES.indexOf(childUrl) !== -1;
 
             var routeKey = FILE_TO_KEY[childUrl];
-            if (routeKey) {
+            var _foreign = _mhIsForeignProfile(childUrl, search);
+            if (routeKey || _foreign) {
               var navButtons = document.querySelectorAll('.mh-sidebar .mh-nb');
               navButtons.forEach(function (btn) {
-                btn.classList.toggle('on', btn.getAttribute('data-mhkey') === routeKey);
+                btn.classList.toggle('on', !_foreign && btn.getAttribute('data-mhkey') === routeKey);
               });
+              var _accFb = document.querySelector('.mh-sidebar .mh-account');
+              if (_accFb) _accFb.classList.toggle('on', !_foreign && routeKey === 'profile');
             }
 
             var searchQS = search ? (search.startsWith('?') ? search : '?' + search) : '';

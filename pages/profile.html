@@ -4526,6 +4526,13 @@
             }
           }
 
+          // Avisa o shell (sidebar) se este é o perfil do próprio usuário ou de outra pessoa
+          try {
+            if (window.parent && window.parent !== window) {
+              window.parent.postMessage({ type: 'mh-profile-view', own: !isPublicView }, window.location.origin);
+            }
+          } catch (e) { }
+
           const targetUser = isPublicView ? publicUserData : currentUser;
           if (!targetUser) return;
           _activeTargetUser = targetUser;
@@ -5477,8 +5484,8 @@
               <button class="fm-follow-btn btn-reject" onclick="rejectFollowRequest('${u.id}', this)">Recusar</button>
             </div>
             ` : `
-            <button class="fm-follow-btn ${u.is_following ? 'is-following' : ''}" onclick="toggleFollowInModal('${u.id}', this)">
-              ${u.is_following ? 'Seguindo' : 'Seguir'}
+            <button class="fm-follow-btn ${(u.is_following || u.is_pending) ? 'is-following' : ''}" onclick="toggleFollowInModal('${u.id}', this)">
+              ${u.is_following ? 'Seguindo' : (u.is_pending ? 'Solicitado' : 'Seguir')}
             </button>
             `
             )}
@@ -5499,15 +5506,24 @@
         btn.disabled = true;
 
         try {
+          // Estado final: 'none' | 'accepted' | 'pending' (perfil privado vira solicitação)
+          let newStatus = 'none';
           if (window.api && typeof window.api.followUser === 'function' && typeof window.api.unfollowUser === 'function') {
-            if (isFollowing) await window.api.unfollowUser(userId);
-            else await window.api.followUser(userId);
+            if (isFollowing) {
+              await window.api.unfollowUser(userId);
+            } else {
+              const r = await window.api.followUser(userId);
+              newStatus = (r && r.status === 'pending') ? 'pending' : 'accepted';
+            }
           }
-          btn.classList.toggle('is-following', !isFollowing);
-          btn.textContent = !isFollowing ? 'Seguindo' : 'Seguir';
+          btn.classList.toggle('is-following', newStatus !== 'none');
+          btn.textContent = newStatus === 'accepted' ? 'Seguindo' : (newStatus === 'pending' ? 'Solicitado' : 'Seguir');
 
           [...fmState.followers, ...fmState.following].forEach(u => {
-            if (u.id === userId) u.is_following = !isFollowing;
+            if (u.id === userId) {
+              u.is_following = newStatus === 'accepted';
+              u.is_pending = newStatus === 'pending';
+            }
           });
         } catch (e) {
           console.warn('Erro ao alternar follow:', e);
