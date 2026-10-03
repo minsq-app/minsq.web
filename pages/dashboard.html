@@ -38,7 +38,7 @@
       overflow-x: hidden;
       z-index: 9999;
     }
-    
+
     #dashAiSuggestions.is-scrollable::after {
       content: "";
       position: sticky;
@@ -46,7 +46,7 @@
       left: 0;
       right: 0;
       height: 32px;
-      background: linear-gradient(to bottom, rgba(13,13,13,0), rgba(13,13,13,1) 90%);
+      background: linear-gradient(to bottom, rgba(13, 13, 13, 0), rgba(13, 13, 13, 1) 90%);
       pointer-events: none;
       flex-shrink: 0;
       margin-top: -32px;
@@ -2429,9 +2429,11 @@
             style="display:flex;flex-direction:column">
             <div class="sh">
               <div class="st">Lista do dia</div>
-              <button class="sh-add-btn" onclick="openModal('task')" title="Adicionar tarefa" data-mh-help="Adicionar Tarefa: Clique aqui para adicionar um novo afazer à sua lista do dia.">+</button>
+              <button class="sh-add-btn" onclick="openModal('task')" title="Adicionar tarefa"
+                data-mh-help="Adicionar Tarefa: Clique aqui para adicionar um novo afazer à sua lista do dia.">+</button>
             </div>
-            <div id="taskList" style="flex:1;min-height:0" data-mh-help="Lista de Tarefas: Seus afazeres diários ficam aqui. Você pode reordenar e marcá-los quando concluir.">
+            <div id="taskList" style="flex:1;min-height:0"
+              data-mh-help="Lista de Tarefas: Seus afazeres diários ficam aqui. Você pode reordenar e marcá-los quando concluir.">
               <div class="empty-state">
                 <div class="empty-t">Nenhuma tarefa ainda</div>
                 <div class="empty-s">Adicione sua primeira tarefa do dia</div>
@@ -2444,7 +2446,8 @@
 
             <!-- Header: saudação + relógio -->
             <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
-              <div data-mh-help="Momento do Dia: Sua saudação personalizada de acordo com o horário, para te manter sintonizado com o momento.">
+              <div
+                data-mh-help="Momento do Dia: Sua saudação personalizada de acordo com o horário, para te manter sintonizado com o momento.">
                 <div id="greetingLine"
                   style="font-size:20px;font-weight:700;letter-spacing:-.6px;color:var(--t1);line-height:1.3">
                   <span id="greeting"></span><span id="greetingSuffix">, <span id="uName">—</span> 👋</span>
@@ -2463,7 +2466,8 @@
             <div style="height:1px;background:var(--b1);margin:18px 0"></div>
 
             <!-- Streak -->
-            <div data-mh-help="Sequência e Constância: Seu streak ativo mostra quantos dias seguidos você manteve o ritmo. Não quebre a corrente!">
+            <div
+              data-mh-help="Sequência e Constância: Seu streak ativo mostra quantos dias seguidos você manteve o ritmo. Não quebre a corrente!">
               <div
                 style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:11px;cursor:default"
                 onmouseenter="showLastStreakTip(event)" onmouseleave="hideLastStreakTip()">
@@ -2517,7 +2521,8 @@
               <div style="display: flex; gap: 20px;">
                 <!-- Coluna Esquerda: Rotina -->
                 <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
-                  <div id="dashRotinaList" class="dash-rotina-list" data-mh-help="Foco na Rotina: Esta lista te mantém focado. O item atual fica destacado automaticamente de acordo com o horário.">
+                  <div id="dashRotinaList" class="dash-rotina-list"
+                    data-mh-help="Foco na Rotina: Esta lista te mantém focado. O item atual fica destacado automaticamente de acordo com o horário.">
                     <div class="dash-rotina-empty">
                       <div class="dash-rotina-empty-t">Carregando...</div>
                     </div>
@@ -2525,7 +2530,8 @@
                 </div>
                 <!-- Coluna Direita: Insights -->
                 <div
-                  style="flex: 1; min-width: 0; border-left: 1px solid var(--b1); padding-left: 20px; display: flex; flex-direction: column;" data-mh-help="Motor de Decisão: Nossa IA analisa sua rotina para gerar insights precisos e conselhos baseados nos seus dados.">
+                  style="flex: 1; min-width: 0; border-left: 1px solid var(--b1); padding-left: 20px; display: flex; flex-direction: column;"
+                  data-mh-help="Motor de Decisão: Nossa IA analisa sua rotina para gerar insights precisos e conselhos baseados nos seus dados.">
                   <div id="aiInsights"
                     style="flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
                     <!-- Insight cards are built dynamically here -->
@@ -2536,12 +2542,12 @@
               <!-- input flat, sem caixa -->
               <div
                 style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--b1)">
-                <div style="position:relative;flex:1;display:flex;align-items:center" data-mh-help="Terminal Inteligente: Que tal registrar um copo d'água? Digite /agua e dê enter sem nem tocar no mouse.">
+                <div style="position:relative;flex:1;display:flex;align-items:center"
+                  data-mh-help="Terminal Inteligente: Que tal registrar um copo d'água? Digite /agua e dê enter sem nem tocar no mouse.">
                   <div id="dashAiSuggestions"></div>
                   <input id="dashAiQ"
                     style="flex:1;background:transparent;border:none;color:var(--t2);font-family:var(--fm);font-size:11.5px;padding:2px 0;outline:none"
-                    placeholder="Terminal, registro rapido via comandos"
-                    autocomplete="off">
+                    placeholder="Terminal, registro rapido via comandos" autocomplete="off">
                 </div>
                 <button
                   style="background:none;border:none;color:var(--t3);font-size:14px;cursor:pointer;padding:0 2px;line-height:1"
@@ -2561,7 +2567,8 @@
             <div class="sh" style="margin-bottom:10px">
               <div class="st">Metas</div>
             </div>
-            <div id="dashGoalsGrid" class="mm-plan-grid" style="flex:1;overflow-y:auto;padding:10px 0" data-mh-help="Metas: Seus grandes objetivos ficam aqui pra você não perder o foco do futuro.">
+            <div id="dashGoalsGrid" class="mm-plan-grid" style="flex:1;overflow-y:auto;padding:10px 0"
+              data-mh-help="Metas: Seus grandes objetivos ficam aqui pra você não perder o foco do futuro.">
               <div class="empty-state"
                 style="padding:32px 16px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center">
                 <svg width="26" height="26" viewBox="0 0 20 20" fill="none">
@@ -2771,8 +2778,9 @@
               style="display:none;position:absolute;top:7px;right:7px;width:22px;height:22px;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.15);border-radius:5px;color:rgba(255,255,255,.7);font-size:11px;cursor:pointer;align-items:center;justify-content:center;padding:0;line-height:1;transition:all .15s;z-index:2"
               onmouseover="this.style.color='#fff';this.style.background='rgba(0,0,0,.85)'"
               onmouseout="this.style.color='rgba(255,255,255,.7)';this.style.background='rgba(0,0,0,.65)'">✕</button>
-            <input type="file" id="dashBgFileInput" accept=".jpg,.jpeg,.png,.webp,.gif,image/png,image/jpeg,image/webp,image/gif"
-              style="display:none" onchange="dashBgLoad(this)">
+            <input type="file" id="dashBgFileInput"
+              accept=".jpg,.jpeg,.png,.webp,.gif,image/png,image/jpeg,image/webp,image/gif" style="display:none"
+              onchange="dashBgLoad(this)">
           </div>
 
           <!-- Slider de opacidade -->
@@ -3890,14 +3898,12 @@
       const items = sorted.map(t => {
         const prio = t.prioridade || 'media';
         const isMuitoAlta = prio === 'muito_alta' && !t.concluida;
-        const dotColor = t.concluida ? 'rgba(255,255,255,.12)' : prioColors[prio];
         const textoStyle = t.concluida
           ? 'font-size:12px;flex:1;line-height:1.5;text-decoration:line-through;color:rgba(255,255,255,.2)'
           : isMuitoAlta ? 'font-size:12px;flex:1;line-height:1.5;color:#ff6b6b;animation:pulseMuitoAlta 2s ease-in-out infinite'
             : 'font-size:12px;flex:1;line-height:1.5;color:rgba(255,255,255,.72)';
         const horaHtml = t.hora ? `<span style="font-size:11px;font-weight:600;color:${t.concluida ? 'inherit' : (prio === 'muito_alta' ? '#e06060' : (prio === 'alta' ? '#e09040' : 'rgba(255,255,255,.4)'))};margin-right:6px;font-family:var(--mono)">${t.hora}</span>` : '';
         return `<div style="display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:opacity .15s" onclick="toggleTask('${t.id}')" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
-      <div style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:${dotColor};transition:background .15s;margin-top:1px"></div>
       <div style="${textoStyle}">${horaHtml}${escHtml(t.texto)}</div>
       <span onclick="event.stopPropagation();solicitarDeleteTask(event,'${t.id}')" style="font-size:11px;color:rgba(255,255,255,.1);cursor:pointer;padding:4px 6px;transition:color .12s;flex-shrink:0;line-height:1" onmouseover="this.style.color='rgba(224,96,96,.7)'" onmouseout="this.style.color='rgba(255,255,255,.1)'">✕</span>
     </div>`;
@@ -4762,7 +4768,7 @@
       });
 
       inp.addEventListener('focus', async () => {
-        try { window._aiCachedVicios = await window.api.getAddictions(); } catch(e){}
+        try { window._aiCachedVicios = await window.api.getAddictions(); } catch (e) { }
         _sugIdx = -1;
         _updateSug(inp.value);
       });
@@ -5863,7 +5869,7 @@
 
       // ── Sidebar glass sync ─────────────────────
       function dashBlackoutInit() { /* sidebar mantém fundo original, nada a fazer */ }
-      window.dashGlassLoad = function() { /* controlado por shared.js agora */ };
+      window.dashGlassLoad = function () { /* controlado por shared.js agora */ };
       function dashGlassLoad() { window.dashGlassLoad(); }
 
       window._dashBlackoutOnNav = function (page) { /* sidebar mantém fundo original, nada a fazer */ };

@@ -4775,6 +4775,11 @@
       function openProfileEdit() {
         const u = S.user; if (!u) return;
         _pendingUser = { ...u };
+        // Cópia profunda do customization_json: evita que editar/cancelar altere o S.user original
+        try {
+          const cj = typeof u.customization_json === 'string' ? JSON.parse(u.customization_json) : (u.customization_json || {});
+          _pendingUser.customization_json = JSON.parse(JSON.stringify(cj || {}));
+        } catch (e) { _pendingUser.customization_json = {}; }
         const panel = document.getElementById('profileEditPanel'); if (!panel) return;
         const nomeInput = document.getElementById('peNome');
         const handleInput = document.getElementById('peHandle');
@@ -5060,16 +5065,27 @@
       // ── CONTROLE DE SLIDER — OPACIDADE FUNDO PÁGINA ──
       window.onPageBgOpacityChange = function onPageBgOpacityChange() {
         const sl = document.getElementById('pePageBgOpacity'); const lb = document.getElementById('pePageBgOpacityLabel');
-        const val = parseInt(sl?.value || 18);
+        let val = parseInt(sl?.value, 10); if (isNaN(val)) val = 18;
         if (lb) lb.textContent = val + '%';
 
-        // Aplica na visualização principal e no editor
+        // Guarda o valor no usuário em edição (nos dois lugares que applyPageBg lê),
+        // senão qualquer re-render durante a edição volta pro valor antigo.
+        if (_pendingUser) {
+          _pendingUser.profile_page_bg_opacity = val;
+          if (!_pendingUser.customization_json || typeof _pendingUser.customization_json !== 'object') _pendingUser.customization_json = {};
+          _pendingUser.customization_json.profile_page_bg_opacity = val;
+        }
+
+        // Aplica ao vivo na imagem de fundo da página (e na miniatura do editor)
         const bgImg = document.getElementById('profilePageBgImg');
-        if (bgImg) bgImg.style.opacity = (val / 100);
+        if (bgImg) {
+          if (!bgImg.getAttribute('src') && _pendingUser && _pendingUser.profile_page_bg === 'image' && _pendingUser.profile_page_bg_img) {
+            applyPageBg('image', _pendingUser.profile_page_bg_img);
+          }
+          bgImg.style.setProperty('opacity', String(val / 100), 'important');
+        }
         const peThumb = document.getElementById('pePageBgThumb');
         if (peThumb) peThumb.style.opacity = (val / 100);
-
-        if (_pendingUser) _pendingUser.profile_page_bg_opacity = val;
       }
 
 
@@ -5083,10 +5099,13 @@
           else if (mode === 'black') { bgDiv.style.background = '#000000'; page.classList.add('pbg-black'); resolve(); }
           else if (mode === 'image' && imgUrl) {
             const activeUser = getActiveUserContext();
-            const op = (activeUser.customization_json?.profile_page_bg_opacity ?? activeUser.profile_page_bg_opacity ?? 18) / 100;
+            const rawOp = (_pendingUser && activeUser === _pendingUser)
+              ? (_pendingUser.profile_page_bg_opacity ?? _pendingUser.customization_json?.profile_page_bg_opacity)
+              : (activeUser.customization_json?.profile_page_bg_opacity ?? activeUser.profile_page_bg_opacity);
+            const op = (rawOp ?? 18) / 100;
             bgImg.onload = () => resolve();
             bgImg.onerror = () => resolve();
-            bgImg.src = imgUrl; bgImg.style.opacity = op; bgImg.style.display = 'block'; page.classList.add('pbg-image');
+            bgImg.src = imgUrl; bgImg.style.setProperty('opacity', String(op), 'important'); bgImg.style.display = 'block'; page.classList.add('pbg-image');
           } else {
             resolve();
           }
