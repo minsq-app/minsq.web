@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --card-bg: #1a1a19;
+            --text: #e2e2df;
+            --muted: #b5b5b1;
+            --badge-bg: #dbeafe;
+            --badge-text: #1d4ed8;
+            --border: #3a3a38;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            color-scheme: dark;
+            --overlay-alpha: 0.45;
+            /* escurecimento do fundo: 0 a 1 */
+        }
+
+        html {
+            background: transparent !important;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, var(--overlay-alpha));
+            font-family: "Exo 2", sans-serif;
+            padding: 16px;
+            animation: overlayIn .28s ease-out both;
+        }
+
+        body.is-closing {
+            pointer-events: none;
+            animation: overlayOut .24s ease-in forwards;
+        }
+
+        @keyframes overlayIn {
+            from {
+                background: rgba(0, 0, 0, 0);
+            }
+
+            to {
+                background: rgba(0, 0, 0, var(--overlay-alpha));
+            }
+        }
+
+        @keyframes overlayOut {
+            from {
+                background: rgba(0, 0, 0, var(--overlay-alpha));
+            }
+
+            to {
+                background: rgba(0, 0, 0, 0);
+            }
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @keyframes cardOut {
+            from {
+                opacity: 1;
+                transform: none;
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(14px) scale(.96);
+            }
+        }
+
+        .card {
+            animation: cardIn .38s cubic-bezier(.2, 1.1, .3, 1) both;
+        }
+
+        body.is-closing .card {
+            animation: cardOut .24s ease-in forwards;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            body,
+            .card,
+            body.is-closing,
+            body.is-closing .card {
+                animation-duration: .01ms !important;
+            }
+        }
+
+        .card {
+            display: flex;
+            width: 100%;
+            max-width: 630px;
+            min-height: 436px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        .card__content {
+            flex: 1 1 50%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .badge {
+            align-self: flex-start;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            margin-bottom: 14px;
+        }
+
+        .card__title {
+            font-family: "Fraunces", serif;
+            font-size: 24px;
+            line-height: 1.17;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+
+        .features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--muted);
+        }
+
+        .features svg {
+            flex: none;
+            width: 16px;
+            height: 16px;
+            stroke: var(--text);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .actions {
+            margin-top: auto;
+            padding-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 9px 12px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity .15s, background .15s;
+        }
+
+        .btn--primary {
+            background: #0c0c0b;
+            color: #e2e2df;
+            border: 1px solid #3a3a38;
+        }
+
+        .btn--primary:hover {
+            opacity: .85;
+        }
+
+        .btn--secondary {
+            background: #2e2e2c;
+            color: var(--text);
+            border: 1px solid #2e2e2c;
+        }
+
+        .btn--secondary:hover {
+            background: #3a3a38;
+            border-color: #3a3a38;
+        }
+
+        .card__media {
+            position: relative;
+            flex: 1 1 50%;
+            background: #0b1020 url("./assets/1.webp") center / cover no-repeat;
+        }
+
+        .close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            border: 0;
+            border-radius: 6px;
+            background: rgba(46, 46, 44, 0.9);
+            color: #e2e2df;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            background: #3a3a38;
+        }
+
+        .close svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            fill: none;
+        }
+
+
+        a.btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:focus-visible,
+        .modal__input:focus-visible {
+            outline: 2px solid #1d4ed8;
+            outline-offset: 2px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity .22s ease, visibility 0s linear .22s;
+        }
+
+        .modal.is-open {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity .22s ease, visibility 0s;
+        }
+
+        .modal__box {
+            width: 100%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            transform: translateY(16px) scale(.95);
+            opacity: 0;
+            transition: transform .22s ease-in, opacity .22s ease-in;
+        }
+
+        .modal.is-open .modal__box {
+            transform: none;
+            opacity: 1;
+            transition: transform .32s cubic-bezier(.2, 1.1, .3, 1), opacity .22s ease-out;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .modal,
+            .modal__box {
+                transition: none !important;
+            }
+        }
+
+        .modal__done {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 12px 0;
+        }
+
+        .modal__box.is-sent> :not(.modal__done) {
+            display: none;
+        }
+
+        .modal__box.is-sent .modal__done {
+            display: flex;
+        }
+
+        .modal__done svg {
+            width: 56px;
+            height: 56px;
+            fill: none;
+            stroke: #4ade80;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            margin-bottom: 14px;
+        }
+
+        .done__circle {
+            stroke-dasharray: 145;
+            stroke-dashoffset: 145;
+        }
+
+        .done__check {
+            stroke-dasharray: 40;
+            stroke-dashoffset: 40;
+        }
+
+        .is-sent .done__circle {
+            animation: draw .5s ease forwards;
+        }
+
+        .is-sent .done__check {
+            animation: draw .35s ease .4s forwards;
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .done__title {
+            font-family: "Fraunces", serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .done__text {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .done__circle,
+            .done__check {
+                animation: none !important;
+                stroke-dashoffset: 0 !important;
+            }
+        }
+
+        .modal__title {
+            font-family: "Fraunces", serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .modal__input {
+            width: 100%;
+            height: 120px;
+            resize: none;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 12px;
+            line-height: 1.4;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #262625;
+        }
+
+        .modal__count {
+            margin: 6px 0 14px;
+            font-size: 11px;
+            text-align: right;
+            color: var(--muted);
+        }
+
+        .modal__actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal__actions .btn {
+            flex: 1;
+        }
+
+        .btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 560px) {
+            .card {
+                flex-direction: column-reverse;
+            }
+
+            .card__media {
+                min-height: 200px;
+                flex: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <article class="card">
+        <div class="card__content">
+            <span class="badge">Novo</span>
+            <h2 class="card__title">Nova versão do Minsq: 0.4.1</h2>
+
+            <ul class="features">
+                <li>
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.6-.6-.6-2.6z" />
+                    </svg>
+                    Mais de 20 correções aplicadas
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z" />
+                    </svg>
+                    Mais estabilidade no uso do dia a dia
+                </li>
+            </ul>
+
+            <div class="actions">
+                <button class="btn btn--primary" type="button" id="openSuggest">Dar sugestão</button>
+                <a class="btn btn--secondary"
+                    href="https://github.com/minsq-app/minsq.web/issues?q=is%3Aissue+state%3Aclosed" target="_blank"
+                    rel="noopener noreferrer">Ver fixes</a>
+            </div>
+        </div>
+
+        <div class="card__media">
+            <button class="close" type="button" aria-label="Fechar">
+                <svg viewBox="0 0 12 12">
+                    <path d="M1 1l10 10M11 1L1 11" />
+                </svg>
+            </button>
+        </div>
+    </article>
+
+    <div class="modal" id="suggestModal" role="dialog" aria-modal="true" aria-labelledby="suggestTitle">
+        <div class="modal__box">
+            <h3 class="modal__title" id="suggestTitle">Dar sugestão</h3>
+            <textarea class="modal__input" id="suggestText" maxlength="200"
+                placeholder="Conte o que podemos melhorar no Minsq"></textarea>
+            <div class="modal__count"><span id="suggestCount">0</span>/200</div>
+            <div class="modal__actions">
+                <button class="btn btn--secondary" type="button" id="suggestCancel">Cancelar</button>
+                <button class="btn btn--primary" type="button" id="suggestSend" disabled>Enviar</button>
+            </div>
+            <div class="modal__done" role="status" aria-live="polite">
+                <svg viewBox="0 0 52 52" aria-hidden="true">
+                    <circle class="done__circle" cx="26" cy="26" r="23" />
+                    <path class="done__check" d="M15 27l8 8 14-16" />
+                </svg>
+                <p class="done__title">Sugestão enviada</p>
+                <p class="done__text">Obrigado por ajudar a melhorar o Minsq.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('suggestModal');
+        const text = document.getElementById('suggestText');
+        const count = document.getElementById('suggestCount');
+        const send = document.getElementById('suggestSend');
+
+        const box = modal.querySelector('.modal__box');
+        let sentTimer;
+
+        function openModal() { modal.classList.add('is-open'); text.focus(); }
+        function closeModal() {
+            modal.classList.remove('is-open');
+            clearTimeout(sentTimer);
+            setTimeout(() => { if (!modal.classList.contains('is-open')) { text.value = ''; update(); box.classList.remove('is-sent'); } }, 250);
+        }
+        function update() {
+            count.textContent = text.value.length;
+            send.disabled = text.value.trim().length === 0;
+        }
+
+        document.getElementById('openSuggest').addEventListener('click', openModal);
+        document.getElementById('suggestCancel').addEventListener('click', closeModal);
+        text.addEventListener('input', update);
+        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('is-open')) { closeModal(); e.stopImmediatePropagation(); } });
+
+        /* Fechar o aviso com animação; depois o shell remove o iframe */
+        let closing = false;
+        function closeAnnouncement() {
+            if (closing) return;
+            closing = true;
+            document.body.classList.add('is-closing');
+            setTimeout(() => {
+                try { window.parent.postMessage({ type: 'MINSQ_CLOSE_UPDATE_MODAL' }, window.location.origin); } catch (e) { }
+            }, 250);
+        }
+        document.querySelector('.close').addEventListener('click', closeAnnouncement);
+        // clique fora do card fecha o aviso
+        document.body.addEventListener('click', e => { if (e.target === document.body) closeAnnouncement(); });
+        // Esc fecha o aviso (se o modal de sugestão estiver aberto, o Esc fecha só ele)
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && !modal.classList.contains('is-open')) closeAnnouncement();
+        });
+
+        send.addEventListener('click', () => {
+            const suggestion = text.value.trim().slice(0, 200);
+            // TODO: enviar `suggestion` para o seu endpoint/API aqui
+            console.log('Sugestão:', suggestion);
+            box.classList.add('is-sent');
+            sentTimer = setTimeout(closeModal, 2000);
+        });
+    </script>
+</body>
+
+</html>
