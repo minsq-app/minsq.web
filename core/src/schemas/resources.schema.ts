@@ -83,16 +83,24 @@ export const mindmapSchema = z.object({
     }
   }, "URL inválida").optional().nullable(),
   nodes: z.array(
+    // O front monta cada nó com { id, parentId, text, color, collapsed, x, y } e o layout
+    // ainda adiciona `w`. Antes o schema era .strict() e não conhecia parentId/collapsed/w,
+    // então QUALQUER criação/edição de plano de ação voltava 400 "Dados inválidos".
+    // Campos desconhecidos agora são descartados (strip) em vez de derrubar a requisição.
     z.object({
       id: z.string().max(50).optional(),
-      text: z.string().max(52, "Máximo de 52 caracteres por badge").optional().or(z.literal('')),
-      type: z.string().max(20).optional(),
-      x: z.number().optional(),
-      y: z.number().optional(),
-      width: z.number().optional(),
-      height: z.number().optional(),
-      color: z.string().max(20).optional()
-    }).strict()
+      parentId: z.string().max(50).optional().nullable(),
+      text: z.string().max(52, "Máximo de 52 caracteres por badge").optional().nullable().or(z.literal('')),
+      type: z.string().max(20).optional().nullable(),
+      color: z.string().max(20).optional().nullable(),
+      collapsed: z.boolean().optional().nullable(),
+      x: z.number().optional().nullable(),
+      y: z.number().optional().nullable(),
+      w: z.number().optional().nullable(),
+      h: z.number().optional().nullable(),
+      width: z.number().optional().nullable(),
+      height: z.number().optional().nullable()
+    })
   ).max(150, "Máximo de 150 nós por plano de ação").optional().nullable(),
 });
 
@@ -124,3 +132,4 @@ export const planActionSchema = z.object({
   desc: z.string().max(1000, "Máximo de 1000 caracteres").optional().nullable(),
   desc_align: z.string().optional().nullable()
 });
+
