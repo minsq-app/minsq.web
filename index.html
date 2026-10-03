@@ -218,6 +218,8 @@
             }
             try { localStorage.setItem('minsq_auth_user', JSON.stringify(user)); } catch (e) { }
           }
+          /* Qualquer login (e-mail, Google, reset de senha) atualiza sidebar/favicon na hora */
+          if (token || user) refreshShellUser();
         }
 
         /* Iframe informou novo token após login */
@@ -296,6 +298,7 @@
             localStorage.removeItem('minsq_token');
             localStorage.removeItem('mh_custom_sync_lock');
           } catch (e) { }
+          resetShellUser();
           return;
         }
 
@@ -419,40 +422,114 @@
          do usuário que handleUserLogin acabou de gravar no localStorage —
          mesma lógica de avatar/favicon que shared.js já usa (avatar_type
          'photo' + avatar, senão avatar_url). Sem chamada de rede. */
-      function refreshShellUser() {
-        try {
-          var raw = null;
-          try { raw = localStorage.getItem('minsq_auth_user'); } catch (e) { }
-          if (!raw) return;
-          var u = null;
-          try { u = JSON.parse(raw); } catch (e) { }
-          if (!u || typeof u !== 'object') return;
+      /* ── Aparência do shell (sidebar + favicon + título) ──────────────────────
+         Duas causas faziam a foto não aparecer/sumir sem F5:
+         1) o <link id="mh-favicon-root"> nasce com type="image/svg+xml"; com esse
+            type o navegador ignora uma foto PNG/JPG colocada em href. Por isso o
+            favicon é RECRIADO (sem type para fotos) em vez de só trocar o href.
+         2) o shell só era atualizado em alguns caminhos de login e nunca no logout. */
+      var SHELL_DEFAULT_FAVICON = '/assets/logo/favcon.svg';
+      var SHELL_AV_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:60%;height:60%;opacity:0.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+      var _shellUserSeq = 0;      /* invalida respostas de rede de um login/logout anterior */
+      var _shellProfileBusy = false;
 
-          var nome = String(u.nome || '').trim();
+      function setShellFavicon(href, isDefault) {
+        try {
+          var olds = document.querySelectorAll('link[rel~="icon"]');
+          for (var i = 0; i < olds.length; i++) {
+            if (olds[i].parentNode) olds[i].parentNode.removeChild(olds[i]);
+          }
+          var link = document.createElement('link');
+          link.rel = 'icon';
+          link.id = 'mh-favicon-root';
+          if (isDefault) link.type = 'image/svg+xml';  /* foto: sem type (png/jpg/webp) */
+          link.href = href;
+          document.head.appendChild(link);
+        } catch (e) { }
+      }
+
+      function shellAvatarSrc(u) {
+        if (!u) return '';
+        if (u.avatar_type === 'photo' && u.avatar && String(u.avatar).indexOf('http') === 0) return String(u.avatar);
+        if (u.avatar_url) return String(u.avatar_url);
+        if (u.avatar && String(u.avatar).indexOf('http') === 0) return String(u.avatar); /* ex.: foto do Google */
+        return '';
+      }
+
+      function applyShellUser(u) {
+        try {
+          if (!u || typeof u !== 'object') return;
+          var nome = String(u.nome || u.name || '').trim();
           var nameEl = document.querySelector('.mh-account-name');
           if (nome && nameEl) nameEl.textContent = nome;
 
-          var src = '';
-          if (u.avatar_type === 'photo' && u.avatar && String(u.avatar).indexOf('http') === 0) {
-            src = String(u.avatar);
-          } else if (u.avatar_url) {
-            src = String(u.avatar_url);
-          }
-          if (src) {
-            var avEl = document.querySelector('.mh-account-av');
-            if (avEl) {
+          var src = shellAvatarSrc(u);
+          var avEl = document.querySelector('.mh-account-av');
+          if (avEl) {
+            if (src) {
               var img = document.createElement('img');
               img.alt = 'avatar';
               img.src = src;
               avEl.textContent = '';
               avEl.appendChild(img);
+            } else {
+              avEl.innerHTML = SHELL_AV_ICON;
             }
-            var fav = document.getElementById('mh-favicon-root') || document.querySelector('link[rel~="icon"]');
-            if (fav) fav.href = src;
           }
+          if (src) setShellFavicon(src, false);
+          else setShellFavicon(SHELL_DEFAULT_FAVICON, true);
 
           if (nome) document.title = nome.split(' ')[0] + ' | Minsq';
         } catch (e) { }
+      }
+
+      /* Logout / sessão invalidada: volta tudo ao estado anônimo, sem F5 */
+      function resetShellUser() {
+        _shellUserSeq++;
+        if (isSubdomainHost) return;
+        try {
+          var nameEl = document.querySelector('.mh-account-name');
+          if (nameEl) nameEl.textContent = 'Usuário';
+          var avEl = document.querySelector('.mh-account-av');
+          if (avEl) avEl.innerHTML = SHELL_AV_ICON;
+          setShellFavicon(SHELL_DEFAULT_FAVICON, true);
+          document.title = 'Minsq';
+        } catch (e) { }
+      }
+
+      /* Aplica o usuário gravado pelo login (instantâneo) e depois confirma com o
+         perfil do servidor — o payload de alguns logins (ex.: Google) não traz
+         avatar_type/avatar_url completos. */
+      function refreshShellUser() {
+        try {
+          var raw = null;
+          try { raw = localStorage.getItem('minsq_auth_user'); } catch (e) { }
+          if (raw) {
+            var u = null;
+            try { u = JSON.parse(raw); } catch (e) { }
+            if (u && typeof u === 'object') applyShellUser(u);
+          }
+          fetchShellProfile();
+        } catch (e) { }
+      }
+
+      function fetchShellProfile() {
+        if (_shellProfileBusy) return;
+        var token = auth.token;
+        if (!token) return;
+        try { if (sessionStorage.getItem('minsq_onboarding_token')) return; } catch (e) { }
+        var seq = _shellUserSeq;
+        _shellProfileBusy = true;
+        fetch(BASE_URL + '/user/me', {
+          headers: { 'Authorization': 'Bearer ' + token },
+          credentials: 'include'
+        })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (p) {
+            if (p && seq === _shellUserSeq && auth.token) applyShellUser(p);
+          })
+          .catch(function () { })
+          .then(function () { _shellProfileBusy = false; });
       }
 
       function goAfterLogin() {
@@ -469,6 +546,8 @@
       }
 
       function navigateIframe(url) {
+        /* Ao ir para login/logout o usuário não está mais logado: limpa foto/nome/favicon */
+        if (typeof url === 'string' && /\/pages\/auth\/(auth|logout)\.html/.test(url)) resetShellUser();
         var curtain = document.getElementById('mh-curtain');
         if (curtain) curtain.classList.remove('hide');
 
@@ -644,7 +723,7 @@
   </script>
 
   <!-- Injeta a lógica compartilhada global no nível do Shell -->
-  <script src="/pages/shared.js?v=1786684900000"></script>
+  <script src="/pages/shared.js?v=1791027704000"></script>
 </body>
 
 </html>

@@ -940,6 +940,7 @@
             if (avSrc) {
               var favicon = document.querySelector('link[rel~="icon"]');
               if (!favicon) { favicon = document.createElement('link'); favicon.rel = 'icon'; document.head.appendChild(favicon); }
+              favicon.removeAttribute('type'); /* type=svg+xml faz o navegador ignorar foto png/jpg */
               favicon.href = avSrc;
             }
           }).catch(function () { });
@@ -3478,4 +3479,3 @@ function _injectSpotlightHTML() {
     el.value = ('0' + Math.floor(total / 60)).slice(-2) + ':' + ('0' + (total % 60)).slice(-2);
   }, true);
 })();
-
