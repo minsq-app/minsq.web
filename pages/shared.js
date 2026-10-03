@@ -1008,6 +1008,9 @@
         // Nova página carregada: zera o aviso de "?u= é o próprio usuário" (profile.html reenvia)
         window._mhProfileOwn = undefined;
         var routeKey = FILE_TO_KEY[childUrl];
+        // No shell, ACTIVE_KEY nasce da URL do F5 (ex.: /hoje -> 'today') e ficava congelada,
+        // travando o clique na sidebar de volta pra essa página. Agora segue o iframe.
+        if (!IS_IN_IFRAME) ACTIVE_KEY = routeKey || '';
         // Perfil de outra pessoa não conta como "Meu perfil"
         if (_mhIsForeignProfile(childUrl, search)) routeKey = '';
         var navButtons = document.querySelectorAll('.mh-sidebar .mh-nb');
@@ -1505,6 +1508,7 @@
             var isChildPublic = PUBLIC_PAGES.indexOf(childUrl) !== -1;
 
             var routeKey = FILE_TO_KEY[childUrl];
+            if (!IS_IN_IFRAME && routeKey) ACTIVE_KEY = routeKey;
             var _foreign = _mhIsForeignProfile(childUrl, search);
             if (routeKey || _foreign) {
               var navButtons = document.querySelectorAll('.mh-sidebar .mh-nb');
