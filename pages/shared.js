@@ -257,6 +257,22 @@
     var loaderId = 'mh-loader';
     if (document.getElementById(loaderId)) return;
 
+    // Dentro do iframe, se o shell (pai) ainda está mostrando o loader (caso do F5),
+    // NÃO cria um segundo loader: reaproveita o do pai. Assim há um único spinner
+    // contínuo e ele só some quando a página interna chamar hideMhLoader().
+    if (IS_IN_IFRAME) {
+      var _parentLoader = null;
+      try { _parentLoader = window.parent.document.getElementById(loaderId); } catch (e) { }
+      if (_parentLoader && !_parentLoader.classList.contains('fade-out')) {
+        window.hideMhLoader = function () {
+          try {
+            if (typeof window.parent.hideMhLoader === 'function') window.parent.hideMhLoader();
+          } catch (e) { }
+        };
+        return;
+      }
+    }
+
     var css = [
       '#mh-loader {',
       '  position: fixed; inset: 0; background: #070707; z-index: 100000;',
