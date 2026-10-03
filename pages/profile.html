@@ -4858,7 +4858,8 @@
           social1,
           social2,
           profile_page_bg: _pendingUser.profile_page_bg,
-          profile_page_bg_img: _pendingUser.profile_page_bg_img,
+          // string vazia (nunca null): backends antigos rejeitavam null como "URL excede o limite"
+          profile_page_bg_img: _pendingUser.profile_page_bg_img || '',
           profile_kout: _pendingUser.profile_kout,
           profile_font: _pendingUser.profile_font,
           profile_bg: _pendingUser.profile_bg,
