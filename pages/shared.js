@@ -3227,7 +3227,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   if (window.location.pathname.includes('/pages/')) {
     const betaNotice = document.createElement("div");
-    betaNotice.innerText = "Minsq Beta · Version 0.2.1 - Build ID: 7F3A9C21D84E6B50A17C4D9F82B6E031";
+    betaNotice.innerText = "Minsq Beta · Version 0.4.1 - Build ID: 7F3A9C21D84E6B50A17C4D9F82B6E031";
     betaNotice.style.position = "fixed";
     betaNotice.style.bottom = "10px";
     betaNotice.style.right = "10px";
