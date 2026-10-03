@@ -49,7 +49,7 @@ export class UserController {
     try {
       let handle = req.query.handle as string;
       if (!handle) return res.json({ available: false, error: 'Handle é obrigatório.' });
-      
+
       handle = handle.replace(/^@/, '').toLowerCase();
 
       const isAdmin = req.userRole === 'admin' || req.userRole === 'dev';
@@ -94,7 +94,7 @@ export class UserController {
 
       const tokenStr = authHeader.split(' ')[1];
       const decoded = verifyToken(tokenStr, 'onboarding');
-      
+
       if (!decoded?.pendingEmail) {
         return res.status(401).json({ error: 'Token inválido para onboarding.' });
       }
@@ -151,16 +151,16 @@ export class UserController {
       }
 
       const userPayload = filterUserPayload({
-        email: pendingEmail, 
-        nome: pendente.nome || rawHandle, 
+        email: pendingEmail,
+        nome: pendente.nome || rawHandle,
         nascimento: pendente.nascimento ?? null,
-        role: 'user', 
+        role: 'user',
         confirmado: true, // a posse do e-mail já foi provada (código ou Google) antes de chegar aqui
-        streak: 0, 
-        tema: 'dark', 
+        streak: 0,
+        tema: 'dark',
         handle: formattedHandle,
-        avatar: (pendingEmail[0] || 'U').toUpperCase(), 
-        avatar_type: 'initial', 
+        avatar: (pendingEmail[0] || 'U').toUpperCase(),
+        avatar_type: 'initial',
         conheceu_por
       });
 
@@ -270,7 +270,7 @@ export class UserController {
 
         const isAdmin = (req as any).userRole === 'admin' || (req as any).userRole === 'dev';
         const minLength = isAdmin ? 1 : 3;
-        
+
         const handleRegex = new RegExp(`^@[a-z0-9_.]{${minLength},30}$`);
         if (!handleRegex.test(cleanHandle)) {
           return res.status(400).json({ error: `Handle do usuário inválido. Deve ter entre ${minLength} e 30 caracteres alfanuméricos, underline ou ponto, e começar com @.` });
@@ -351,7 +351,7 @@ export class UserController {
         if (profile_page_bg_img) {
           try {
             if (!isOwnAssetUrl(profile_page_bg_img)) return res.status(400).json({ error: 'Host de fundo não permitido.' });
-          } catch(e) { return res.status(400).json({ error: 'URL do fundo inválida.' }); }
+          } catch (e) { return res.status(400).json({ error: 'URL do fundo inválida.' }); }
         }
         updateData.profile_page_bg_img = profile_page_bg_img.replace(/[<>"]/g, '');
       }
@@ -398,7 +398,7 @@ export class UserController {
         if (avatar.startsWith('http')) {
           try {
             if (!isOwnAssetUrl(avatar)) return res.status(400).json({ error: 'Host de avatar não permitido.' });
-          } catch(e) { return res.status(400).json({ error: 'URL de avatar inválida.' }); }
+          } catch (e) { return res.status(400).json({ error: 'URL de avatar inválida.' }); }
         }
         updateData.avatar = avatar.replace(/[<>"]/g, '');
       }
@@ -880,7 +880,32 @@ export class UserController {
         .in('id', ids);
       if (uErr) throw uErr;
 
-      res.json((users || []).map(formatUser));
+      // Relação de QUEM ESTÁ VENDO (myId) com cada usuário da lista:
+      // sem isso o front não sabe quem eu já sigo e mostra "Seguir" pra todo mundo.
+      const { data: myRels, error: rErr } = await supabase
+        .from('follows')
+        .select('followed_id, status')
+        .eq('follower_id', myId)
+        .in('followed_id', ids);
+      if (rErr) throw rErr;
+
+      const relMap = new Map<string, string>();
+      (myRels || []).forEach((r: any) => relMap.set(r.followed_id, r.status));
+
+      // .in() não garante ordem: reaplica a ordem da paginação (mais recentes primeiro)
+      const byId = new Map<string, any>();
+      (users || []).forEach((u: any) => byId.set(u.id, u));
+
+      const result = ids
+        .map((id: string) => byId.get(id))
+        .filter(Boolean)
+        .map((u: any) => ({
+          ...formatUser(u),
+          is_following: relMap.get(u.id) === 'accepted',
+          is_pending: relMap.get(u.id) === 'pending'
+        }));
+
+      res.json(result);
     } catch (err: any) {
       console.error('[Internal Error]', err.message);
       res.status(500).json({ error: 'Erro interno no servidor.' });
@@ -1081,3 +1106,4 @@ export class UserController {
     }
   }
 }
+
