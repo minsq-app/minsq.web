@@ -10,7 +10,7 @@ export const studySettingsSchema = z.object({
 export const studyTrackSchema = z.object({
   track_id: z.string().uuid("ID inválido").or(z.string().max(50)),
   name: z.string().min(2, "Mínimo 2 caracteres").max(38, "Máximo de 38 caracteres").regex(/^[a-zA-Z0-9À-ÿ\s\-_]+$/, "Sem caracteres especiais"),
-  icon: z.string().max(50000, "Ícone muito grande").optional().nullable(),
+  icon: z.string().max(2800000, "Ícone muito grande (máx 2MB)").optional().nullable(),
   description: z.string().max(25, "Máximo de 25 caracteres").optional().nullable()
 });
 
