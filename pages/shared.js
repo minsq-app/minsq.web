@@ -257,6 +257,22 @@
     var loaderId = 'mh-loader';
     if (document.getElementById(loaderId)) return;
 
+    // Corrida no Ctrl+R: o shared.js do shell (grande, sem cache) pode terminar de carregar
+    // DEPOIS do iframe já ter concluído e pedido para esconder o loader. Nesse caso o loader
+    // do shell nasceria "órfão" e ficaria girando até o fallback de 8s. Se o filho já
+    // sinalizou que terminou, simplesmente não cria o loader.
+    if (!IS_IN_IFRAME && window.__mhLoaderHidden) return;
+
+    // Avisa o shell (pai) que a página interna terminou, mesmo que o loader do pai
+    // ainda não exista. Usado nos dois caminhos do loader abaixo.
+    function _notifyParentHidden() {
+      if (!IS_IN_IFRAME) return;
+      try {
+        window.parent.__mhLoaderHidden = true;
+        if (typeof window.parent.hideMhLoader === 'function') window.parent.hideMhLoader();
+      } catch (e) { }
+    }
+
     // Dentro do iframe, se o shell (pai) ainda está mostrando o loader (caso do F5),
     // NÃO cria um segundo loader: reaproveita o do pai. Assim há um único spinner
     // contínuo e ele só some quando a página interna chamar hideMhLoader().
@@ -264,11 +280,7 @@
       var _parentLoader = null;
       try { _parentLoader = window.parent.document.getElementById(loaderId); } catch (e) { }
       if (_parentLoader && !_parentLoader.classList.contains('fade-out')) {
-        window.hideMhLoader = function () {
-          try {
-            if (typeof window.parent.hideMhLoader === 'function') window.parent.hideMhLoader();
-          } catch (e) { }
-        };
+        window.hideMhLoader = function () { _notifyParentHidden(); };
         return;
       }
     }
@@ -331,8 +343,10 @@
     var startTime = Date.now();
 
     window.hideMhLoader = function (force) {
+      _notifyParentHidden();
       if (isHidden) return;
       isHidden = true;
+      if (!IS_IN_IFRAME) window.__mhLoaderHidden = true;
       loader.classList.add('fade-out');
       setTimeout(function () {
         if (loader.parentNode) loader.parentNode.removeChild(loader);
