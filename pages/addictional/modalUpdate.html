@@ -29,8 +29,7 @@
 
         :root {
             color-scheme: dark;
-            --overlay-alpha: 0.45;
-            /* escurecimento do fundo: 0 a 1 */
+            --overlay-alpha: 0.45; /* escurecimento do fundo: 0 a 1 */
         }
 
         html {
@@ -54,47 +53,23 @@
         }
 
         @keyframes overlayIn {
-            from {
-                background: rgba(0, 0, 0, 0);
-            }
-
-            to {
-                background: rgba(0, 0, 0, var(--overlay-alpha));
-            }
+            from { background: rgba(0, 0, 0, 0); }
+            to   { background: rgba(0, 0, 0, var(--overlay-alpha)); }
         }
 
         @keyframes overlayOut {
-            from {
-                background: rgba(0, 0, 0, var(--overlay-alpha));
-            }
-
-            to {
-                background: rgba(0, 0, 0, 0);
-            }
+            from { background: rgba(0, 0, 0, var(--overlay-alpha)); }
+            to   { background: rgba(0, 0, 0, 0); }
         }
 
         @keyframes cardIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: none;
-            }
+            from { opacity: 0; transform: translateY(20px) scale(.95); }
+            to   { opacity: 1; transform: none; }
         }
 
         @keyframes cardOut {
-            from {
-                opacity: 1;
-                transform: none;
-            }
-
-            to {
-                opacity: 0;
-                transform: translateY(14px) scale(.96);
-            }
+            from { opacity: 1; transform: none; }
+            to   { opacity: 0; transform: translateY(14px) scale(.96); }
         }
 
         .card {
@@ -106,11 +81,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-
-            body,
-            .card,
-            body.is-closing,
-            body.is-closing .card {
+                        body, .card, body.is-closing, body.is-closing .card {
                 animation-duration: .01ms !important;
             }
         }
@@ -228,17 +199,29 @@
 
         .close {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 28px;
-            height: 28px;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
             border: 0;
-            border-radius: 6px;
+            border-radius: 5px;
             background: rgba(46, 46, 44, 0.9);
             color: #e2e2df;
             display: grid;
             place-items: center;
             cursor: pointer;
+            /* escondido até o dashboard terminar de carregar */
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .25s ease, visibility 0s linear .25s, background .15s;
+        }
+
+        .close.is-ready {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity .25s ease, visibility 0s, background .15s;
         }
 
         .close:hover {
@@ -246,8 +229,8 @@
         }
 
         .close svg {
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
             stroke: currentColor;
             stroke-width: 2;
             stroke-linecap: round;
@@ -531,8 +514,22 @@
 
         /* Fechar o aviso com animação; depois o shell remove o iframe */
         let closing = false;
+        let dashReady = false;
+        const closeBtn = document.querySelector('.close');
+
+        // O shell avisa quando o loading do dashboard terminou; só então o X aparece
+        window.addEventListener('message', e => {
+            if (e.origin !== window.location.origin) return;
+            if (e.data && e.data.type === 'MINSQ_DASH_READY') {
+                dashReady = true;
+                closeBtn.classList.add('is-ready');
+            }
+        });
+        // Caso o aviso do shell tenha chegado antes deste script, pede de novo
+        try { window.parent.postMessage({ type: 'MINSQ_UPDATE_MODAL_HELLO' }, window.location.origin); } catch (e) { }
+
         function closeAnnouncement() {
-            if (closing) return;
+            if (closing || !dashReady) return;
             closing = true;
             document.body.classList.add('is-closing');
             setTimeout(() => {
